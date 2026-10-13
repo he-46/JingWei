@@ -1,0 +1,35 @@
+# Godot-generated caches (keep .gd.uid and .gdshader.uid source identifiers).
+.godot/
+.import/
+export_credentials.cfg
+
+# Local engine binaries and exported builds.
+.tools/
+build/
+builds/
+dist/
+exports/
+*.pck
+
+# Screenshots, verification output, isolated profiles and game saves.
+/artifacts/*
+!/artifacts/.gdignore
+*.log
+*.tmp
+*.bak
+*.before-reset-*
+journey.json
+coast_journey.json
+
+# Local editor, operating system and credential files.
+.vscode/
+.idea/
+.vs/
+.DS_Store
+Thumbs.db
+Desktop.ini
+.env
+.env.*
+!.env.example
+*.pem
+*.key
