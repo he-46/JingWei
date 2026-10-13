@@ -130,3 +130,45 @@ static func tree(parent: Node3D, point: Vector3, size: float) -> void:
 	cone(root, Vector3(0, 1.6, 0), 0.95, 1.5, Color("427961"))
 	cone(root, Vector3(0, 2.25, 0), 0.72, 1.35, Color("598b69"))
 	cone(root, Vector3(0, 2.8, 0), 0.43, 1.0, Color("78a077"))
+
+# Five shared silhouettes. Unit radius / unit peak lets stock scale each shape consistently.
+static func mountain_mesh(shape: int) -> ArrayMesh:
+	var tool := SurfaceTool.new()
+	tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var sectors := 24
+	var rings := 10
+	for ring_index in range(rings):
+		var inner := float(ring_index) / rings
+		var outer := float(ring_index + 1) / rings
+		for sector in range(sectors):
+			var a := float(sector) / sectors * TAU
+			var b := float(sector + 1) / sectors * TAU
+			var vertices := [
+				mountain_vertex(shape, inner, a), mountain_vertex(shape, outer, a), mountain_vertex(shape, outer, b),
+				mountain_vertex(shape, inner, a), mountain_vertex(shape, outer, b), mountain_vertex(shape, inner, b)]
+			for vertex in vertices:
+				tool.set_color(Color("657d6b").lerp(Color("c6c9ad"), clampf(vertex.y, 0, 1)))
+				tool.add_vertex(vertex)
+	tool.generate_normals()
+	return tool.commit()
+
+static func mountain_vertex(shape: int, radius: float, angle: float) -> Vector3:
+	var x := cos(angle) * radius
+	var z := sin(angle) * radius
+	var height := 0.0
+	match shape:
+		0: # Round, broad hill.
+			height = pow(maxf(0, 1.0 - radius * radius), 0.9)
+		1: # Narrow stone spire.
+			height = pow(1.0 - radius, 1.25)
+		2: # Two distinct summits.
+			height = maxf(exp(-9.0 * (pow(x - 0.34, 2) + z * z)), 0.86 * exp(-11.0 * (pow(x + 0.38, 2) + pow(z - 0.12, 2))))
+			height *= minf(1, (1 - radius) * 5)
+		3: # Long ridge, lower saddles between crags.
+			height = pow(maxf(0, 1 - absf(z) * 1.8), 1.25) * pow(maxf(0, 1 - absf(x)), 0.4)
+			height *= (0.82 + 0.18 * cos(x * 11)) * minf(1, (1 - radius) * 5)
+		4: # Stepped strata with an offset crown.
+			height = floorf(pow(1.0 - radius, 0.65) * 6.0) / 6.0
+	var edge := 1.0 + 0.045 * sin(angle * 5 + shape) + 0.025 * cos(angle * 9)
+	var relief := 0.95 + 0.025 * sin(radius * 12 + shape) + 0.025 * radius * sin(angle * 3)
+	return Vector3(x * edge * 0.93, maxf(0, height) * relief, z * edge * 0.93)

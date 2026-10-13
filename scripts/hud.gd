@@ -148,7 +148,7 @@ func _build_header() -> void:
 	button(row, "暂停  Esc", func() -> void: menu_requested.emit(), 40)
 
 func _build_left() -> void:
-	var box := panel(root, Rect2(24, 114, 260, 226))
+	var box := panel(root, Rect2(24, 114, 260, 196))
 	side_panels.append(box.get_parent())
 	text(box, "一石一羽，终成陆地", 19)
 	text(box, "此 行", 12, RUST)
@@ -156,10 +156,10 @@ func _build_left() -> void:
 	var divider := HSeparator.new()
 	box.add_child(divider)
 	text(box, "填海只是精卫自己的心愿。\n修行记录一路的坚持。", 13, MUTED, true)
-	box = panel(root, Rect2(24, 358, 260, 278))
+	box = panel(root, Rect2(24, 326, 260, 330))
 	side_panels.append(box.get_parent())
 	text(box, "修行 · 日益精进", 19)
-	for kind in ["bag", "speed", "mining"]:
+	for kind in ["bag", "mining", "throw", "speed"]:
 		var id: String = kind
 		upgrade_buttons[id] = button(box, "", func() -> void: upgrade_requested.emit(id), 54)
 		upgrade_buttons[id].add_theme_font_size_override("font_size", 14)
@@ -169,7 +169,7 @@ func _build_left() -> void:
 			compact.content_margin_bottom = 6
 			upgrade_buttons[id].add_theme_stylebox_override(style_name, compact)
 	text(box, "同级采矿、负重：约 4 次装满。", 12, MUTED)
-	box = panel(root, Rect2(24, 654, 260, 124))
+	box = panel(root, Rect2(24, 674, 260, 120))
 	side_panels.append(box.get_parent())
 	text(box, "穿山甲的开山工坊", 18)
 	mining_label = text(box, "尚未接洽", 14, MUTED)
@@ -177,7 +177,7 @@ func _build_left() -> void:
 	mining_bar.custom_minimum_size.y = 9
 	mining_bar.show_percentage = false
 	box.add_child(mining_bar)
-	text(box, "开采途中可寻得埋藏神器。", 12, MUTED)
+	text(box, "一只穿山甲 · 从小山依次开采", 12, MUTED)
 
 func _build_right() -> void:
 	var box := panel(root, Rect2(-284, 114, 260, 302), true)
@@ -201,7 +201,7 @@ func _build_right() -> void:
 	atlas.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	atlas.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(atlas)
-	text(box, "绿：大陆  青：浅海  蓝：远海\n深蓝：深海  褐：山脉  白：精卫", 11, MUTED)
+	text(box, "绿：大陆  青：浅海  蓝：远海\n深蓝：深海  褐：山脉\n白：精卫  橙：穿山甲", 11, MUTED)
 	cell_label = text(box, "", 12, MUTED, true)
 	save_label = text(root, "每 15 秒自动保存", 12, Color("eaf1dc"))
 	save_label.anchor_left = 1
@@ -217,7 +217,7 @@ func _build_right() -> void:
 	overview_info = text(box, "", 15, INK, true)
 	text(box, "西侧大陆，东侧海域\n金色光点：精卫的位置", 14, MUTED, true)
 	text(box, "每格所需石子\n浅海    10～100\n远海    100～5000\n深海    5000～50000", 16, INK, true)
-	text(box, "点击方形边界内投石\nTab 返回随行视角", 14, MUTED, true)
+	text(box, "仅金色射程圈内可投石\n雾区不可到达\nTab 返回随行视角", 14, MUTED, true)
 
 func _build_bottom() -> void:
 	var banner := panel(root, Rect2(320, -179, 800, 52), false, true)
@@ -239,7 +239,7 @@ func _build_bottom() -> void:
 	context.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	button(row, "拾取 / 对话  E", func() -> void: interact_requested.emit(), 32)
 	button(row, "投石  Q", func() -> void: throw_requested.emit(), 32)
-	var footer := text(root, "WASD / 方向键  移动     空格  高飞     E  拾取 / 对话     Q  向海投石     鼠标左键  视野内投石     Tab  全图     滚轮  缩放     M  静音", 13, Color("e9f0df"))
+	var footer := text(root, "WASD / 方向键  移动     空格  高飞     E  拾取 / 对话     Q  向海投石     鼠标左键  射程内投石     Tab  全图     滚轮  缩放     M  静音", 13, Color("e9f0df"))
 	footer.anchor_top = 1
 	footer.anchor_bottom = 1
 	footer.anchor_right = 1
@@ -315,24 +315,26 @@ func set_overview(enabled: bool) -> void:
 		side.visible = not enabled
 	save_label.visible = not enabled
 
-func update_state(state: JWState, prompt: String, aimed_cell: int) -> void:
+func update_state(state: JWState, prompt: String, aimed_cell: int, aimed_point: Vector2 = Vector2.INF) -> void:
 	overview_info.text = "所愿：%s 石\n%d×%d 格 · %d 座山" % [State.number(state.target_stones), state.grid_size, state.grid_size, state.mountains.size()]
 	cargo.text = "石子  %s / %s" % [State.number(state.carried), State.number(state.capacity())]
 	cultivation_label.text = "修行  %s" % State.number(state.cultivation)
 	progress_label.text = "填海  %.2f%%" % (float(state.total_delivered) / state.target_stones * 100)
 	context.text = prompt
-	goal.text = "所愿：%s 石\n已填：%s 石\n向西寻山，向东望海。" % [State.number(state.target_stones), State.number(state.total_delivered)]
+	goal.text = "所愿：%s 石\n已填：%s 石" % [State.number(state.target_stones), State.number(state.total_delivered)]
 	if state.won:
 		goal.text = "✓ 这次心愿已经完成。\n%s 石，从第一石开始。" % State.number(state.total_delivered)
-	var near := state.nearby_mountain(state.player)
-	var mountain: Dictionary = state.mountains[near]
-	mining_bar.value = float(mountain["work"]) / float(mountain["yield"]) * 100
-	if mountain["settled"]:
-		mining_label.text = "%s · 余 %s 石" % [state.mountain_name(near), State.number(int(mountain["stock"]))]
-	elif mountain["started"]:
-		mining_label.text = "%s · 开采 %.0f%%" % [state.mountain_name(near), mining_bar.value]
+	var near := state.next_mountain()
+	if not state.mining_unlocked():
+		mining_bar.value = float(state.total_delivered) / State.MINING_UNLOCK_STONES * 100
+		mining_label.text = "开山之约 · 填海 %d / %d 石" % [state.total_delivered, State.MINING_UNLOCK_STONES]
+	elif near < 0:
+		mining_bar.value = 100
+		mining_label.text = "群山已开尽 · 石料留在原地"
 	else:
-		mining_label.text = "%s · 橙旗旁按 E" % state.mountain_name(near)
+		var mountain: Dictionary = state.mountains[near]
+		mining_bar.value = float(mountain["work"]) / float(mountain["yield"]) * 100
+		mining_label.text = "%s · 开采 %.0f%%" % [state.mountain_name(near), mining_bar.value]
 	for index in range(3):
 		var item: Dictionary = state.artifact_plan[index]
 		var found := state.artifacts.has(String(item["id"]))
@@ -350,11 +352,15 @@ func update_state(state: JWState, prompt: String, aimed_cell: int) -> void:
 			"mining":
 				var next := int(ceil(32 * pow(2.0, level + 1) * state.relic_factor() / 3.5))
 				title = "采矿  %s → %s 石/次" % [State.number(state.gather_power()), State.number(next)]
+			"throw":
+				title = "投石  %.1f → %.1f 距离" % [state.throw_distance(), State.THROW_DISTANCES[mini(level + 1, state.upgrade_limit("throw"))]]
 			"speed":
 				title = "羽翼  %.1f → %.1f" % [state.move_speed(), state.move_speed() / (1.0 + 0.08 * level) * (1.0 + 0.08 * (level + 1))]
 		target.text = "%s\n%s" % [title, "%s 修行 · %d 阶" % [State.number(price), level] if price >= 0 else "已修至满阶"]
 		target.disabled = price < 0 or state.cultivation < price
 		target.tooltip_text = "采矿同时提高每次采集量和穿山甲开山速度。\n负重与采矿配套提升，前期约 6–10 趟、后期约 18–24 趟进入下一阶；神器可加快修行。"
+		if kind == "throw":
+			target.tooltip_text = "投石射程按水平距离计算，鼠标、Q 和全图都遵守。\n当前地图射程上限 %.1f。" % State.THROW_DISTANCES[state.upgrade_limit("throw")]
 	map_caption.text = "%d×%d 方形地图 · %d 座山" % [state.grid_size, state.grid_size, state.mountains.size()]
 	_update_atlas(state)
 	if aimed_cell >= 0:
@@ -364,7 +370,10 @@ func update_state(state: JWState, prompt: String, aimed_cell: int) -> void:
 		else:
 			cell_label.text = "大陆落点：留下可拾回的石堆\n填入海中的石子才计入修行"
 	else:
-		cell_label.text = "鼠标所见皆可投石\nTab 全图 · 滚轮缩放"
+		cell_label.text = "当前射程 %.1f · 雾区不可投石\nTab 全图 · 滚轮缩放" % state.throw_distance()
+
+	if aimed_point.is_finite() and aimed_cell >= 0:
+		cell_label.text += "\n距离 %.1f / 射程 %.1f%s" % [state.player.distance_to(aimed_point), state.throw_distance(), " · 超出" if not state.can_throw(aimed_point) else ""]
 
 func _update_atlas(state: JWState) -> void:
 	var mine_code := ""
@@ -383,8 +392,10 @@ func _update_atlas(state: JWState) -> void:
 			atlas_base.set_pixel(index % state.grid_size, index / state.grid_size, color)
 		for index in range(state.mountains.size()):
 			var cell := state.cell_at(state.mountain_position(index))
-			atlas_base.set_pixel(cell % state.grid_size, cell / state.grid_size, Color("d99854") if state.mountains[index]["started"] else Color("665746"))
+			atlas_base.set_pixel(cell % state.grid_size, cell / state.grid_size, Color("c6b597") if state.mountains[index]["settled"] else Color("665746"))
 	var image: Image = atlas_base.duplicate()
+	var npc_cell := state.cell_at(state.npc_position(state.pangolin_mountain()))
+	image.set_pixel(npc_cell % state.grid_size, npc_cell / state.grid_size, Color("ed9742"))
 	var player_cell := state.cell_at(state.player)
 	if player_cell >= 0:
 		image.set_pixel(player_cell % state.grid_size, player_cell / state.grid_size, Color.WHITE)

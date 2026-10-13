@@ -44,48 +44,76 @@ func run() -> void:
 		await physics_frame
 	Input.action_release("jw_right")
 	expect(game.state.player.distance_to(before) > 0.2, "movement input flies across coastline")
-	move_player(game.state.stone_positions[0])
 	for action in range(4):
+		move_player(game.state.stone_positions[action])
 		game.interact()
-	expect(game.state.carried == game.state.capacity(), "four E actions fill starter basket")
+	expect(game.state.carried == game.state.capacity(), "four E collections at different scatters fill starter basket")
+	expect(game.state.stone_amounts.slice(0, 4) == [0, 0, 0, 0], "harvested scatter instances are exhausted")
 	var outside_view := Vector2(27, -23)
-	expect(not game.world.point_visible(outside_view) and game.deposit_at(outside_view) == 0, "unseen location rejects throw without deleting cargo")
+	expect(not game.world.point_visible(outside_view) and game.deposit_at(outside_view) == 0, "unseen location preserves inventory")
+	move_player(Vector2(-2.5, 3))
 	var distant := Vector2(9, 3)
-	expect(game.world.point_visible(distant) and game.state.player.distance_to(distant) > 4.5, "visible point lies beyond old throw radius")
 	var cargo: int = game.state.carried
-	expect(game.deposit_at(distant) == cargo and game.state.cultivation == cargo, "visible distant throw succeeds")
+	expect(game.world.point_visible(distant) and game.deposit_at(distant) == 0 and game.state.carried == cargo, "visible but out-of-range throw is rejected")
+	game.throw_forward()
+	expect(game.state.total_delivered == cargo and game.state.carried == 0, "Q throws to nearby shoreline within starter range")
 	expect(not game.world.terrain_chunks.is_empty(), "deposits create terrain chunks")
+	game.state.tick(14)
 	for action in range(4):
+		move_player(game.state.stone_positions[action])
 		game.interact()
 	game.toggle_overview()
-	expect(game.world.overview and not game.hud.side_panels[0].visible, "overview shows map and hides obstructing sidebars")
+	expect(game.world.overview and not game.hud.side_panels[0].visible, "overview shows map and hides sidebars")
 	var deep: int = game.state.sea_indices[-1]
-	expect(game.world.point_visible(game.state.cell_center(deep)), "overview reveals distant deep sea")
+	var deep_point: Vector2 = game.state.cell_center(deep)
 	cargo = game.state.carried
-	expect(game.deposit_at(game.state.cell_center(deep)) == cargo and game.state.sea_fill[deep] == cargo, "overview allows deep-sea throws")
+	expect(game.world.point_visible(deep_point) and game.deposit_at(deep_point) == 0 and game.state.carried == cargo, "overview cannot bypass throwing distance")
+	move_player(deep_point - Vector2(2, 0))
+	expect(game.deposit_at(deep_point) == cargo and game.state.sea_fill[deep] == cargo, "flying near deep sea permits the same throw")
+	expect(game.world.fog_layers.size() == 3, "land and sea share layered boundary fog")
+	for fog in game.world.fog_layers:
+		var bounds: Vector4 = fog.material_override.get_shader_parameter("map_bounds")
+		expect(is_equal_approx(bounds.x, game.state.map_origin.x) and is_equal_approx(bounds.z - bounds.x, game.state.map_side), "fog shader uses actual playable boundary")
 	game.toggle_overview()
 	move_player(game.state.npc_position(0))
 	game.interact()
-	expect(game.hud.modal_open and not game.state.mountains[0]["started"], "NPC asks before starting its mine")
+	expect(game.hud.modal_open and not game.state.mountains[0]["started"], "NPC explains the fill threshold before mining unlocks")
 	var elapsed: float = game.state.elapsed
 	for index in range(3):
 		await physics_frame
 	expect(game.state.elapsed == elapsed, "dialogue pauses simulation")
-	game._modal_action("start_mining")
-	expect(game.state.mountains[0]["started"] and not game.hud.modal_open, "dialogue begins specific mountain")
+	expect(game.hud.modal_text.text.contains("128") and game.hud.modal_buttons.get_child_count() == 1, "locked dialogue shows threshold with no mining bypass")
+	game._modal_action("resume")
+	for trip in range(2):
+		game.state.tick(14)
+		for action in range(4):
+			move_player(game.state.stone_positions[action])
+			game.interact()
+		move_player(Vector2(-1, 0))
+		game.throw_forward()
+	expect(game.state.total_delivered == 128 and game.state.mountains[0]["started"], "real gathering and throwing unlock mining without another dialogue")
+	expect(game.world.npc_views.size() == 1, "world contains exactly one pangolin")
+	var actor: Node3D = game.world.npc_views[0]["root"]
 	game.state.tick(100)
 	game._refresh()
 	await process_frame
 	expect(game.state.mountains[0]["settled"] and game.state.artifacts.has("basket"), "live mountain gives stock and relic")
+	expect(game.state.next_mountain() == 1 and game.world.npc_views.size() == 1 and game.world.npc_views[0]["root"] == actor, "same pangolin advances to second mountain")
+	var npc_point: Vector2 = game.state.npc_position(1)
+	expect(Vector2(actor.position.x, actor.position.z).distance_to(npc_point) < 0.001 and game.state.nearby_mountain(game.state.npc_position(0), 2.1, true) == -1, "NPC interaction moves with its sole actor and leaves no ghost behind")
 	expect(game.world.mountain_cache[0] == 0 and game.world.pile_cache[0] == 1024 and game.world.mountain_collisions[0].disabled, "settled mountain removes rocks and collision")
 	move_player(game.state.pile_position(0))
 	for index in range(4):
 		game.interact()
 	expect(game.state.carried == game.state.capacity(), "mountain stone takes four E collections")
+	var blocked_cargo: int = game.state.carried
+	game.throw_forward()
+	expect(game.state.carried == blocked_cargo, "starter cannot throw into sea while standing in a quarry")
 	game.toggle_overview()
 	var land_point := Vector2(-2, 2)
 	var cultivation: int = game.state.cultivation
 	cargo = game.state.carried
+	move_player(land_point - Vector2(1, 0))
 	expect(game.deposit_at(land_point) == cargo and game.state.cultivation == cultivation, "land throw has no cultivation reward")
 	game.toggle_overview()
 	move_player(game.state.cell_center(game.state.cell_at(land_point)))
@@ -98,13 +126,51 @@ func run() -> void:
 	game._modal_action("pick_again")
 	game._modal_action("resume")
 	expect(game.state.carried == cargo and not game.hud.modal_open, "cancel scale change keeps current journey")
+	# Earn enough cultivation for the first range tier using actual nearby throws.
+	for trip in range(4):
+		move_player(game.state.pile_position(0))
+		for action in range(4):
+			game.interact()
+		move_player(Vector2(-1, 0))
+		game.throw_forward()
+	var earlier_range: float = game.state.throw_distance()
+	game.hud.upgrade_buttons["throw"].pressed.emit()
+	expect(game.state.throw_distance() > earlier_range and game.hud.upgrade_buttons.size() == 4, "HUD range upgrade spends earned cultivation")
+	await physics_frame
+	await physics_frame
+	expect(is_equal_approx(game.world.range_ring.scale.x, game.state.throw_distance()), "range ring follows the upgraded radius")
+	var attempts := 0
+	while int(game.state.mountains[0]["stock"]) > 0 and attempts < 100:
+		move_player(game.state.pile_position(0))
+		for action in range(4):
+			game.interact()
+		move_player(Vector2(-1, 0))
+		game.throw_forward()
+		attempts += 1
+	game.state.tick(30)
+	move_player(game.state.pile_position(0))
+	game.interact()
+	expect(int(game.state.mountains[0]["stock"]) == 0 and game.state.carried == 0 and game.world.pile_cache[0] == 0, "empty quarry disappears and does not yield new stones")
+	game.show_npc_dialogue(0)
+	expect(game.hud.modal_text.text.contains(game.state.mountain_name(game.state.pangolin_mountain())) and game.hud.modal_buttons.get_child_count() == 1, "dialogue follows the sole worker rather than reopening an empty quarry")
+	game._modal_action("resume")
 	for target in [1000000, 10000000, 100000000]:
 		game.show_menu()
 		game._modal_action("reset_confirm")
 		game._modal_action("pick_again")
 		game._modal_action("world_%d" % target)
 		await process_frame
-		expect(game.state.target_stones == target and game.world.mountain_mesh.instance_count == game.state.mountains.size() * 32, "chosen profile allocates batched mountain geometry")
+		var rendered := 0
+		var different_meshes: Dictionary = {}
+		for batch in game.world.mountain_batches:
+			rendered += batch.instance_count
+			different_meshes[hash(batch.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX])] = true
+		expect(game.state.target_stones == target and rendered == game.state.mountains.size() and different_meshes.size() == 5, "five shared mountain meshes cover all generated mountains")
+		expect(game.world.npc_views.size() == 1, "larger world still has exactly one pangolin")
+		var first_shape: CylinderShape3D = game.world.mountain_collisions[0].shape
+		var last_shape: CylinderShape3D = game.world.mountain_collisions[-1].shape
+		expect(last_shape.radius > first_shape.radius and last_shape.height > first_shape.height, "collision footprints grow with actual stock")
+		expect(game.world.flight_ceiling > last_shape.height + 1, "high flight clears the largest mountain")
 		game.toggle_overview()
 		var corners_visible := true
 		for index in [0, game.state.grid_size - 1, game.state.grid_size * (game.state.grid_size - 1), game.state.grid_size * game.state.grid_size - 1]:
@@ -114,7 +180,9 @@ func run() -> void:
 		var point: Vector2 = game.state.cell_center(game.state.sea_indices[-1])
 		var screen: Vector2 = game.world.camera.unproject_position(Vector3(point.x, 0.2, point.y))
 		var picked: Vector2 = game.mouse_world_point(screen)
-		expect(picked.distance_to(point) < 0.001 and game.deposit_at(picked) > 0, "mouse ray reaches large-map far corner")
+		expect(picked.distance_to(point) < 0.001 and game.deposit_at(picked) == 0, "far-corner ray is accurate but still out of range")
+		move_player(point - Vector2(2, 0))
+		expect(game.deposit_at(picked) > 0, "large map target becomes available after moving nearby")
 		expect(game.hud.atlas_texture.get_width() == game.state.grid_size and game.world.terrain_chunks.size() <= 4, "large map uses compact atlas and local dirty chunks")
 	# Isolated save location verifies restart archival without touching player saves.
 	game.save_enabled = true
@@ -134,18 +202,24 @@ func run() -> void:
 			archived = Store.load_game("res://artifacts/qa-profile/" + file)["state"].target_stones == 100000000
 	expect(archived, "restart archives full previous journey")
 	game.save_enabled = false
-	for index in range(game.state.mountains.size()):
-		game.state.begin_mining(index)
+	for trip in range(4):
+		game.state.tick(14)
+		for index in range(4):
+			game.state.pickup_stone(index)
+		game.state.player = Vector2(2, 0)
+		game.state.deposit(game.state.player)
 	game.state.tick(100000)
 	var mine := 0
 	while not game.state.won and mine < game.state.mountains.size():
 		while game.state.carried < game.state.capacity() and mine < game.state.mountains.size():
 			if game.state.pickup_pile(mine) == 0:
 				mine += 1
+		move_player(Vector2(2, 0))
 		game.state.deposit(Vector2(2, 0))
 		game.state.buy_upgrade("bag")
 		game.state.buy_upgrade("mining")
 	game._refresh()
+	expect(game.world.npc_views.size() == 1 and game.state.next_mountain() == -1, "one worker remains resting after all mountains finish")
 	await physics_frame
 	await physics_frame
 	expect(game.state.won and game.win_shown and game.hud.modal_open, "complete world opens personal wish journal")

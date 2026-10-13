@@ -9,13 +9,16 @@ var camera: Camera3D
 var bird_body: CharacterBody3D
 var bird_model: Node3D
 var stone_mesh: MultiMesh
-var mountain_mesh: MultiMesh
+var mountain_batches: Array[MultiMesh] = []
+var mountain_slots: Array[int] = []
+var flight_ceiling: float = 8.2
+var range_ring: MeshInstance3D
+var fog_layers: Array[MeshInstance3D] = []
 var pile_mesh: MultiMesh
 var drop_mesh: MultiMesh
 var mountain_collisions: Array[CollisionShape3D] = []
 var mountain_cache: Array[int] = []
 var pile_cache: Array[int] = []
-var mountain_local: Array[Transform3D] = []
 var terrain_chunks: Dictionary = {}
 var npc_views: Dictionary = {}
 var cell_marker: MeshInstance3D
@@ -23,6 +26,7 @@ var pickup_marker: MeshInstance3D
 var shadow: MeshInstance3D
 var overview_marker: MeshInstance3D
 var font: SystemFont
+var aim_point := Vector2.ZERO
 var time: float = 0
 var overview: bool = false
 var zoom: float = 1.0
@@ -38,6 +42,8 @@ func setup(state: JWState) -> void:
 	focus = Vector3(state.player.x, 0, state.player.y)
 	_build_lighting(state)
 	_build_land(state)
+	_build_boundary_fog(state)
+	flight_ceiling = state.high_flight_height()
 	_build_decor(state)
 	_build_resources(state)
 	bird_body = CharacterBody3D.new()
@@ -60,6 +66,8 @@ func setup(state: JWState) -> void:
 	cell_marker = ring(Color("f3d491"), State.CELL_SIZE * 0.43, 0.035)
 	add_child(cell_marker)
 	cell_marker.visible = false
+	range_ring = ring(Color("e9d192"), 1.0, 0.012)
+	add_child(range_ring)
 	pickup_marker = ring(Color("fff1bd"), 0.64, 0.035)
 	add_child(pickup_marker)
 	sync(state)
@@ -124,6 +132,20 @@ func _build_land(state: JWState) -> void:
 		depth_labels.append(node)
 		band_start += width
 
+func _build_boundary_fog(state: JWState) -> void:
+	for layer in range(3):
+		var plane := PlaneMesh.new()
+		plane.size = Vector2.ONE * state.map_side * 5
+		var mat := ShaderMaterial.new()
+		mat.shader = preload("res://shaders/boundary_fog.gdshader")
+		mat.set_shader_parameter("map_bounds", Vector4(state.map_origin.x, state.map_origin.y, state.map_origin.x + state.map_side, state.map_origin.y + state.map_side))
+		mat.set_shader_parameter("opacity", 1.0 if layer == 0 else 0.25)
+		mat.set_shader_parameter("edge_width", clampf(state.map_side * 0.035, 1.8, 7.0))
+		mat.set_shader_parameter("drift", layer * 4.1)
+		var node := Models.mesh_part(self, plane, mat, Vector3(state.map_origin.x + state.map_side / 2, 0.82 + layer * 1.5, 0))
+		node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		fog_layers.append(node)
+
 func _build_decor(state: JWState) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = state.world_seed + 980
@@ -165,17 +187,27 @@ func batch(mesh: Mesh, count: int, colors: bool, color: Color) -> MultiMesh:
 
 func _build_resources(state: JWState) -> void:
 	stone_mesh = batch(Models.rock_mesh(), state.stone_positions.size() * 3, true, Color.WHITE)
-	mountain_mesh = batch(Models.rock_mesh(3), state.mountains.size() * ROCKS_PER_MOUNTAIN, true, Color.WHITE)
 	pile_mesh = batch(Models.rock_mesh(4), state.mountains.size() * ROCKS_PER_MOUNTAIN, false, Color("b8b6a6"))
 	drop_mesh = batch(Models.rock_mesh(1), 0, false, Color("e1d3ad"))
-	for layer in range(4):
-		var count := 11 - layer * 2
-		for index in range(count):
-			var angle := float(index) / count * TAU + layer * 0.6
-			var radius := 2.1 - layer * 0.55
-			var p := Vector3(cos(angle) * radius, 1.2 + layer * 1.45, sin(angle) * radius)
-			var scale_value := Vector3(2.2, 2.1, 2.4) * (1.0 - layer * 0.08)
-			mountain_local.append(Transform3D(Basis.from_euler(Vector3(0, angle, 0)).scaled(scale_value), p))
+	var counts := [0, 0, 0, 0, 0]
+	for mountain in state.mountains:
+		var shape: int = mountain["shape"]
+		mountain_slots.append(counts[shape])
+		counts[shape] += 1
+	for shape in range(5):
+		var mesh := MultiMesh.new()
+		mesh.transform_format = MultiMesh.TRANSFORM_3D
+		mesh.use_colors = true
+		mesh.use_custom_data = true
+		mesh.mesh = Models.mountain_mesh(shape)
+		mesh.instance_count = counts[shape]
+		var node := MultiMeshInstance3D.new()
+		node.multimesh = mesh
+		var mat := ShaderMaterial.new()
+		mat.shader = preload("res://shaders/mountain.gdshader")
+		node.material_override = mat
+		add_child(node)
+		mountain_batches.append(mesh)
 	for index in range(state.mountains.size()):
 		mountain_cache.append(-1)
 		pile_cache.append(-1)
@@ -184,11 +216,11 @@ func _build_resources(state: JWState) -> void:
 		body.position = Vector3(point.x, 0.44, point.y)
 		add_child(body)
 		var shape := CylinderShape3D.new()
-		shape.radius = 2.9
-		shape.height = 6.5
+		shape.radius = state.mountain_radius(index) * 0.96
+		shape.height = state.mountain_height(index)
 		var collider := CollisionShape3D.new()
 		collider.shape = shape
-		collider.position.y = 3.25
+		collider.position.y = state.mountain_height(index) * 0.5
 		body.add_child(collider)
 		mountain_collisions.append(collider)
 
@@ -210,17 +242,20 @@ func sync(state: JWState) -> void:
 		if mountain_cache[index] != count:
 			mountain_cache[index] = count
 			var point := state.mountain_position(index)
-			for part in range(ROCKS_PER_MOUNTAIN):
-				var transform := mountain_local[part]
-				transform.origin += Vector3(point.x, 0, point.y)
-				if part >= count:
-					transform.origin.y = -60
-				mountain_mesh.set_instance_transform(index * ROCKS_PER_MOUNTAIN + part, transform)
-				mountain_mesh.set_instance_color(index * ROCKS_PER_MOUNTAIN + part, Color("8c9e91") if part % 3 else Color("a5b09a"))
+			var radius := state.mountain_radius(index)
+			var height := state.mountain_height(index)
+			var transform := Transform3D(Basis.from_euler(Vector3(0, float(mountain["yaw"]), 0)).scaled(Vector3(radius, height, radius)), Vector3(point.x, 0.44, point.y))
+			if count == 0:
+				transform.origin.y = -100
+			var mesh := mountain_batches[int(mountain["shape"])]
+			var slot := mountain_slots[index]
+			mesh.set_instance_transform(slot, transform)
+			mesh.set_instance_custom_data(slot, Color(ratio, 0, 0, 1))
+			mesh.set_instance_color(slot, Color("e5ead3") if index % 3 == 0 else Color.WHITE)
 			var collider := mountain_collisions[index]
 			collider.set_deferred("disabled", count == 0)
 			collider.scale.y = maxf(0.05, ratio)
-			collider.position.y = 3.25 * ratio
+			collider.position.y = height * 0.5 * ratio
 		var stock := int(mountain["stock"])
 		if pile_cache[index] != stock:
 			pile_cache[index] = stock
@@ -256,31 +291,31 @@ func sync(state: JWState) -> void:
 	bird_model.get_node("Load").visible = state.carried > 0
 
 func _sync_npcs(state: JWState) -> void:
-	var radius := normal_size * zoom * 0.8 + 8.0
-	for index in range(state.mountains.size()):
-		var nearby := state.mountain_position(index).distance_to(state.player) < radius
-		if nearby and not npc_views.has(index):
-			var root := Node3D.new()
-			var point := state.npc_position(index)
-			root.position = Vector3(point.x, 0.45, point.y)
-			add_child(root)
-			var animal := Models.pangolin()
-			animal.rotation.y = -0.5
-			root.add_child(animal)
-			Models.box(root, Vector3(0.95, 1.0, -0.65), Vector3(0.10, 2.0, 0.10), Color("866b4b"))
-			Models.box(root, Vector3(1.3, 1.8, -0.65), Vector3(0.65, 0.55, 0.06), Color("d5905b"))
-			var title := label("", Vector3(point.x, 3.0, point.y), Color("fff1c7"), 36)
-			npc_views[index] = {"root": root, "animal": animal, "label": title}
-		elif not nearby and npc_views.has(index):
-			npc_views[index]["root"].queue_free()
-			npc_views[index]["label"].queue_free()
-			npc_views.erase(index)
-		if npc_views.has(index):
-			var mountain: Dictionary = state.mountains[index]
-			var title: Label3D = npc_views[index]["label"]
-			title.text = state.mountain_name(index) + (" · 碎石 %s" % State.number(int(mountain["stock"])) if mountain["settled"] else (" · 开采 %.0f%%" % (float(mountain["work"]) / float(mountain["yield"]) * 100) if mountain["started"] else " · 穿山甲"))
-			title.visible = not overview
-			npc_views[index]["root"].visible = not overview
+	# This actor is created once and moves with the worker, regardless of camera range.
+	if npc_views.is_empty():
+		var root := Node3D.new()
+		add_child(root)
+		var animal := Models.pangolin()
+		animal.rotation.y = -0.5
+		root.add_child(animal)
+		Models.box(root, Vector3(0.95, 1.0, -0.65), Vector3(0.10, 2.0, 0.10), Color("866b4b"))
+		Models.box(root, Vector3(1.3, 1.8, -0.65), Vector3(0.65, 0.55, 0.06), Color("d5905b"))
+		npc_views[0] = {"root": root, "animal": animal, "label": label("", Vector3.ZERO, Color("fff1c7"), 36)}
+	var index := state.pangolin_mountain()
+	var point := state.npc_position(index)
+	var view: Dictionary = npc_views[0]
+	view["root"].position = Vector3(point.x, 0.45, point.y)
+	var title: Label3D = view["label"]
+	title.position = Vector3(point.x, 3.0, point.y)
+	if not state.mining_unlocked():
+		title.text = "穿山甲 · 填海 %d 石后开山" % State.MINING_UNLOCK_STONES
+	elif state.next_mountain() < 0:
+		title.text = "穿山甲 · 群山已开尽"
+	else:
+		var mountain: Dictionary = state.mountains[index]
+		title.text = "穿山甲 · %s %.0f%%" % [state.mountain_name(index), float(mountain["work"]) / float(mountain["yield"]) * 100]
+	title.visible = not overview
+	view["root"].visible = not overview
 
 func cell_height(state: JWState, index: int) -> float:
 	if index < 0 or index >= state.sea_fill.size():
@@ -357,12 +392,17 @@ func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aime
 	bird_model.position.y = sin(time * 3.8) * 0.045
 	for index in npc_views:
 		var animal: Node3D = npc_views[index]["animal"]
-		animal.rotation.x = sin(time * 8) * 0.1 if state.mountains[index]["started"] and not state.mountains[index]["settled"] else 0.0
+		animal.rotation.x = sin(time * 8) * 0.1 if state.mining_unlocked() and state.next_mountain() >= 0 else 0.0
 	shadow.position = Vector3(state.player.x, 0.48 if state.player.x < 0 else 0.2, state.player.y)
+	range_ring.position = Vector3(state.player.x, 0.58, state.player.y)
+	range_ring.scale = Vector3(state.throw_distance(), 1, state.throw_distance())
+	range_ring.visible = true
 	cell_marker.visible = aimed_cell >= 0
 	if aimed_cell >= 0:
 		var point := state.cell_center(aimed_cell)
 		cell_marker.position = Vector3(point.x, maxf(0.24, cell_height(state, aimed_cell) + 0.03), point.y)
+		# Grey-red cells are visible but beyond the physical throwing range.
+		cell_marker.material_override.albedo_color = Color("f3d491") if state.can_throw(aim_point) else Color("d38b79")
 	var nearby := state.closest_stone(state.player)
 	pickup_marker.visible = nearby >= 0 and state.carried < state.capacity() and not overview
 	if nearby >= 0:

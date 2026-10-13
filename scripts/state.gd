@@ -1,10 +1,12 @@
 class_name JWState
 extends RefCounted
 
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 const CELL_SIZE := 4.0
 const RESPAWN_SECONDS := 14.0
+const MINING_UNLOCK_STONES := 128
 const MAX_LEVEL := 24
+const THROW_DISTANCES := [4.0, 5.0, 6.5, 8.0, 10.0, 12.5, 16.0, 20.0, 24.0, 30.0, 36.0]
 const PROFILES := [
 	{"target": 100000, "grid": 12, "land": 5, "bands": [3, 3, 1], "mountains": 6, "name": "十万石 · 初愿"},
 	{"target": 1000000, "grid": 24, "land": 10, "bands": [4, 6, 4], "mountains": 18, "name": "百万石 · 长行"},
@@ -36,10 +38,11 @@ var total_generated: int = 0
 var total_trips: int = 0
 var elapsed: float = 0.0
 var won: bool = false
-var upgrades: Dictionary = {"bag": 0, "mining": 0, "speed": 0}
+var upgrades: Dictionary = {"bag": 0, "mining": 0, "speed": 0, "throw": 0}
 var artifacts: Array[String] = []
 var artifact_plan: Array[Dictionary] = []
 var mountains: Array[Dictionary] = []
+var mountain_radii: Array[float] = []
 var stone_positions: Array[Vector2] = []
 var stone_base: Array[int] = []
 var stone_amounts: Array[int] = []
@@ -55,6 +58,7 @@ var stone_dirty: Dictionary = {}
 var piles_dirty: bool = true
 var filled_count: int = 0
 var stone_buckets: Dictionary = {}
+var migrated_from: int = 0
 
 func _init(target_value: int = 100000, seed_value: int = 10213, generate: bool = true) -> void:
 	target_stones = target_value if profile_for(target_value) != null else 100000
@@ -135,35 +139,18 @@ func _generate_sea(rng: RandomNumberGenerator) -> void:
 		cursor += 1
 
 func _generate_mountains(rng: RandomNumberGenerator, count: int) -> void:
-	var points: Array[Vector2] = [Vector2(-8, -4)]
-	var attempts := 0
-	while points.size() < count and attempts < count * 3000:
-		attempts += 1
-		var point := Vector2(rng.randf_range(map_origin.x + 3.7, -5.0), rng.randf_range(map_origin.y + 4, -map_origin.y - 4))
-		var clear := point.distance_to(player) >= 5.0
-		for existing in points:
-			if point.distance_to(existing) < 7.7:
-				clear = false
-				break
-		if clear:
+	# Generous plots bound the largest possible footprint, not only mountain centres.
+	var usable_width := absf(map_origin.x) - 7.0
+	var columns := maxi(1, floori(sqrt(count * usable_width / map_side)))
+	var rows := ceili(float(count) / columns)
+	var step := Vector2(usable_width / columns, map_side / rows)
+	var points: Array[Vector2] = []
+	for row in range(rows):
+		for col in range(columns):
+			var point := Vector2(-7.0 - (col + 0.5) * step.x, map_origin.y + (row + 0.5) * step.y)
+			point += Vector2(rng.randf_range(-0.04, 0.04) * step.x, rng.randf_range(-0.04, 0.04) * step.y)
 			points.append(point)
-	if points.size() < count:
-		for row in range(grid_size):
-			for col in range(land_cols):
-				if points.size() >= count:
-					break
-				var point := map_origin + Vector2((col + 0.5) * CELL_SIZE, (row + 0.5) * CELL_SIZE)
-				if point.x > -4.0:
-					continue
-				var clear := point.distance_to(player) >= 5.0
-				for existing in points:
-					if point.distance_to(existing) < 5.0:
-						clear = false
-				if clear:
-					points.append(point)
-	var first: Vector2 = points.pop_front()
 	points.sort_custom(func(a: Vector2, b: Vector2) -> bool: return a.distance_squared_to(player) < b.distance_squared_to(player))
-	points.push_front(first)
 	var budget := int(target_stones * 1.2)
 	var weight_total := 0.0
 	for index in range(count):
@@ -172,29 +159,57 @@ func _generate_mountains(rng: RandomNumberGenerator, count: int) -> void:
 	for index in range(count):
 		var stock := 1024 + int(floor((budget - count * 1024) * float(index * index) / weight_total))
 		allocated += stock
-		mountains.append({"x": points[index].x, "z": points[index].y, "yield": stock, "work": 0.0, "started": false, "settled": false, "stock": 0})
+		mountains.append({"x": points[index].x, "z": points[index].y, "yield": stock, "work": 0.0,
+			"started": false, "settled": false, "stock": 0, "shape": index % 5, "yaw": rng.randi_range(0, 6433) / 1024.0})
 	mountains[-1]["yield"] = int(mountains[-1]["yield"]) + budget - allocated
+
+func mountain_radius(index: int) -> float:
+	if mountain_radii.size() != mountains.size():
+		mountain_radii.clear()
+		var count := mountains.size()
+		var width := absf(map_origin.x) - 7.0
+		var columns := maxi(1, floori(sqrt(count * width / map_side)))
+		var rows := ceili(float(count) / columns)
+		var limit := minf(width / columns, map_side / rows) * 0.39
+		for mountain in mountains:
+			mountain_radii.append(minf(1.7 * pow(float(mountain["yield"]) / 1024.0, 0.18), limit))
+	return mountain_radii[index]
+
+func mountain_height(index: int) -> float:
+	return mountain_radius(index) * 2.25
+
+func high_flight_height() -> float:
+	var height := 8.2
+	for index in range(mountains.size()):
+		height = maxf(height, mountain_height(index) + 2.0)
+	return height
+
+func clear_of_mountains(point: Vector2, margin: float = 0.7) -> bool:
+	for index in range(mountains.size()):
+		if point.distance_to(mountain_position(index)) < mountain_radius(index) + margin:
+			return false
+	return true
 
 func _generate_scatter(rng: RandomNumberGenerator) -> void:
 	var count := clampi(int(grid_size * grid_size / 3), 50, 1500)
+	var starting_points := [Vector2(-2.5, 3), Vector2(-4.5, 4.5), Vector2(-5.5, 1.5), Vector2(-2.5, 0)]
 	for index in range(count):
-		var point := Vector2(-2.5, 3.0)
-		if index > 0:
+		var point: Vector2 = starting_points[index] if index < 4 else Vector2(-2.5, 3)
+		if index >= 4:
+			var found := false
 			for attempt in range(200):
 				point = Vector2(rng.randf_range(map_origin.x + 1, -1.5), rng.randf_range(map_origin.y + 1, -map_origin.y - 1))
-				var clear := true
-				for mountain in mountains:
-					if point.distance_to(Vector2(mountain["x"], mountain["z"])) < 4.0:
-						clear = false
-						break
-				if clear:
+				if clear_of_mountains(point):
+					found = true
 					break
+			if not found:
+				# The reserved coastal lane is always outside every mining footprint.
+				point = Vector2(-2.5, rng.randf_range(map_origin.y + 1, -map_origin.y - 1))
 		stone_positions.append(point)
-		var amount := 64 + int(pow(absf(point.x) / absf(map_origin.x), 2.0) * target_stones / (count * 2.0))
-		stone_base.append(amount)
-		stone_amounts.append(amount)
+		# A scatter is one available gathering action, not a finite multi-action stockpile.
+		stone_base.append(1)
+		stone_amounts.append(1)
 		stone_cooldowns.append(0.0)
-		total_generated += amount
 		stone_dirty[index] = true
 	_rebuild_buckets()
 
@@ -227,10 +242,23 @@ static func cycle_trips(level: int) -> int:
 static func cost_at(kind: String, level: int) -> int:
 	if kind == "speed":
 		return int(128 * pow(4.0, level))
+	if kind == "throw":
+		return int(ceil(96 * pow(2.2, level)))
 	return int(ceil(32 * pow(2.0, level) * cycle_trips(level) * 0.6))
 
+func upgrade_limit(kind: String) -> int:
+	if kind == "throw":
+		return {100000: 4, 1000000: 6, 10000000: 8, 100000000: 10}[target_stones]
+	return 6 if kind == "speed" else MAX_LEVEL
+
+func throw_distance() -> float:
+	return THROW_DISTANCES[int(upgrades["throw"])]
+
+func can_throw(point: Vector2) -> bool:
+	return cell_at(point) >= 0 and player.distance_to(point) <= throw_distance() + 0.00001
+
 func upgrade_cost(kind: String) -> int:
-	if not upgrades.has(kind) or int(upgrades[kind]) >= (6 if kind == "speed" else MAX_LEVEL):
+	if not upgrades.has(kind) or int(upgrades[kind]) >= upgrade_limit(kind):
 		return -1
 	return cost_at(kind, int(upgrades[kind]))
 
@@ -246,15 +274,45 @@ func mountain_position(index: int) -> Vector2:
 	return Vector2(mountains[index]["x"], mountains[index]["z"])
 
 func npc_position(index: int) -> Vector2:
-	return mountain_position(index) + Vector2(4.6, 0.6)
+	return mountain_position(index) + Vector2(mountain_radius(index) + 1.5, 0.0)
 
 func pile_position(index: int) -> Vector2:
-	return mountain_position(index) + Vector2(1.0, 1.5)
+	return mountain_position(index)
 
 func mountain_name(index: int) -> String:
 	return MOUNTAIN_NAMES[index % MOUNTAIN_NAMES.size()] + "山" + (" · %d" % (index + 1) if index >= MOUNTAIN_NAMES.size() else "")
 
+func next_mountain() -> int:
+	var best := -1
+	for index in range(mountains.size()):
+		if not mountains[index]["settled"] and (best < 0 or int(mountains[index]["yield"]) < int(mountains[best]["yield"])):
+			best = index
+	return best
+
+func mining_unlocked() -> bool:
+	if total_delivered >= MINING_UNLOCK_STONES:
+		return true
+	# Older saves could start several mines before the new threshold. Keep that unlock,
+	# but only advance the smallest unfinished mountain; other partial work is retained.
+	for mountain in mountains:
+		if mountain["started"]:
+			return true
+	return false
+
+func pangolin_mountain() -> int:
+	var next := next_mountain()
+	if next >= 0:
+		return next
+	var largest := 0
+	for index in range(mountains.size()):
+		if int(mountains[index]["yield"]) > int(mountains[largest]["yield"]):
+			largest = index
+	return largest
+
 func nearby_mountain(point: Vector2, radius: float = INF, npc: bool = false) -> int:
+	if npc:
+		var index := pangolin_mountain()
+		return index if point.distance_to(npc_position(index)) < radius else -1
 	var best := -1
 	var distance := radius
 	for index in range(mountains.size()):
@@ -278,10 +336,10 @@ func nearby_pile(point: Vector2, radius: float = 3.1) -> int:
 	return best
 
 func begin_mining(index: int) -> bool:
-	if index < 0 or index >= mountains.size() or mountains[index]["started"]:
+	if not mining_unlocked() or index < 0 or index != next_mountain() or mountains[index]["started"]:
 		return false
 	mountains[index]["started"] = true
-	messages.append("穿山甲开始开采%s。你可以继续衔石，或向大陆深处寻山。" % mountain_name(index))
+	messages.append("穿山甲转往%s，开始开采。挖完后会继续寻找更大的山。" % mountain_name(index))
 	return true
 
 func tick(seconds: float) -> void:
@@ -293,44 +351,35 @@ func tick(seconds: float) -> void:
 			continue
 		stone_cooldowns[index] = maxf(0, stone_cooldowns[index] - seconds)
 		if stone_cooldowns[index] <= 0:
-			var amount := maxi(stone_base[index], gather_power() * 8)
-			stone_amounts[index] = amount
-			total_generated += amount
+			stone_amounts[index] = 1
 			stone_dirty[index] = true
-	# Split the shared timeline at artifact boundaries, including rate changes.
+	# One worker, one timeline. Split at both relic discoveries and mountain completion
+	# so a long tick carries its remaining time into the next (smallest) mountain.
 	var remaining := seconds
-	while remaining > 0.000001:
-		var step := remaining
-		var any_active := false
-		var rate := mining_rate()
-		for index in range(mountains.size()):
-			var mountain: Dictionary = mountains[index]
-			if not mountain["started"] or mountain["settled"]:
-				continue
-			any_active = true
-			step = minf(step, maxf(0, float(mountain["yield"]) - float(mountain["work"])) / rate)
-			for item in artifact_plan:
-				if int(item["mountain"]) == index and not artifacts.has(String(item["id"])):
-					step = minf(step, maxf(0, float(mountain["yield"]) * float(item["threshold"]) - float(mountain["work"])) / rate)
-		if not any_active:
+	while remaining > 0.000001 and mining_unlocked():
+		var index := next_mountain()
+		if index < 0:
 			break
-		for mountain in mountains:
-			if mountain["started"] and not mountain["settled"]:
-				mountain["work"] = minf(float(mountain["yield"]), float(mountain["work"]) + step * rate)
+		begin_mining(index)
+		var mountain: Dictionary = mountains[index]
+		var rate := mining_rate()
+		var step := minf(remaining, maxf(0, float(mountain["yield"]) - float(mountain["work"])) / rate)
+		for item in artifact_plan:
+			if int(item["mountain"]) == index and not artifacts.has(String(item["id"])):
+				step = minf(step, maxf(0, float(mountain["yield"]) * float(item["threshold"]) - float(mountain["work"])) / rate)
+		mountain["work"] = minf(float(mountain["yield"]), float(mountain["work"]) + step * rate)
 		remaining -= step
 		for item in artifact_plan:
-			var mountain: Dictionary = mountains[int(item["mountain"])]
-			if not artifacts.has(String(item["id"])) and float(mountain["work"]) + 0.00001 >= float(mountain["yield"]) * float(item["threshold"]):
+			if int(item["mountain"]) == index and not artifacts.has(String(item["id"])) and float(mountain["work"]) + 0.00001 >= float(mountain["yield"]) * float(item["threshold"]):
 				artifacts.append(String(item["id"]))
 				messages.append("神器出土 · %s：%s（已装备）" % [item["name"], item["effect"]])
-		for index in range(mountains.size()):
-			var mountain: Dictionary = mountains[index]
-			if mountain["started"] and not mountain["settled"] and float(mountain["work"]) + 0.00001 >= float(mountain["yield"]):
-				mountain["work"] = float(mountain["yield"])
-				mountain["settled"] = true
-				mountain["stock"] = int(mountain["yield"])
-				total_generated += int(mountain["yield"])
-				messages.append("%s开尽，留下%s石。" % [mountain_name(index), number(int(mountain["stock"]))])
+		if float(mountain["work"]) + 0.00001 >= float(mountain["yield"]):
+			mountain["work"] = float(mountain["yield"])
+			mountain["settled"] = true
+			mountain["stock"] = int(mountain["yield"])
+			total_generated += int(mountain["yield"])
+			messages.append("%s开尽，留下%s石。" % [mountain_name(index), number(int(mountain["stock"]))])
+			begin_mining(next_mountain())
 
 func closest_stone(point: Vector2, radius: float = 2.2) -> int:
 	var bucket := Vector2i(floori(point.x / 8.0), floori(point.y / 8.0))
@@ -349,18 +398,18 @@ func closest_stone(point: Vector2, radius: float = 2.2) -> int:
 	return best
 
 func pickup_stone(index: int) -> int:
-	if index < 0 or index >= stone_amounts.size():
+	if index < 0 or index >= stone_amounts.size() or stone_amounts[index] == 0 or carried >= capacity():
 		return 0
-	var amount := mini(gather_power(), mini(capacity() - carried, stone_amounts[index]))
-	stone_amounts[index] -= amount
+	var amount := mini(gather_power(), capacity() - carried)
+	stone_amounts[index] = 0
 	carried += amount
+	total_generated += amount
 	stone_dirty[index] = true
-	if stone_amounts[index] == 0:
-		stone_cooldowns[index] = RESPAWN_SECONDS
+	stone_cooldowns[index] = RESPAWN_SECONDS
 	return amount
 
 func pickup_pile(index: int) -> int:
-	if index < 0 or index >= mountains.size():
+	if index < 0 or index >= mountains.size() or not mountains[index]["settled"] or int(mountains[index]["stock"]) <= 0:
 		return 0
 	var amount := mini(gather_power(), mini(capacity() - carried, int(mountains[index]["stock"])))
 	mountains[index]["stock"] = int(mountains[index]["stock"]) - amount
@@ -409,7 +458,7 @@ func cell_center(index: int) -> Vector2:
 
 func deposit(point: Vector2) -> int:
 	var start := cell_at(point)
-	if start < 0 or carried <= 0:
+	if start < 0 or carried <= 0 or not can_throw(point):
 		return 0
 	if sea_depth[start] < 0:
 		var amount := carried
@@ -445,6 +494,8 @@ func deposit(point: Vector2) -> int:
 				queue.append(neighbor)
 	cultivation += delivered
 	total_delivered += delivered
+	if mining_unlocked():
+		begin_mining(next_mountain())
 	if delivered > 0:
 		total_trips += 1
 	if not won and total_delivered == target_stones:
@@ -454,8 +505,6 @@ func deposit(point: Vector2) -> int:
 
 func remaining_stones() -> int:
 	var total := carried + total_delivered
-	for amount in stone_amounts:
-		total += amount
 	for mountain in mountains:
 		total += int(mountain["stock"])
 	for amount in land_piles.values():
@@ -480,6 +529,12 @@ func snapshot() -> Dictionary:
 		"sea_capacity": sea_capacity.duplicate(), "sea_fill": sea_fill.duplicate()}
 
 static func from_snapshot(data: Dictionary) -> JWState:
+	var legacy_version := 0
+	if _integer(data.get("version")) and int(data["version"]) == 2:
+		legacy_version = 2
+		data = _migrate_v2(data)
+		if data.is_empty():
+			return null
 	if not _integer(data.get("version")) or int(data["version"]) != SAVE_VERSION or not _integer(data.get("target")) or profile_for(int(data["target"])) == null:
 		return null
 	if not data.get("seed") is String or not String(data["seed"]).is_valid_int():
@@ -490,6 +545,7 @@ static func from_snapshot(data: Dictionary) -> JWState:
 	if not _number(data.get("elapsed")) or float(data["elapsed"]) < 0 or not data.get("won") is bool:
 		return null
 	var result := JWState.new(int(data["target"]), int(data["seed"]), false)
+	result.migrated_from = legacy_version
 	if not _point(data.get("player")):
 		return null
 	result.player = Vector2(data["player"][0], data["player"][1])
@@ -501,7 +557,7 @@ static func from_snapshot(data: Dictionary) -> JWState:
 		if not _integer(data["upgrades"].get(kind)):
 			return null
 		var level := int(data["upgrades"][kind])
-		if level < 0 or level > (6 if kind == "speed" else MAX_LEVEL):
+		if level < 0 or level > result.upgrade_limit(kind):
 			return null
 		result.upgrades[kind] = level
 	for id in data["artifacts"]:
@@ -553,10 +609,10 @@ static func from_snapshot(data: Dictionary) -> JWState:
 	for entry in data["mountains"]:
 		if not entry is Dictionary:
 			return null
-		for key in ["x", "z", "work"]:
+		for key in ["x", "z", "work", "yaw"]:
 			if not _number(entry.get(key)):
 				return null
-		for key in ["yield", "stock"]:
+		for key in ["yield", "stock", "shape"]:
 			if not _integer(entry.get(key)):
 				return null
 		if not entry.get("started") is bool or not entry.get("settled") is bool:
@@ -566,11 +622,13 @@ static func from_snapshot(data: Dictionary) -> JWState:
 		var stock := int(entry["stock"])
 		var amount := int(entry["yield"])
 		var work := float(entry["work"])
+		if int(entry["shape"]) < 0 or int(entry["shape"]) >= 5 or float(entry["yaw"]) < 0 or float(entry["yaw"]) > TAU:
+			return null
 		if index < 0 or result.sea_depth[index] >= 0 or amount < 1024 or stock < 0 or stock > amount or work < 0 or work > amount:
 			return null
 		if bool(entry["settled"]) != (work >= amount) or (not entry["started"] and work > 0) or (not entry["settled"] and stock != 0):
 			return null
-		result.mountains.append({"x": point.x, "z": point.y, "yield": amount, "work": work, "stock": stock, "started": entry["started"], "settled": entry["settled"]})
+		result.mountains.append({"x": point.x, "z": point.y, "yield": amount, "work": work, "stock": stock, "started": entry["started"], "settled": entry["settled"], "shape": int(entry["shape"]), "yaw": float(entry["yaw"])})
 		mountain_total += amount
 	if mountain_total != int(result.target_stones * 1.2):
 		return null
@@ -602,7 +660,9 @@ static func from_snapshot(data: Dictionary) -> JWState:
 		var amount := int(data["stone_amounts"][index])
 		var base := int(data["stone_base"][index])
 		var cooldown := float(data["stone_cooldowns"][index])
-		if cell < 0 or result.sea_depth[cell] >= 0 or base < 1 or amount < 0 or amount > maxi(base, result.gather_power() * 8) or cooldown < 0 or cooldown > RESPAWN_SECONDS:
+		if cell < 0 or result.sea_depth[cell] >= 0 or base != 1 or amount < 0 or amount > 1 or cooldown < 0 or cooldown > RESPAWN_SECONDS:
+			return null
+		if not result.clear_of_mountains(point) or (amount > 0 and cooldown != 0):
 			return null
 		result.stone_positions.append(point)
 		result.stone_base.append(base)
@@ -636,3 +696,64 @@ static func _integer(value: Variant) -> bool:
 
 static func _point(value: Variant) -> bool:
 	return value is Array and value.size() == 2 and _number(value[0]) and _number(value[1])
+
+static func _migrate_v2(source: Dictionary) -> Dictionary:
+	if not _integer(source.get("target")) or profile_for(int(source["target"])) == null:
+		return {}
+	if not source.get("seed") is String or not String(source["seed"]).is_valid_int() or not _point(source.get("player")):
+		return {}
+	if not source.get("upgrades") is Dictionary or not source.get("mountains") is Array or not source.get("land_piles") is Dictionary:
+		return {}
+	if not _integer(source.get("total_generated")):
+		return {}
+	var fresh := JWState.new(int(source["target"]), int(source["seed"]))
+	if source["mountains"].size() != fresh.mountains.size():
+		return {}
+	var count := fresh.stone_positions.size()
+	for key in ["stone_positions", "stone_base", "stone_amounts", "stone_cooldowns"]:
+		if not source.get(key) is Array or source[key].size() != count:
+			return {}
+	var data := source.duplicate(true)
+	var unharvested := 0
+	for index in range(count):
+		if not _integer(source["stone_amounts"][index]) or int(source["stone_amounts"][index]) < 0 or not _number(source["stone_cooldowns"][index]):
+			return {}
+		unharvested += int(source["stone_amounts"][index])
+		data["stone_amounts"][index] = 1 if int(source["stone_amounts"][index]) > 0 else 0
+		data["stone_base"][index] = 1
+		if int(data["stone_amounts"][index]) > 0:
+			data["stone_cooldowns"][index] = 0.0
+	for index in range(fresh.mountains.size()):
+		if not data["mountains"][index] is Dictionary:
+			return {}
+		for key in ["x", "z", "shape", "yaw"]:
+			data["mountains"][index][key] = fresh.mountains[index][key]
+	data["stone_positions"] = fresh.snapshot()["stone_positions"]
+	data["total_generated"] = int(source["total_generated"]) - unharvested
+	data["upgrades"]["throw"] = 0
+	data["version"] = SAVE_VERSION
+	var point := Vector2(source["player"][0], source["player"][1])
+	if fresh.cell_at(point) < 0:
+		return {}
+	if not fresh.clear_of_mountains(point, 0.4):
+		data["player"] = [fresh.player.x, fresh.player.y]
+	# Old ground caches retain their stock, moving to a nearby clear land cell if necessary.
+	var drops: Dictionary = {}
+	for key in source["land_piles"]:
+		if not key is String or not String(key).is_valid_int() or not _integer(source["land_piles"][key]):
+			return {}
+		var cell := int(key)
+		if cell < 0 or cell >= fresh.sea_depth.size() or fresh.sea_depth[cell] >= 0 or int(source["land_piles"][key]) <= 0:
+			return {}
+		var at := fresh.cell_center(cell)
+		if not fresh.clear_of_mountains(at):
+			var nearest := INF
+			for candidate in range(fresh.sea_depth.size()):
+				if fresh.sea_depth[candidate] < 0 and fresh.clear_of_mountains(fresh.cell_center(candidate)):
+					var distance := at.distance_squared_to(fresh.cell_center(candidate))
+					if distance < nearest:
+						nearest = distance
+						cell = candidate
+		drops[str(cell)] = int(drops.get(str(cell), 0)) + int(source["land_piles"][key])
+	data["land_piles"] = drops
+	return data
