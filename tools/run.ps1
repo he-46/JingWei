@@ -24,6 +24,8 @@ if ($Mode -eq 'Test') {
     & $enginePath --headless --path $projectRoot --script res://tests/test_runner.gd
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     & $enginePath --headless --path $projectRoot --script res://tests/test_game.gd -- --qa
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    & $enginePath --headless --path $projectRoot --script res://tests/test_audio.gd -- --qa
     exit $LASTEXITCODE
 }
 if ($Mode -eq 'Editor') { & $enginePath --path $projectRoot --editor }

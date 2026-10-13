@@ -5,6 +5,7 @@ const World = preload("res://scripts/world.gd")
 const HUD = preload("res://scripts/hud.gd")
 const Store = preload("res://scripts/save_store.gd")
 const Models = preload("res://scripts/models.gd")
+const Soundscape = preload("res://scripts/soundscape.gd")
 
 var state: JWState
 var world: Node3D
@@ -24,7 +25,7 @@ var capture_path: String = ""
 var capture_frames: int = 0
 var showcase: bool = false
 var win_shown: bool = false
-var tones: Dictionary = {}
+var soundscape: Node
 
 func _ready() -> void:
 	_setup_input()
@@ -46,6 +47,9 @@ func _ready() -> void:
 			showcase = true
 		if arg == "--overview":
 			atlas_view = true
+	soundscape = Soundscape.new()
+	add_child(soundscape)
+	soundscape.set_muted(muted)
 	var loaded: Dictionary = Store.load_game(save_path) if save_enabled else {"state": null, "status": "new"}
 	state = loaded["state"] if loaded["state"] != null else State.new(target)
 	save_blocked = loaded["status"] == "invalid"
@@ -120,7 +124,7 @@ func _physics_process(delta: float) -> void:
 		world.bird_model.rotation.y = lerp_angle(world.bird_model.rotation.y, atan2(-movement.x, -movement.z), delta * 12)
 	simulation_clock += delta
 	while simulation_clock >= 0.2:
-		state.tick(0.2)
+		_advance_world(0.2)
 		simulation_clock -= 0.2
 	pickup_clock -= delta
 	if Input.is_action_pressed("jw_interact") and pickup_clock <= 0:
@@ -142,6 +146,8 @@ func _physics_process(delta: float) -> void:
 		save_game(false)
 
 func _process(_delta: float) -> void:
+	if soundscape != null and hud != null:
+		soundscape.set_context(state.player.x, hud.modal_open, selection_pending)
 	if capture_path.is_empty():
 		return
 	capture_frames += 1
@@ -162,6 +168,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			show_menu()
 	elif event.is_action_pressed("jw_mute"):
 		muted = not muted
+		soundscape.set_muted(muted)
 		hud.notify("声音已关闭" if muted else "声音已开启")
 	elif not hud.modal_open and event.is_action_pressed("jw_overview"):
 		toggle_overview()
@@ -212,7 +219,7 @@ func interact() -> void:
 		amount = state.pickup_stone(state.closest_stone(state.player))
 	if amount > 0:
 		hud.notify("采集 %s 石 · 携带 %s / %s" % [State.number(amount), State.number(state.carried), State.number(state.capacity())])
-		play_tone(620, 0.1)
+		soundscape.play("gather")
 	elif state.carried >= state.capacity():
 		hud.notify("石篓已满，飞近海岸，在金色射程圈内投石。")
 	else:
@@ -262,13 +269,15 @@ func deposit_at(point: Vector2) -> int:
 		return 0
 	var sea := state.sea_depth[index] >= 0
 	var was_unlocked := state.mining_unlocked()
+	var was_won := state.won
+	var before_cells := state.filled_count
 	var amount := state.deposit(point)
 	if not was_unlocked and state.mining_unlocked():
+		soundscape.play("unlock")
 		save_game(false)
 	if amount > 0:
-		_throw_effect(point)
+		_throw_effect(point, sea, state.filled_count > before_cells, state.won and not was_won)
 		hud.notify("投入 %s 石 · 修行 +%s" % [State.number(amount), State.number(amount)] if sea else "在大陆放下 %s 石，石堆可再次采集。" % State.number(amount))
-		play_tone(350, 0.17)
 	else:
 		hud.notify("海域已填满，多余石子仍在石篓中。")
 	_refresh()
@@ -285,7 +294,7 @@ func buy_upgrade(kind: String) -> void:
 			"throw": "投石修行 · 射程提升到 %.1f" % state.throw_distance(),
 		}
 		hud.notify(descriptions[kind])
-		play_tone(830, 0.16)
+		soundscape.play("upgrade")
 		_refresh()
 	else:
 		hud.notify("修行尚不足，再向海中投入一些石子吧。")
@@ -319,7 +328,6 @@ func _drain_messages() -> void:
 		message += "（另有 %d 条开采进展）" % state.messages.size()
 		state.messages.clear()
 	hud.notify(message)
-	play_tone(960, 0.2)
 
 func show_menu() -> void:
 	if hud.modal_open or selection_pending:
@@ -351,6 +359,7 @@ func choose_world(target: int) -> bool:
 		if not _archive_before_new():
 			hud.modal_text.text = "原存档暂时无法备份，请检查保存目录权限。当前旅程仍被保留。"
 			return false
+	soundscape.reset()
 	var fresh := State.new(target)
 	state = fresh
 	if world != null:
@@ -419,7 +428,21 @@ func _prepare_showcase() -> void:
 	state.pickup_stone(36 % state.stone_positions.size())
 	state.messages.clear()
 
-func _throw_effect(target: Vector2) -> void:
+func _advance_world(seconds: float) -> void:
+	var previous_artifacts := state.artifacts.size()
+	var previous_mine := state.next_mountain()
+	state.tick(seconds)
+	if state.artifacts.size() > previous_artifacts:
+		soundscape.play("relic")
+	if previous_mine >= 0 and state.mountains[previous_mine]["settled"]:
+		var distance := state.player.distance_to(state.mountain_position(previous_mine))
+		if distance < 60.0:
+			soundscape.play("mined", 1.0 / (1.0 + distance / 12.0))
+
+func _throw_effect(target: Vector2, sea: bool, formed_land: bool, completed: bool) -> void:
+	var journey := state
+	var audio_epoch: int = soundscape.epoch
+	soundscape.play("throw")
 	var rock := Models.mesh_part(self, Models.rock_mesh(2), Models.material(Color("d9ceb3")), world.bird_body.position, Vector3.ONE * 0.3)
 	var start: Vector3 = rock.position
 	var end := Vector3(target.x, maxf(0.25, world.cell_height(state, state.cell_at(target)) + 0.04), target.y)
@@ -430,6 +453,14 @@ func _throw_effect(target: Vector2) -> void:
 	, 0.0, 1.0, 0.48)
 	tween.tween_callback(func() -> void:
 		rock.queue_free()
+		if journey != state:
+			return
+		if audio_epoch == soundscape.epoch:
+			soundscape.play("water" if sea else "land")
+			if completed:
+				soundscape.play("complete")
+			elif formed_land:
+				soundscape.play("fill")
 		var ripple: MeshInstance3D = world.ring(Color("e9e8c8"), 0.35, 0.04)
 		ripple.position = end
 		add_child(ripple)
@@ -437,27 +468,3 @@ func _throw_effect(target: Vector2) -> void:
 		fade.tween_property(ripple, "scale", Vector3(3, 0.1, 3), 0.55)
 		fade.tween_callback(ripple.queue_free)
 	)
-
-func play_tone(frequency: int, duration: float) -> void:
-	if muted:
-		return
-	var key := "%d-%.2f" % [frequency, duration]
-	if not tones.has(key):
-		var stream := AudioStreamWAV.new()
-		stream.format = AudioStreamWAV.FORMAT_16_BITS
-		stream.mix_rate = 22050
-		var samples := int(duration * 22050)
-		var data := PackedByteArray()
-		data.resize(samples * 2)
-		for index in range(samples):
-			var t := float(index) / 22050
-			var envelope := sin(PI * float(index) / samples) * exp(-t * 12)
-			data.encode_s16(index * 2, int(sin(TAU * frequency * t) * envelope * 4500))
-		stream.data = data
-		tones[key] = stream
-	var sound := AudioStreamPlayer.new()
-	sound.stream = tones[key]
-	sound.volume_db = -10
-	add_child(sound)
-	sound.finished.connect(sound.queue_free)
-	sound.play()
