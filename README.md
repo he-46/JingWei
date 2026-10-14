@@ -111,3 +111,5 @@ Windows 存档：%APPDATA%/AzVGames/Jingwei/coast_journey.json，备份为 coast
 底层设计见 docs/architecture.md，测试记录见 docs/verification.md。
 
 建模与美术升级计划见 [上线美术任务包](docs/art-production-tasks.md)，包含 10 个任务包的依赖、交付物与验收标准，先完成可玩样板，再扩展至全地图。
+
+ART-00 的 [风格规范、资产清单与实机基线](docs/art/README.md) 已建立，包含四档地图的 20 个固定对比场景；当前游戏仍使用原有程序模型。

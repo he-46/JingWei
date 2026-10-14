@@ -1,0 +1,816 @@
+{
+  "cases": [
+    {
+      "camera_position": [
+        13.5,
+        29.0,
+        30.0
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 29.0,
+      "draw_calls_median": 300.0,
+      "engine_static_memory_peak_mib": 99.1442193984985,
+      "fps_mean": 115.275453488249,
+      "frame_ms_max": 68.571,
+      "frame_ms_median": 5.0,
+      "frame_ms_p95": 25.292,
+      "id": "100000-coast",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 210.0,
+      "physics_ms_p95": 1.205,
+      "player_xz": [
+        -2.5,
+        3.0
+      ],
+      "render_primitives_monitor_median": 156701.0,
+      "sample_count": 578,
+      "sample_seconds": 5.014077,
+      "screenshot": "100000-coast.png",
+      "seed": 10213,
+      "target": 100000,
+      "view": "coast",
+      "world_setup_ms": 20.555,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        7.00836086273193,
+        29.0,
+        32.7184944152832
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 20.8799991607666,
+      "draw_calls_median": 297.0,
+      "engine_static_memory_peak_mib": 109.017323493958,
+      "fps_mean": 69.6428856499737,
+      "frame_ms_max": 67.549,
+      "frame_ms_median": 10.77,
+      "frame_ms_p95": 39.849,
+      "id": "100000-mountain",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 210.0,
+      "physics_ms_p95": 1.422,
+      "player_xz": [
+        -8.99163913726807,
+        5.71849536895752
+      ],
+      "render_primitives_monitor_median": 150637.0,
+      "sample_count": 349,
+      "sample_seconds": 5.01128,
+      "screenshot": "100000-mountain.png",
+      "seed": 10213,
+      "target": 100000,
+      "view": "mountain",
+      "world_setup_ms": 24.953,
+      "zoom": 0.72
+    },
+    {
+      "camera_position": [
+        -0.511268615722656,
+        29.0,
+        21.916675567627
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 29.0,
+      "draw_calls_median": 299.0,
+      "engine_static_memory_peak_mib": 109.196618080139,
+      "fps_mean": 68.7890625390563,
+      "frame_ms_max": 66.952,
+      "frame_ms_median": 9.825,
+      "frame_ms_p95": 45.314,
+      "id": "100000-inland",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 210.0,
+      "physics_ms_p95": 1.155,
+      "player_xz": [
+        -16.5112686157227,
+        -5.08332443237305
+      ],
+      "render_primitives_monitor_median": 148633.0,
+      "sample_count": 344,
+      "sample_seconds": 5.000795,
+      "screenshot": "100000-inland.png",
+      "seed": 10213,
+      "target": 100000,
+      "view": "inland",
+      "world_setup_ms": 19.903,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        42.0,
+        29.0,
+        29.0
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 29.0,
+      "draw_calls_median": 255.0,
+      "engine_static_memory_peak_mib": 109.250672340393,
+      "fps_mean": 145.073061071562,
+      "frame_ms_max": 85.99,
+      "frame_ms_median": 3.017,
+      "frame_ms_p95": 27.358,
+      "id": "100000-deep_sea",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 210.0,
+      "physics_ms_p95": 1.213,
+      "player_xz": [
+        26.0,
+        2.0
+      ],
+      "render_primitives_monitor_median": 131102.0,
+      "sample_count": 726,
+      "sample_seconds": 5.004375,
+      "screenshot": "100000-deep_sea.png",
+      "seed": 10213,
+      "target": 100000,
+      "view": "deep_sea",
+      "world_setup_ms": 20.199,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        4.0,
+        119.172416687012,
+        18.529655456543
+      ],
+      "camera_rotation": [
+        -82.4053573608398,
+        0.0,
+        0.0
+      ],
+      "camera_size": 76.8000030517578,
+      "draw_calls_median": 125.0,
+      "engine_static_memory_peak_mib": 109.278950691223,
+      "fps_mean": 168.315438323786,
+      "frame_ms_max": 67.03,
+      "frame_ms_median": 3.445,
+      "frame_ms_p95": 23.566,
+      "id": "100000-overview",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 210.0,
+      "physics_ms_p95": 1.114,
+      "player_xz": [
+        -2.5,
+        3.0
+      ],
+      "render_primitives_monitor_median": 121996.0,
+      "sample_count": 842,
+      "sample_seconds": 5.002512,
+      "screenshot": "100000-overview.png",
+      "seed": 10213,
+      "target": 100000,
+      "view": "overview",
+      "world_setup_ms": 25.965,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        16.1357383728027,
+        33.7772750854492,
+        34.4478073120117
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 33.7772750854492,
+      "draw_calls_median": 311.0,
+      "engine_static_memory_peak_mib": 100.042491912842,
+      "fps_mean": 321.338046024726,
+      "frame_ms_max": 35.328,
+      "frame_ms_median": 3.122,
+      "frame_ms_p95": 7.666,
+      "id": "1000000-coast",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 234.0,
+      "physics_ms_p95": 1.48,
+      "player_xz": [
+        -2.5,
+        3.0
+      ],
+      "render_primitives_monitor_median": 394419.0,
+      "sample_count": 1607,
+      "sample_seconds": 5.000964,
+      "screenshot": "1000000-coast.png",
+      "seed": 20261014,
+      "target": 1000000,
+      "view": "coast",
+      "world_setup_ms": 30.646,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        4.69807052612305,
+        29.0,
+        28.2681922912598
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 24.319637298584,
+      "draw_calls_median": 296.0,
+      "engine_static_memory_peak_mib": 109.914432525635,
+      "fps_mean": 257.146616362443,
+      "frame_ms_max": 29.323,
+      "frame_ms_median": 3.487,
+      "frame_ms_p95": 10.833,
+      "id": "1000000-mountain",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 234.0,
+      "physics_ms_p95": 1.353,
+      "player_xz": [
+        -11.301929473877,
+        1.26819312572479
+      ],
+      "render_primitives_monitor_median": 317679.0,
+      "sample_count": 1286,
+      "sample_seconds": 5.001038,
+      "screenshot": "1000000-mountain.png",
+      "seed": 20261014,
+      "target": 1000000,
+      "view": "mountain",
+      "world_setup_ms": 26.36,
+      "zoom": 0.72
+    },
+    {
+      "camera_position": [
+        -7.77745056152344,
+        33.7772750854492,
+        19.8401737213135
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 33.7772750854492,
+      "draw_calls_median": 259.0,
+      "engine_static_memory_peak_mib": 109.907550811768,
+      "fps_mean": 158.972434179913,
+      "frame_ms_max": 52.458,
+      "frame_ms_median": 3.991,
+      "frame_ms_p95": 18.404,
+      "id": "1000000-inland",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 234.0,
+      "physics_ms_p95": 1.206,
+      "player_xz": [
+        -26.4131889343262,
+        -11.6076354980469
+      ],
+      "render_primitives_monitor_median": 299282.0,
+      "sample_count": 795,
+      "sample_seconds": 5.000867,
+      "screenshot": "1000000-inland.png",
+      "seed": 20261014,
+      "target": 1000000,
+      "view": "inland",
+      "world_setup_ms": 25.965,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        68.6357421875,
+        33.7772750854492,
+        33.4478073120117
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.650671005249,
+        0.0
+      ],
+      "camera_size": 33.7772750854492,
+      "draw_calls_median": 250.0,
+      "engine_static_memory_peak_mib": 109.968463897705,
+      "fps_mean": 310.836810674396,
+      "frame_ms_max": 32.41,
+      "frame_ms_median": 2.752,
+      "frame_ms_p95": 10.067,
+      "id": "1000000-deep_sea",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 234.0,
+      "physics_ms_p95": 1.5,
+      "player_xz": [
+        50.0,
+        2.0
+      ],
+      "render_primitives_monitor_median": 257236.0,
+      "sample_count": 1555,
+      "sample_seconds": 5.002625,
+      "screenshot": "1000000-deep_sea.png",
+      "seed": 20261014,
+      "target": 1000000,
+      "view": "deep_sea",
+      "world_setup_ms": 26.856,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        8.0,
+        238.344833374023,
+        37.0593109130859
+      ],
+      "camera_rotation": [
+        -82.4053573608398,
+        0.0,
+        0.0
+      ],
+      "camera_size": 153.600006103516,
+      "draw_calls_median": 154.0,
+      "engine_static_memory_peak_mib": 109.915550231934,
+      "fps_mean": 122.234274770266,
+      "frame_ms_max": 62.002,
+      "frame_ms_median": 4.451,
+      "frame_ms_p95": 25.701,
+      "id": "1000000-overview",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 234.0,
+      "physics_ms_p95": 1.08,
+      "player_xz": [
+        -2.5,
+        3.0
+      ],
+      "render_primitives_monitor_median": 288660.0,
+      "sample_count": 612,
+      "sample_seconds": 5.006779,
+      "screenshot": "1000000-overview.png",
+      "seed": 20261014,
+      "target": 1000000,
+      "view": "overview",
+      "world_setup_ms": 29.965,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        19.2056694030762,
+        39.3415260314941,
+        39.6283187866211
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 39.3415260314941,
+      "draw_calls_median": 281.0,
+      "engine_static_memory_peak_mib": 101.662306785584,
+      "fps_mean": 190.294310539926,
+      "frame_ms_max": 47.445,
+      "frame_ms_median": 3.864,
+      "frame_ms_p95": 15.779,
+      "id": "10000000-coast",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 318.0,
+      "physics_ms_p95": 1.561,
+      "player_xz": [
+        -2.5,
+        3.0
+      ],
+      "render_primitives_monitor_median": 1007177.0,
+      "sample_count": 952,
+      "sample_seconds": 5.002777,
+      "screenshot": "10000000-coast.png",
+      "seed": 314159,
+      "target": 10000000,
+      "view": "coast",
+      "world_setup_ms": 67.21,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        4.99253559112549,
+        29.0,
+        28.8269557952881
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 28.3258991241455,
+      "draw_calls_median": 232.0,
+      "engine_static_memory_peak_mib": 111.626898765564,
+      "fps_mean": 282.056117181932,
+      "frame_ms_max": 96.399,
+      "frame_ms_median": 1.312,
+      "frame_ms_p95": 10.475,
+      "id": "10000000-mountain",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 318.0,
+      "physics_ms_p95": 1.519,
+      "player_xz": [
+        -11.0074644088745,
+        1.82695603370667
+      ],
+      "render_primitives_monitor_median": 762580.0,
+      "sample_count": 1412,
+      "sample_seconds": 5.006096,
+      "screenshot": "10000000-mountain.png",
+      "seed": 314159,
+      "target": 10000000,
+      "view": "mountain",
+      "world_setup_ms": 61.51,
+      "zoom": 0.72
+    },
+    {
+      "camera_position": [
+        -31.7000389099121,
+        39.3415260314941,
+        19.6760025024414
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 39.3415260314941,
+      "draw_calls_median": 145.0,
+      "engine_static_memory_peak_mib": 111.641642570496,
+      "fps_mean": 276.530977867924,
+      "frame_ms_max": 72.183,
+      "frame_ms_median": 2.175,
+      "frame_ms_p95": 10.48,
+      "id": "10000000-inland",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 318.0,
+      "physics_ms_p95": 1.347,
+      "player_xz": [
+        -53.4057083129883,
+        -16.9523162841797
+      ],
+      "render_primitives_monitor_median": 753372.0,
+      "sample_count": 1383,
+      "sample_seconds": 5.001248,
+      "screenshot": "10000000-inland.png",
+      "seed": 314159,
+      "target": 10000000,
+      "view": "inland",
+      "world_setup_ms": 75.647,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        131.705673217773,
+        39.3415260314941,
+        38.6283187866211
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.650671005249,
+        0.0
+      ],
+      "camera_size": 39.3415260314941,
+      "draw_calls_median": 217.0,
+      "engine_static_memory_peak_mib": 111.759799003601,
+      "fps_mean": 379.592787737033,
+      "frame_ms_max": 31.753,
+      "frame_ms_median": 1.041,
+      "frame_ms_p95": 7.551,
+      "id": "10000000-deep_sea",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 318.0,
+      "physics_ms_p95": 2.724,
+      "player_xz": [
+        110.0,
+        2.0
+      ],
+      "render_primitives_monitor_median": 461318.0,
+      "sample_count": 1898,
+      "sample_seconds": 5.000095,
+      "screenshot": "10000000-deep_sea.png",
+      "seed": 314159,
+      "target": 10000000,
+      "view": "deep_sea",
+      "world_setup_ms": 63.579,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        20.0,
+        476.689666748047,
+        74.1186218261719
+      ],
+      "camera_rotation": [
+        -82.4053573608398,
+        0.0,
+        0.0
+      ],
+      "camera_size": 307.200012207031,
+      "draw_calls_median": 155.0,
+      "engine_static_memory_peak_mib": 111.811625480652,
+      "fps_mean": 328.098158331654,
+      "frame_ms_max": 24.952,
+      "frame_ms_median": 1.977,
+      "frame_ms_p95": 8.186,
+      "id": "10000000-overview",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 318.0,
+      "physics_ms_p95": 1.6,
+      "player_xz": [
+        -2.5,
+        3.0
+      ],
+      "render_primitives_monitor_median": 756098.0,
+      "sample_count": 1641,
+      "sample_seconds": 5.001552,
+      "screenshot": "10000000-overview.png",
+      "seed": 314159,
+      "target": 10000000,
+      "view": "overview",
+      "world_setup_ms": 56.527,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        22.781322479248,
+        45.822395324707,
+        45.6622314453125
+      ],
+      "camera_rotation": [
+        -42.7384490966797,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 45.822395324707,
+      "draw_calls_median": 231.0,
+      "engine_static_memory_peak_mib": 105.484855651855,
+      "fps_mean": 186.556047395234,
+      "frame_ms_max": 41.26,
+      "frame_ms_median": 5.231,
+      "frame_ms_p95": 12.504,
+      "id": "100000000-coast",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 558.0,
+      "physics_ms_p95": 1.479,
+      "player_xz": [
+        -2.5,
+        3.0
+      ],
+      "render_primitives_monitor_median": 1709782.0,
+      "sample_count": 933,
+      "sample_seconds": 5.001178,
+      "screenshot": "100000000-coast.png",
+      "seed": 271828,
+      "target": 100000000,
+      "view": "coast",
+      "world_setup_ms": 225.13,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        7.2941837310791,
+        32.9921264648438,
+        31.7939300537109
+      ],
+      "camera_rotation": [
+        -42.7384490966797,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 32.9921264648438,
+      "draw_calls_median": 230.0,
+      "engine_static_memory_peak_mib": 115.402198791504,
+      "fps_mean": 201.495817166287,
+      "frame_ms_max": 41.622,
+      "frame_ms_median": 2.551,
+      "frame_ms_p95": 14.941,
+      "id": "100000000-mountain",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 558.0,
+      "physics_ms_p95": 1.666,
+      "player_xz": [
+        -10.9083690643311,
+        1.07712197303772
+      ],
+      "render_primitives_monitor_median": 1548502.0,
+      "sample_count": 1010,
+      "sample_seconds": 5.012511,
+      "screenshot": "100000000-mountain.png",
+      "seed": 271828,
+      "target": 100000000,
+      "view": "mountain",
+      "world_setup_ms": 247.981,
+      "zoom": 0.72
+    },
+    {
+      "camera_position": [
+        -83.8312835693359,
+        45.822395324707,
+        4.27984619140625
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506633758545,
+        0.0
+      ],
+      "camera_size": 45.822395324707,
+      "draw_calls_median": 144.0,
+      "engine_static_memory_peak_mib": 115.376098632813,
+      "fps_mean": 125.92585485666,
+      "frame_ms_max": 87.404,
+      "frame_ms_median": 5.793,
+      "frame_ms_p95": 24.603,
+      "id": "100000000-inland",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 558.0,
+      "physics_ms_p95": 1.398,
+      "player_xz": [
+        -109.112602233887,
+        -38.3823852539063
+      ],
+      "render_primitives_monitor_median": 1539306.0,
+      "sample_count": 630,
+      "sample_seconds": 5.002944,
+      "screenshot": "100000000-inland.png",
+      "seed": 271828,
+      "target": 100000000,
+      "view": "inland",
+      "world_setup_ms": 249.536,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        251.281326293945,
+        45.822395324707,
+        44.6622314453125
+      ],
+      "camera_rotation": [
+        -42.7384490966797,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 45.822395324707,
+      "draw_calls_median": 136.0,
+      "engine_static_memory_peak_mib": 115.384044647217,
+      "fps_mean": 138.539790607002,
+      "frame_ms_max": 97.598,
+      "frame_ms_median": 1.344,
+      "frame_ms_p95": 32.729,
+      "id": "100000000-deep_sea",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 558.0,
+      "physics_ms_p95": 1.641,
+      "player_xz": [
+        226.0,
+        2.0
+      ],
+      "render_primitives_monitor_median": 1030998.0,
+      "sample_count": 693,
+      "sample_seconds": 5.002173,
+      "screenshot": "100000000-deep_sea.png",
+      "seed": 271828,
+      "target": 100000000,
+      "view": "deep_sea",
+      "world_setup_ms": 251.044,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        40.0,
+        953.379333496094,
+        148.237243652344
+      ],
+      "camera_rotation": [
+        -82.4053573608398,
+        0.0,
+        0.0
+      ],
+      "camera_size": 614.400024414063,
+      "draw_calls_median": 155.0,
+      "engine_static_memory_peak_mib": 115.389091491699,
+      "fps_mean": 66.4783711721035,
+      "frame_ms_max": 130.265,
+      "frame_ms_median": 6.661,
+      "frame_ms_p95": 62.614,
+      "id": "100000000-overview",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 558.0,
+      "physics_ms_p95": 1.655,
+      "player_xz": [
+        -2.5,
+        3.0
+      ],
+      "render_primitives_monitor_median": 1542046.0,
+      "sample_count": 333,
+      "sample_seconds": 5.009148,
+      "screenshot": "100000000-overview.png",
+      "seed": 271828,
+      "target": 100000000,
+      "view": "overview",
+      "world_setup_ms": 231.093,
+      "zoom": 1.0
+    }
+  ],
+  "metadata": {
+    "captured_at_utc": "2026-10-14T13:28:25",
+    "engine": "4.7.2-stable (official)",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "logical_processors": 32,
+    "msaa_3d": 0,
+    "os": "Windows",
+    "os_version": "10.0.22631",
+    "physics_hz": 60,
+    "processor": "13th Gen Intel(R) Core(TM) i9-13900HX",
+    "rendering_method": "gl_compatibility",
+    "sample_seconds_requested": 5.0,
+    "screen_space_aa": 0,
+    "system_memory": {
+      "available": 47043174400,
+      "free": 378159104,
+      "physical": 16978403328,
+      "stack": 8388608
+    },
+    "video_driver": "opengl3",
+    "viewport": [
+      1440,
+      900
+    ],
+    "vsync": 0,
+    "warmup_seconds": 3,
+    "window_size": [
+      1440,
+      900
+    ],
+    "workload": "controlled idle; real World/HUD; animation 60 Hz; sync 0.15 s; simulation 0.2 s; no input, sound, saving or combat/throw effects"
+  }
+}

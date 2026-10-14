@@ -1,0 +1,75 @@
+{
+  "cases": [
+    {
+      "camera_position": [
+        13.5,
+        29.0,
+        30.0
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 29.0,
+      "draw_calls_median": 300.0,
+      "engine_static_memory_peak_mib": 99.5764427185059,
+      "fps_mean": 742.029430502407,
+      "frame_ms_max": 10.473,
+      "frame_ms_median": 0.875,
+      "frame_ms_p95": 3.439,
+      "id": "100000-coast",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 210.0,
+      "physics_ms_p95": 1.11,
+      "player_xz": [
+        -2.5,
+        3.0
+      ],
+      "render_primitives_monitor_median": 156701.0,
+      "sample_count": 3712,
+      "sample_seconds": 5.002497,
+      "screenshot": "100000-coast.png",
+      "seed": 10213,
+      "target": 100000,
+      "view": "coast",
+      "world_setup_ms": 20.589,
+      "zoom": 1.0
+    }
+  ],
+  "metadata": {
+    "captured_at_utc": "2026-10-14T13:34:26",
+    "engine": "4.7.2-stable (official)",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "logical_processors": 32,
+    "msaa_3d": 0,
+    "os": "Windows",
+    "os_version": "10.0.22631",
+    "physics_hz": 60,
+    "processor": "13th Gen Intel(R) Core(TM) i9-13900HX",
+    "rendering_method": "gl_compatibility",
+    "sample_seconds_requested": 5.0,
+    "screen_space_aa": 0,
+    "system_memory": {
+      "available": 47043174400,
+      "free": 3602944000,
+      "physical": 16978403328,
+      "stack": 8388608
+    },
+    "video_driver": "opengl3",
+    "viewport": [
+      1440,
+      900
+    ],
+    "vsync": 0,
+    "warmup_seconds": 3,
+    "window_size": [
+      1440,
+      900
+    ],
+    "workload": "controlled idle; real World/HUD; animation 60 Hz; sync 0.15 s; simulation 0.2 s; no input, sound, saving or combat/throw effects"
+  }
+}
