@@ -1,33 +1,139 @@
-param([ValidateSet('Run', 'Editor', 'Test')][string]$Mode = 'Run')
+param(
+    [ValidateSet('Run', 'Editor', 'Test')][string]$Mode = 'Run',
+    [string]$GodotPath,
+    [switch]$NonInteractive,
+    [switch]$Check
+)
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
-$localEngine = Join-Path $projectRoot '.tools\godot\Godot_v4.7.2-stable_win64_console.exe'
-$sharedEngine = Join-Path (Split-Path -Parent $projectRoot) 'RainyArrow\.tools\godot\Godot_v4.7.2-stable_win64_console.exe'
+$settingsPath = Join-Path $projectRoot '.tools\godot-path.txt'
+$logRoot = Join-Path $projectRoot 'artifacts'
 $enginePath = $null
-foreach ($candidate in @($localEngine, $sharedEngine, $env:GODOT_EXE)) {
-    if ($candidate -and (Test-Path -LiteralPath $candidate)) { $enginePath = $candidate; break }
+
+function Resolve-Engine([string]$Candidate) {
+    if ([string]::IsNullOrWhiteSpace($Candidate)) { return $null }
+    $candidatePath = $Candidate.Trim().Trim('"')
+    if (Test-Path -LiteralPath $candidatePath -PathType Leaf) {
+        $resolved = (Resolve-Path -LiteralPath $candidatePath).Path
+        # Prefer the console companion so version checks and diagnostics are reliable.
+        if ($resolved.EndsWith('.exe') -and -not $resolved.EndsWith('_console.exe')) {
+            $console = $resolved.Substring(0, $resolved.Length - 4) + '_console.exe'
+            if (Test-Path -LiteralPath $console -PathType Leaf) { return $console }
+        }
+        return $resolved
+    }
+    return $null
 }
-if (-not $enginePath) {
-    foreach ($command in @('godot', 'godot4')) {
-        $found = Get-Command $command -ErrorAction SilentlyContinue
-        if ($found) { $enginePath = $found.Source; break }
+
+function Invoke-Engine([string[]]$Arguments, [string]$LogName) {
+    $lines = New-Object 'System.Collections.Generic.List[string]'
+    # Windows PowerShell 5.1 represents redirected native stderr as ErrorRecord.
+    # Collect it without terminating early; check the exit code AND Godot diagnostics.
+    $savedPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        & $script:enginePath @Arguments 2>&1 | ForEach-Object {
+            $line = $_.ToString()
+            $lines.Add($line)
+            Write-Host $line
+        }
+        $code = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $savedPreference
+    }
+    $lines | Out-File -LiteralPath (Join-Path $script:logRoot $LogName) -Encoding utf8
+    $failures = @($lines | Where-Object {
+        $_ -match '^(SCRIPT ERROR:|ERROR:)' -and $_ -notmatch '^ERROR: Failed to read the root certificate store\.'
+    })
+    if ($code -ne 0 -or $failures.Count -gt 0) {
+        throw "Godot did not finish successfully. Please send artifacts\$LogName with the error report."
     }
 }
-if (-not $enginePath) {
-    Write-Host 'Godot 4 is required. Set GODOT_EXE, or import project.godot with your Godot editor.'
+
+try {
+    if ($GodotPath -or $env:GODOT_EXE) {
+        $requested = if ($GodotPath) { $GodotPath } else { $env:GODOT_EXE }
+        $enginePath = Resolve-Engine $requested
+        if (-not $enginePath) { throw "Godot executable not found: $requested. Set GODOT_EXE to the full executable path, or clear it to use automatic detection." }
+    }
+    if (-not $enginePath -and (Test-Path -LiteralPath $settingsPath)) {
+        $enginePath = Resolve-Engine (Get-Content -LiteralPath $settingsPath -Raw -Encoding utf8)
+    }
+    # Portable downloads need no hardcoded version filename or neighbouring project.
+    foreach ($folder in @((Join-Path $projectRoot '.tools\godot'), (Join-Path $projectRoot 'Godot'), $projectRoot)) {
+        if ($enginePath) { break }
+        if (Test-Path -LiteralPath $folder -PathType Container) {
+            foreach ($file in @(Get-ChildItem -LiteralPath $folder -Filter 'Godot*.exe' -File | Sort-Object Name -Descending)) {
+                $enginePath = Resolve-Engine $file.FullName
+                if ($enginePath) { break }
+            }
+        }
+    }
+    if (-not $enginePath) {
+        foreach ($command in @('godot', 'godot4')) {
+            $found = Get-Command $command -CommandType Application -ErrorAction SilentlyContinue
+            if ($found) { $enginePath = Resolve-Engine $found.Source; break }
+        }
+    }
+    # Optional compatibility with the existing local workspace; never required.
+    if (-not $enginePath) {
+        $shared = Join-Path (Split-Path -Parent $projectRoot) 'RainyArrow\.tools\godot\Godot_v4.7.2-stable_win64_console.exe'
+        $enginePath = Resolve-Engine $shared
+    }
+    $picked = $false
+    if (-not $enginePath) {
+        Write-Host 'This GitHub download contains the game source, not the Godot engine.'
+        Write-Host 'Download and extract the standard Windows Godot 4 build: https://godotengine.org/download/windows/'
+        Write-Host 'Put the extracted Godot executables in the Godot folder next to Play.cmd, or select your existing executable.'
+        if (-not $NonInteractive -and -not $Check -and $Mode -ne 'Test') {
+            Add-Type -AssemblyName System.Windows.Forms
+            $dialog = New-Object System.Windows.Forms.OpenFileDialog
+            try {
+                $dialog.Title = 'Select Godot 4 executable (standard Windows build)'
+                $dialog.Filter = 'Godot executable (Godot*.exe)|Godot*.exe'
+                $dialog.CheckFileExists = $true
+                if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
+                    $enginePath = Resolve-Engine $dialog.FileName
+                    $picked = $true
+                }
+            } finally { $dialog.Dispose() }
+        }
+        if (-not $enginePath) { throw 'Godot 4 was not found. Extract Godot into the Godot folder, then double-click Play.cmd again.' }
+    }
+    $version = (& $enginePath --version | Out-String).Trim()
+    if ($LASTEXITCODE -ne 0 -or $version -notmatch '^4\.') { throw "Expected a Godot 4 executable; received: $version" }
+    Write-Host "Godot $version"
+    Write-Host "Engine: $enginePath"
+    if ($picked) {
+        New-Item -ItemType Directory -Path (Split-Path -Parent $settingsPath) -Force | Out-Null
+        Set-Content -LiteralPath $settingsPath -Value $enginePath -Encoding utf8
+    }
+    New-Item -ItemType Directory -Path $logRoot -Force | Out-Null
+    if ($Mode -eq 'Test' -or $Check) {
+        $env:APPDATA = Join-Path $logRoot 'qa-profile'
+        New-Item -ItemType Directory -Path $env:APPDATA -Force | Out-Null
+    }
+    if ($Mode -eq 'Editor') {
+        Invoke-Engine @('--path', $projectRoot, '--editor') 'editor-launch.log'
+    } else {
+        # Required on EVERY fresh checkout, and after new scripts/audio are pulled.
+        # Test-only importing hid this failure in the previous Play.cmd workflow.
+        Write-Host 'Preparing game scripts and audio. The first launch may take a moment...'
+        Invoke-Engine @('--headless', '--path', $projectRoot, '--editor', '--import', '--quit') 'startup-import.log'
+        if ($Mode -eq 'Test') {
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_runner.gd') 'state-tests.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_game.gd', '--', '--qa') 'game-tests.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_audio.gd', '--', '--qa') 'audio-tests.log'
+        } elseif ($Check) {
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--quit-after', '6', '--', '--qa') 'startup-check.log'
+            Write-Host 'Fresh-start check passed.'
+        } else {
+            Invoke-Engine @('--path', $projectRoot) 'game-launch.log'
+        }
+    }
+    exit 0
+} catch {
+    Write-Host ''
+    Write-Host ('Startup failed: ' + $_.Exception.Message) -ForegroundColor Red
     exit 1
 }
-if ($Mode -eq 'Test') {
-    $env:APPDATA = Join-Path $projectRoot 'artifacts\qa-profile'
-    & $enginePath --headless --path $projectRoot --editor --import --quit
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    & $enginePath --headless --path $projectRoot --script res://tests/test_runner.gd
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    & $enginePath --headless --path $projectRoot --script res://tests/test_game.gd -- --qa
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    & $enginePath --headless --path $projectRoot --script res://tests/test_audio.gd -- --qa
-    exit $LASTEXITCODE
-}
-if ($Mode -eq 'Editor') { & $enginePath --path $projectRoot --editor }
-else { & $enginePath --path $projectRoot }
-exit $LASTEXITCODE

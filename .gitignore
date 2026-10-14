@@ -5,6 +5,8 @@ export_credentials.cfg
 
 # Local engine binaries and exported builds.
 .tools/
+/Godot/
+/Godot*.exe
 build/
 builds/
 dist/

@@ -1,3 +1,6 @@
 @echo off
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\run.ps1" -Mode Run
-if errorlevel 1 pause
+setlocal
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\run.ps1" -Mode Run %*
+set "result=%errorlevel%"
+if not "%result%"=="0" pause
+exit /b %result%
