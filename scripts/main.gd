@@ -67,6 +67,7 @@ func _ready() -> void:
 	hud.save_requested.connect(save_game.bind(true))
 	hud.menu_requested.connect(show_menu)
 	hud.overview_requested.connect(toggle_overview)
+	hud.help_requested.connect(show_help)
 	hud.modal_action.connect(_modal_action)
 	get_tree().auto_accept_quit = false
 	if atlas_view:
@@ -83,9 +84,7 @@ func _ready() -> void:
 	elif loaded["status"] == "recovered":
 		hud.notify("已从上一份有效备份恢复旅程。")
 	elif loaded["status"] == "loaded":
-		hud.notify("旅程已续上。向大陆寻山，向更广的海出发。")
-	elif showcase:
-		hud.notify("向西是群山，向东是浅海、远海与深海。")
+		hud.notify("已继续上次进度。")
 	win_shown = state.won
 
 func _setup_input() -> void:
@@ -94,6 +93,7 @@ func _setup_input() -> void:
 		"jw_up": [KEY_W, KEY_UP], "jw_down": [KEY_S, KEY_DOWN],
 		"jw_high": [KEY_SPACE], "jw_interact": [KEY_E], "jw_throw": [KEY_Q],
 		"jw_menu": [KEY_ESCAPE], "jw_mute": [KEY_M], "jw_overview": [KEY_TAB],
+		"jw_upgrades": [KEY_U], "jw_help": [KEY_F1],
 	}
 	for action in keys:
 		if not InputMap.has_action(action):
@@ -142,7 +142,7 @@ func _physics_process(delta: float) -> void:
 		save_clock = 0
 	if state.won and not win_shown:
 		win_shown = true
-		hud.show_modal("这一次，心愿已成", "%s石，一次次衔起，一次次投入海中。\n\n你完成了这段属于自己的旅程。\n可以留在这片海岸，也可以带着新的心愿重新出发。" % State.number(state.target_stones), [{"text": "留在这片海岸", "action": "resume"}, {"text": "保存旅程", "action": "save"}])
+		hud.show_modal("填海完成", "已填入 %s 石。精卫完成了自己的心愿。" % State.number(state.target_stones), [{"text": "继续探索", "action": "resume"}, {"text": "保存", "action": "save"}])
 		save_game(false)
 
 func _process(_delta: float) -> void:
@@ -170,6 +170,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		muted = not muted
 		soundscape.set_muted(muted)
 		hud.notify("声音已关闭" if muted else "声音已开启")
+	elif not hud.modal_open and event.is_action_pressed("jw_upgrades"):
+		hud.toggle_drawer()
+	elif not hud.modal_open and event.is_action_pressed("jw_help"):
+		show_help()
 	elif not hud.modal_open and event.is_action_pressed("jw_overview"):
 		toggle_overview()
 	elif not hud.modal_open and event.is_action_pressed("jw_throw"):
@@ -196,13 +200,12 @@ func toggle_overview() -> void:
 	hud.set_overview(world.overview)
 	world.update_camera(state, 1.0, true)
 	_refresh()
-	hud.notify("全图俯瞰：金圈内可投石，远处请先飞过去；Tab 返回。" if world.overview else "随行视角：向大陆探索群山，向外海继续填海。")
 
 func interact() -> void:
 	if hud.modal_open or selection_pending:
 		return
 	if world.bird_body.position.y > 2.7:
-		hud.notify("先松开空格，降到地面附近再采集或对话。")
+		hud.notify("松开空格，降到低空后操作。")
 		return
 	var npc := state.nearby_mountain(state.player, 2.1, true)
 	if npc >= 0:
@@ -218,16 +221,15 @@ func interact() -> void:
 	else:
 		amount = state.pickup_stone(state.closest_stone(state.player))
 	if amount > 0:
-		hud.notify("采集 %s 石 · 携带 %s / %s" % [State.number(amount), State.number(state.carried), State.number(state.capacity())])
 		soundscape.play("gather")
 	elif state.carried >= state.capacity():
-		hud.notify("石篓已满，飞近海岸，在金色射程圈内投石。")
+		hud.notify("负重已满，靠近海面投石。")
 	else:
 		var mine := state.nearby_mountain(state.player, 3.1)
 		if mine >= 0 and state.mountains[mine]["settled"] and int(state.mountains[mine]["stock"]) == 0:
-			hud.notify("这座山的石料已搬空，不会再产出石子。向大陆深处寻山吧。")
+			hud.notify("这里的石料已搬空。")
 		else:
-			hud.notify("散石采集一次就会消失；累计填海 128 石后，穿山甲自动开山。")
+			hud.notify("附近没有可采集的石子。")
 	_refresh()
 
 func show_npc_dialogue(_index: int = -1) -> void:
@@ -235,12 +237,12 @@ func show_npc_dialogue(_index: int = -1) -> void:
 	var mountain: Dictionary = state.mountains[index]
 	var body := ""
 	if not state.mining_unlocked():
-		body = "“这是你的心愿，我可以帮你开山。”\n\n“等你累计填海 %d 石，我就从最小的山开始挖。挖完一座，再去下一座，不用回来催我。”\n\n已填 %d / %d 石，还差 %d 石。" % [State.MINING_UNLOCK_STONES, state.total_delivered, State.MINING_UNLOCK_STONES, State.MINING_UNLOCK_STONES - state.total_delivered]
+		body = "累计填海 %d 石后，自动从最小的山开始开采。\n\n当前 %d / %d 石" % [State.MINING_UNLOCK_STONES, state.total_delivered, State.MINING_UNLOCK_STONES]
 	elif state.next_mountain() < 0:
-		body = "“山都开完啦，我也该歇一歇了。”\n\n“剩下的石料都在原来的山体位置，按 E 搬运。搬空的山不会再长出石头。”"
+		body = "所有山都已挖完。剩余石料在原山址，按 E 搬运。"
 	else:
-		body = "“我正在开采%s，已经挖了 %.1f%%。”\n\n“只有我一个，慢慢从小山挖到大山。整座挖完后会留下 %s 石，我就去下一座。”\n\n提升采矿修行会加快开山；你继续填海就好。" % [state.mountain_name(index), float(mountain["work"]) / float(mountain["yield"]) * 100, State.number(int(mountain["yield"]))]
-	hud.show_modal("穿山甲 · 开山之约", body, [{"text": "我继续前行", "action": "resume"}])
+		body = "%s · %.1f%%\n完工产出 %s 石，然后自动转往下一座。\n\n提升采集等级可以加快开山。" % [state.mountain_name(index), float(mountain["work"]) / float(mountain["yield"]) * 100, State.number(int(mountain["yield"]))]
+	hud.show_modal("穿山甲", body, [{"text": "返回", "action": "resume"}])
 
 func q_target() -> Vector2:
 	var current := state.cell_at(state.player)
@@ -255,17 +257,17 @@ func deposit_at(point: Vector2) -> int:
 	if hud.modal_open or selection_pending:
 		return 0
 	if state.carried == 0:
-		hud.notify("先采集石子，再把它们投向海中。")
+		hud.notify("没有携带石子。")
 		return 0
 	var index := state.cell_at(point)
 	if index < 0:
-		hud.notify("这次旅程以方形边界为界，请选择地图内的落点。")
+		hud.notify("无法投向地图边界外。")
 		return 0
 	if not world.point_visible(point):
-		hud.notify("落点在视野之外。向海飞行，或按 Tab 展开全图。")
+		hud.notify("落点不在视野内。")
 		return 0
 	if not state.can_throw(point):
-		hud.notify("落点距你 %.1f，当前射程 %.1f。飞近一些，或修行投石。" % [state.player.distance_to(point), state.throw_distance()])
+		hud.notify("超出射程：%.1f / %.1f。" % [state.player.distance_to(point), state.throw_distance()])
 		return 0
 	var sea := state.sea_depth[index] >= 0
 	var was_unlocked := state.mining_unlocked()
@@ -277,9 +279,8 @@ func deposit_at(point: Vector2) -> int:
 		save_game(false)
 	if amount > 0:
 		_throw_effect(point, sea, state.filled_count > before_cells, state.won and not was_won)
-		hud.notify("投入 %s 石 · 修行 +%s" % [State.number(amount), State.number(amount)] if sea else "在大陆放下 %s 石，石堆可再次采集。" % State.number(amount))
 	else:
-		hud.notify("海域已填满，多余石子仍在石篓中。")
+		hud.notify("海域已填满。")
 	_refresh()
 	return amount
 
@@ -288,16 +289,16 @@ func buy_upgrade(kind: String) -> void:
 		return
 	if state.buy_upgrade(kind):
 		var descriptions := {
-			"bag": "负重提升 · 可携带 %s 石" % State.number(state.capacity()),
-			"mining": "采矿提升 · 每次 %s 石，开山速度翻倍" % State.number(state.gather_power()),
-			"speed": "羽翼渐丰 · 当前飞速 %.1f" % state.move_speed(),
-			"throw": "投石修行 · 射程提升到 %.1f" % state.throw_distance(),
+			"bag": "负重提升至 %s 石" % State.number(state.capacity()),
+			"mining": "采集提升至 %s 石/次" % State.number(state.gather_power()),
+			"speed": "飞速提升至 %.1f" % state.move_speed(),
+			"throw": "射程提升至 %.1f" % state.throw_distance(),
 		}
 		hud.notify(descriptions[kind])
 		soundscape.play("upgrade")
 		_refresh()
 	else:
-		hud.notify("修行尚不足，再向海中投入一些石子吧。")
+		hud.notify("修行不足。")
 
 func _refresh() -> void:
 	var target: Vector2 = q_target()
@@ -308,31 +309,45 @@ func _refresh() -> void:
 	aimed_cell = state.cell_at(target) if world.point_visible(target) else -1
 	world.aim_point = target
 	world.sync(state)
-	var prompt := "E  采集 · 每次 %s 石" % State.number(state.gather_power())
+	var prompt := "寻找石子"
 	var npc := state.nearby_mountain(state.player, 2.1, true)
 	var pile := state.nearby_pile(state.player)
-	if npc >= 0:
-		prompt = "E  与%s的穿山甲对话" % state.mountain_name(npc)
-	elif pile >= 0:
-		prompt = "E  碎石场 · 余 %s 石" % State.number(int(state.mountains[pile]["stock"]))
+	if world.bird_body.position.y > 2.7:
+		prompt = "松开空格降落"
+	elif npc >= 0:
+		prompt = "穿山甲"
 	elif state.carried >= state.capacity():
-		prompt = "石篓已满 · 飞近海面再投石"
+		prompt = "负重已满 · 靠近海面投石"
+	elif pile >= 0:
+		prompt = "碎石场 · 剩余 %s 石" % State.number(int(state.mountains[pile]["stock"]))
+	elif state.closest_drop(state.player) >= 0:
+		prompt = "拾回落地石子"
+	elif state.closest_stone(state.player) >= 0:
+		prompt = "散石 · 每次 %s 石" % State.number(state.gather_power())
 	hud.update_state(state, prompt, aimed_cell, target)
+	if world.bird_body.position.y > 2.7:
+		hud.interact_button.disabled = true
 
 func _drain_messages() -> void:
 	if state.messages.is_empty():
 		return
-	# Group queued progress messages after a long simulation step.
-	var message: String = state.messages.pop_front()
-	if state.messages.size() > 2:
-		message += "（另有 %d 条开采进展）" % state.messages.size()
-		state.messages.clear()
+	var message: String = state.messages.back()
+	for item in state.messages:
+		if item.contains("神器"):
+			message = item
+			break
+	state.messages.clear()
 	hud.notify(message)
 
 func show_menu() -> void:
 	if hud.modal_open or selection_pending:
 		return
-	hud.show_modal("暂歇于海岸", "这次心愿：%s 石\n已填：%s 石 · 已成陆地 %d 格\n\nE 采集与对话，鼠标点击金色射程圈内投石。\nTab 全图，滚轮缩放。暂停和离线期间不生产。" % [State.number(state.target_stones), State.number(state.total_delivered), state.filled_count], [{"text": "继续旅程", "action": "resume"}, {"text": "保存旅程", "action": "save"}, {"text": "重新选择填海规模…", "action": "reset_confirm"}])
+	hud.show_modal("暂停", "已填 %s / %s 石\n%s" % [State.number(state.total_delivered), State.number(state.target_stones), hud.save_label.text], [{"text": "继续", "action": "resume"}, {"text": "保存", "action": "save"}, {"text": "操作说明", "action": "help"}, {"text": "重新开始…", "action": "reset_confirm"}])
+
+func show_help() -> void:
+	if hud.modal_open or selection_pending:
+		return
+	hud.show_modal("操作", "WASD / 方向键  移动\n空格  高飞，松开降落\nE  采集 / 对话（可按住）\nQ / 鼠标左键  射程内投石\n\nU  收起升级栏　Tab  全图\n滚轮  缩放　M  静音　Esc  暂停\n\n陆地石子可拾回；填入海中才获得修行。", [{"text": "返回", "action": "resume"}])
 
 func _modal_action(action: String) -> void:
 	if action.begins_with("world_"):
@@ -343,11 +358,14 @@ func _modal_action(action: String) -> void:
 			if not selection_pending:
 				hud.hide_modal()
 				choosing_again = false
+		"help":
+			hud.hide_modal()
+			show_help()
 		"save":
 			save_game(true)
 			hud.hide_modal()
 		"reset_confirm":
-			hud.show_modal("重新踏上另一段旅程？", "确认后可以重新选择填海规模。\n\n当前旅程会先保留一份存档副本，再开始新地图。", [{"text": "继续当前旅程", "action": "resume"}, {"text": "选择新的规模", "action": "pick_again"}])
+			hud.show_modal("重新开始？", "当前进度会保留备份，然后选择新的填海规模。", [{"text": "取消", "action": "resume"}, {"text": "选择规模", "action": "pick_again"}])
 		"pick_again":
 			choosing_again = true
 			hud.show_world_picker(true)
@@ -374,9 +392,10 @@ func choose_world(target: int) -> bool:
 	win_shown = false
 	simulation_clock = 0
 	save_clock = 0
+	hud.seen_relics = 0
 	hud.hide_modal()
 	hud.set_overview(false)
-	hud.notify("从第一石开始。向西探索群山，向东填海。")
+	hud.notify("WASD 移动 · E 采集 · Q 投石")
 	_refresh()
 	save_game(false)
 	return true
@@ -403,7 +422,7 @@ func save_game(manual: bool = false) -> void:
 	if error == OK:
 		hud.save_label.text = "已保存 · " + Time.get_time_string_from_system().substr(0, 5)
 		if manual:
-			hud.notify("旅程已保存。下次打开将从这里继续。")
+			hud.notify("已保存。")
 	else:
 		hud.save_label.text = "保存未成功 · 错误 %d" % error
 		hud.notify("保存未成功，请检查保存目录权限。")

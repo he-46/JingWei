@@ -124,6 +124,7 @@ try {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_runner.gd') 'state-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_game.gd', '--', '--qa') 'game-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_audio.gd', '--', '--qa') 'audio-tests.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_ui.gd', '--', '--qa') 'ui-tests.log'
         } elseif ($Check) {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--quit-after', '6', '--', '--qa') 'startup-check.log'
             Write-Host 'Fresh-start check passed.'

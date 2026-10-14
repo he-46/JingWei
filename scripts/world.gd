@@ -33,7 +33,6 @@ var zoom: float = 1.0
 var focus := Vector3.ZERO
 var normal_size: float = 29.0
 var camera_offset := Vector3(16, 29, 27)
-var depth_labels: Array[Label3D] = []
 
 func setup(state: JWState) -> void:
 	font = SystemFont.new()
@@ -124,13 +123,6 @@ func _build_land(state: JWState) -> void:
 	Models.box(self, Vector3((xmin + xmax) / 2, 0.5, zmax), Vector3(state.map_side, 0.025, border_width), border_color)
 	Models.box(self, Vector3(xmin, 0.5, 0), Vector3(border_width, 0.025, state.map_side), border_color)
 	Models.box(self, Vector3(xmax, 0.23, 0), Vector3(border_width, 0.025, state.map_side), border_color)
-	var band_start := 0.0
-	for depth in range(3):
-		var width := int(state.bands[depth]) * State.CELL_SIZE
-		var caption := "%s\n%d～%d 石/格" % [State.DEPTH_NAMES[depth], State.DEPTH_MIN[depth], State.DEPTH_MAX[depth]]
-		var node := label(caption, Vector3(band_start + width / 2, 0.4, zmin + state.map_side * 0.055), Color("e5ead3"), 40)
-		depth_labels.append(node)
-		band_start += width
 
 func _build_boundary_fog(state: JWState) -> void:
 	for layer in range(3):
@@ -307,13 +299,7 @@ func _sync_npcs(state: JWState) -> void:
 	view["root"].position = Vector3(point.x, 0.45, point.y)
 	var title: Label3D = view["label"]
 	title.position = Vector3(point.x, 3.0, point.y)
-	if not state.mining_unlocked():
-		title.text = "穿山甲 · 填海 %d 石后开山" % State.MINING_UNLOCK_STONES
-	elif state.next_mountain() < 0:
-		title.text = "穿山甲 · 群山已开尽"
-	else:
-		var mountain: Dictionary = state.mountains[index]
-		title.text = "穿山甲 · %s %.0f%%" % [state.mountain_name(index), float(mountain["work"]) / float(mountain["yield"]) * 100]
+	title.text = "穿山甲"
 	title.visible = not overview
 	view["root"].visible = not overview
 
@@ -372,8 +358,6 @@ func update_camera(state: JWState, delta: float, instant: bool = false) -> void:
 	var distance_factor := maxf(1.0, camera.size / 29.0)
 	camera.position = focus + (Vector3(0, 45, 6) if overview else camera_offset) * distance_factor
 	camera.look_at(focus)
-	for node in depth_labels:
-		node.visible = not overview
 	overview_marker.visible = overview
 	overview_marker.position = Vector3(state.player.x, 0.6, state.player.y)
 	overview_marker.scale = Vector3.ONE * maxf(1, state.map_side / 90.0)

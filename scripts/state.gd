@@ -339,7 +339,7 @@ func begin_mining(index: int) -> bool:
 	if not mining_unlocked() or index < 0 or index != next_mountain() or mountains[index]["started"]:
 		return false
 	mountains[index]["started"] = true
-	messages.append("穿山甲转往%s，开始开采。挖完后会继续寻找更大的山。" % mountain_name(index))
+	messages.append("开始开采%s。" % mountain_name(index))
 	return true
 
 func tick(seconds: float) -> void:
@@ -372,7 +372,7 @@ func tick(seconds: float) -> void:
 		for item in artifact_plan:
 			if int(item["mountain"]) == index and not artifacts.has(String(item["id"])) and float(mountain["work"]) + 0.00001 >= float(mountain["yield"]) * float(item["threshold"]):
 				artifacts.append(String(item["id"]))
-				messages.append("神器出土 · %s：%s（已装备）" % [item["name"], item["effect"]])
+				messages.append("神器出土 · %s：%s" % [item["name"], item["effect"]])
 		if float(mountain["work"]) + 0.00001 >= float(mountain["yield"]):
 			mountain["work"] = float(mountain["yield"])
 			mountain["settled"] = true
