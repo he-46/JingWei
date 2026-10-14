@@ -109,3 +109,5 @@ Windows 存档：%APPDATA%/AzVGames/Jingwei/coast_journey.json，备份为 coast
 角色和场景目前是程序生成的低多边形模型。尚无正式美术、任意挖洞的体素系统、自动搬运和发布安装包。数值属于可玩原型的第一轮标定，后续可按试玩节奏调整。
 
 底层设计见 docs/architecture.md，测试记录见 docs/verification.md。
+
+建模与美术升级计划见 [上线美术任务包](docs/art-production-tasks.md)，包含 10 个任务包的依赖、交付物与验收标准，先完成可玩样板，再扩展至全地图。
