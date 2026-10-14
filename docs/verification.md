@@ -2,6 +2,14 @@
 
 最近验证日期：2026-10-14。引擎：Godot 4.7.2 标准版，Windows。实际画面使用 OpenGL 3.3 Compatibility，NVIDIA GeForce RTX 4060 Laptop GPU。
 
+## 2026-10-14：随附引擎临时版
+
+提交 Godot/Godot_v4.7.2-stable_win64.zip（87,710,475 字节），包含现有已验证的主程序与控制台程序，附带对应版本许可文件。解压后的 EXE、缓存和测试副本未加入 Git。
+
+在中文和空格路径下创建仅含待提交文件的独立副本，确认无已有 EXE 和 .godot 缓存时，启动器从随附 ZIP 校验、解压、导入并启动主场景。实际执行该副本的 Play.cmd -Check -NonInteractive，确认使用副本内部引擎，返回 0；删除副本中的控制台 EXE 后能自动重新解压恢复。验证了从 PowerShell 7 调用 CMD 入口时仍可加载 Windows PowerShell 自带的校验与解压模块。
+
+副本执行 Test.cmd -NonInteractive，413 项检查通过；篡改 ZIP 的独立测试副本被校验明确拒绝并返回 1，未执行引擎。Check/Test 同时隔离 APPDATA 与 LOCALAPPDATA，避免测试使用正式存档或编辑器缓存。随附引擎准备过程没有联网请求。
+
 ## 2026-10-14：界面精简
 
 新增 tests/test_ui.gd，检查默认面板、神器页签切换、面板收起与全图状态恢复、底部按钮保持在视口内、神器页签高度贴合内容、普通采集不弹横幅、提示到期隐藏、帮助入口、弹窗阻止侧栏操作、后期大数与升级价格不重叠、高飞时禁用地面交互。Test.cmd 已包含这些检查。

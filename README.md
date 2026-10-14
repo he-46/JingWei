@@ -4,12 +4,12 @@ Godot 4.7.2 / GDScript 的单机 3D 增量游戏原型。从大陆海岸出发�
 
 ## 开始试玩
 
-GitHub 下载的是**源码工程**，不含 Godot 引擎或已打包的游戏 EXE。Windows 首次使用：
+当前提供 **Windows 64 位临时试玩版：源码 + 随附 Godot 4.7.2 引擎**，无需另行安装 Godot。
 
 1. 将仓库 ZIP **完整解压**到文件夹，不能在压缩包里直接双击启动。
-2. 从 [Godot 官网](https://godotengine.org/download/windows/) 下载并解压 **Godot 4 标准版 Windows**（本项目验证版本 4.7.2，不需要 .NET 版）。
-3. 在 Play.cmd 旁建立 **Godot** 文件夹，把解压出的 Godot EXE 文件放进去；也可以直接双击 Play.cmd，在找不到引擎时弹出的窗口里选择已有的 Godot EXE。选择的路径只保存在本机。
-4. 双击 **Play.cmd**。它会先自动导入脚本和音频，再启动游戏。首次可能稍慢，更新源码后也会自动检查新资源。
+2. 双击 **Play.cmd**。首次会自动解压 Godot 文件夹里的引擎，再导入脚本和音频，随后启动游戏；请等待准备完成。
+
+Godot 文件夹内约 84 MiB 的 ZIP 是随项目提供的引擎，启动时无需联网下载。解压后的 EXE 保存在同一文件夹，下次直接复用。请使用可写入的目录；这是包含编辑器引擎的临时版本，尚非正式导出的独立游戏 EXE。引擎采用 MIT 许可，版权及第三方声明见 Godot/LICENSE.txt、Godot/COPYRIGHT.txt 和 [Godot 许可说明](https://godotengine.org/license/)。
 
 其他入口：
 
@@ -18,9 +18,9 @@ GitHub 下载的是**源码工程**，不含 Godot 引擎或已打包的游戏 E
 - 支持 GODOT_EXE 环境变量、PATH 中的 godot / godot4，或 `Play.cmd -GodotPath "D:\Godot\Godot_v4.7.2-stable_win64.exe"` 指定引擎。
 - 如原工作区旁有 RainyArrow 的引擎，可作为最后的可选查找位置；独立下载不依赖它。
 
-**启动失败排查**：提示找不到 Godot 时先完成第 2～3 步；`JWState` 找不到、音频 `.sample` 缺失通常意味着没有进行首次导入，请使用更新后的 Play.cmd。失败窗口会保留错误，完整信息位于 artifacts/startup-import.log 或 artifacts/game-launch.log。将错误文字发给开发者即可定位。
+**启动失败排查**：提示引擎缺失或压缩包损坏时，请重新完整下载解压，确保 Godot 文件夹里的 ZIP 存在。也可从 [Godot 官网](https://godotengine.org/download/windows/) 下载标准版 Windows 引擎，并通过上面的 GodotPath 参数指定。`JWState` 找不到、音频 `.sample` 缺失通常意味着没有进行首次导入，请使用更新后的 Play.cmd。失败窗口会保留错误，完整信息位于 artifacts/startup-import.log 或 artifacts/game-launch.log。将错误文字发给开发者即可定位。
 
-开发时可用 `Play.cmd -Check -NonInteractive` 检查自动导入和主场景启动（不打开游戏窗口、不读取正式存档）。本地生成的 .godot 缓存、引擎和启动日志都不应提交到 Git。
+开发时可用 `Play.cmd -Check -NonInteractive` 检查自动解压、导入和主场景启动（不打开游戏窗口、不读取正式存档）。随附引擎 ZIP 提交到 Git；解压后的 EXE、.godot 缓存及日志均被忽略。
 
 首次进入选择填海总量；有有效海岸版存档时自动续玩。暂停菜单可以重新选择规模，原旅程先备份。
 

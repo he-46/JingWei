@@ -25,6 +25,30 @@ function Resolve-Engine([string]$Candidate) {
     return $null
 }
 
+function Resolve-BundledEngine {
+    $bundleFolder = Join-Path $projectRoot 'Godot'
+    $bundlePath = Join-Path $bundleFolder 'Godot_v4.7.2-stable_win64.zip'
+    if (-not (Test-Path -LiteralPath $bundlePath -PathType Leaf)) { return $null }
+    $guiPath = Join-Path $bundleFolder 'Godot_v4.7.2-stable_win64.exe'
+    $consolePath = Join-Path $bundleFolder 'Godot_v4.7.2-stable_win64_console.exe'
+    if (-not (Test-Path -LiteralPath $guiPath -PathType Leaf) -or -not (Test-Path -LiteralPath $consolePath -PathType Leaf)) {
+        # CMD launched from PowerShell 7 can inherit its module paths. Use the
+        # Windows PowerShell modules that ship with the interpreter running us.
+        Import-Module (Join-Path $PSHOME 'Modules\Microsoft.PowerShell.Utility') -ErrorAction Stop
+        Import-Module (Join-Path $PSHOME 'Modules\Microsoft.PowerShell.Archive') -ErrorAction Stop
+        Write-Host 'Preparing the included Godot engine. No download is needed...'
+        $expectedHash = '6BF5B2D5BB1580D62615DE321EE4D5896CE0DB452603CA61F1AB9B5157D9AB87'
+        if ((Get-FileHash -LiteralPath $bundlePath -Algorithm SHA256).Hash -ne $expectedHash) {
+            throw 'The included Godot ZIP is incomplete or damaged. Download and fully extract the repository again.'
+        }
+        Expand-Archive -LiteralPath $bundlePath -DestinationPath $bundleFolder -Force
+        if (-not (Test-Path -LiteralPath $guiPath -PathType Leaf) -or -not (Test-Path -LiteralPath $consolePath -PathType Leaf)) {
+            throw 'The included Godot engine could not be extracted. Check that the game folder is writable.'
+        }
+    }
+    return $consolePath
+}
+
 function Invoke-Engine([string[]]$Arguments, [string]$LogName) {
     $lines = New-Object 'System.Collections.Generic.List[string]'
     # Windows PowerShell 5.1 represents redirected native stderr as ErrorRecord.
@@ -56,6 +80,7 @@ try {
         $enginePath = Resolve-Engine $requested
         if (-not $enginePath) { throw "Godot executable not found: $requested. Set GODOT_EXE to the full executable path, or clear it to use automatic detection." }
     }
+    if (-not $enginePath) { $enginePath = Resolve-BundledEngine }
     if (-not $enginePath -and (Test-Path -LiteralPath $settingsPath)) {
         $enginePath = Resolve-Engine (Get-Content -LiteralPath $settingsPath -Raw -Encoding utf8)
     }
@@ -82,7 +107,7 @@ try {
     }
     $picked = $false
     if (-not $enginePath) {
-        Write-Host 'This GitHub download contains the game source, not the Godot engine.'
+        Write-Host 'The bundled Godot engine is missing from this copy of the project.'
         Write-Host 'Download and extract the standard Windows Godot 4 build: https://godotengine.org/download/windows/'
         Write-Host 'Put the extracted Godot executables in the Godot folder next to Play.cmd, or select your existing executable.'
         if (-not $NonInteractive -and -not $Check -and $Mode -ne 'Test') {
@@ -111,7 +136,9 @@ try {
     New-Item -ItemType Directory -Path $logRoot -Force | Out-Null
     if ($Mode -eq 'Test' -or $Check) {
         $env:APPDATA = Join-Path $logRoot 'qa-profile'
+        $env:LOCALAPPDATA = Join-Path $logRoot 'qa-profile\local'
         New-Item -ItemType Directory -Path $env:APPDATA -Force | Out-Null
+        New-Item -ItemType Directory -Path $env:LOCALAPPDATA -Force | Out-Null
     }
     if ($Mode -eq 'Editor') {
         Invoke-Engine @('--path', $projectRoot, '--editor') 'editor-launch.log'

@@ -3,9 +3,11 @@
 .import/
 export_credentials.cfg
 
-# Local engine binaries and exported builds.
+# Keep the bundled engine ZIP; exclude extracted executables and local builds.
 .tools/
-/Godot/
+/Godot/*.exe
+/Godot/_sc_
+/Godot/editor_data/
 /Godot*.exe
 build/
 builds/

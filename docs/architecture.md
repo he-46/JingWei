@@ -137,6 +137,6 @@ version=2 存档在读取时自动迁移。保持原海格需求、填海量、�
 
 ## 独立源码启动
 
-Play.cmd 调用 Windows PowerShell 启动器，先按显式路径、GODOT_EXE、本地已选路径、工程内 Godot 文件夹、PATH 顺序寻找 Godot；原工作区相邻工程仅作为最后的可选兼容路径。没有引擎时说明源码与运行引擎的区别，并可选择已有 Godot EXE，路径只保存在被忽略的 .tools/godot-path.txt。
+Play.cmd 调用 Windows PowerShell 启动器，先按显式路径、GODOT_EXE、随附引擎、本地已选路径、工程内引擎文件夹、PATH 顺序寻找 Godot；原工作区相邻工程仅作为最后的可选兼容路径。Godot 文件夹中提交压缩后的 4.7.2 Windows 64 位引擎及许可声明，避免原始 EXE 超过 GitHub 单文件限制。首次启动校验 ZIP 的 SHA-256 后解压两份配套 EXE；若任一缺失则重新解压，两份均存在时直接复用。随附引擎启动不需要网络。解压产物被 Git 忽略，Godot/.gdignore 避免导入引擎本身。缺少整份引擎包时仍可选择已有 Godot EXE，路径只保存在被忽略的 .tools/godot-path.txt。
 
 Run 和 Test 均先调用无窗口编辑器导入，再启动主场景或测试。这样全新下载也能生成全局类索引、音频资源和着色器缓存，后续拉取新资源会自动重新导入。检查除了进程退出码，也读取 Godot 的脚本及资源错误，因为解析失败不一定使引擎退出码非零。启动日志位于 artifacts，CMD 包装保留失败状态码及错误窗口。
