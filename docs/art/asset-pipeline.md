@@ -94,3 +94,11 @@ Godot 中复制角色预制场景，设置 `model_scene`。默认动作名可直
 性能单独运行 `--path . --script res://tests/art_slice_benchmark.gd -- --qa`；此脚本拒绝无窗口和固定帧率模式，使用实际时钟，输出 `artifacts/art/art07-performance/results.json`。不要与录制、编码或其他重负载作业同时运行。
 
 `tools/package-slice-review.py --walk artifacts/art/art07-walk-final --views artifacts/art/art07-review-final --performance artifacts/art/art07-performance/results.json --ffmpeg <ffmpeg.exe 路径>` 生成审阅 JPG、性能摘要和带章节说明的无声 MP4。制作工具需要 Python/Pillow、中文字体与 ffmpeg；只处理已捕获帧，游戏运行不需要这些工具。可选 `--fog-before <修正前 PNG>` 重建本包边界对照。原始帧和编码器留在忽略目录；已提交的对照图可直接审阅。完整证据、范围与下一包见 [样板评审](vertical-slice-review.md)。
+
+## ART-08 全地图扩展入口
+
+`blender --background --python art_source/build_expansion.py` 生成 24 份同名 `.blend` / GLB：7 个新山、8 份全图简化山、5 个新石形、4 个新植被。沿用已有两张环境图集，不覆盖前包源模型或图集。源文件实际重开后导出；新增 GLB 使用 `export(..., materials=False)`，保留 UV 与法线，运行材质通过 `asset_catalog.gd` / world 明确赋予，不携带重复图片。直接把单个新 GLB 拖入空场景时需指定同类正式材质；可编辑 Blender 源文件仍有纹理。
+
+所有山均为单网格，标准地面 0、峰高 1、水平半径 <0.96。8 份全图模型为每型 478 三角形，正式模型每型 1,918；完整预算及存档家族映射见 [扩展资产清单](expansion-assets.md)。普通游戏的所有山均用正式资产，早期程序山只供导入诊断覆盖接口使用。
+
+实机验证入口 `tools/verify-art-expansion.ps1`，包含 113 项山体、95 项环境、71 项反馈、281 项扩展、31 项定位检查及资产总览；扩展项比无窗口模式多四项实际实例颜色检查。普通 Test.cmd 增加 277 项扩展检查，合计 1,203 项。`tools/measure-art-expansion.ps1 -Output artifacts/art/art08-performance-accepted` 单独运行二十个实际 1080p 渲染压力场景，按引擎报告的游戏进程 ID 采样工作集；`tools/package-expansion-review.py` 整理最终摘要与图片。详见 [性能报告](performance-report.md)。

@@ -37,19 +37,30 @@ func stage_name() -> String:
 	return "分层开采" if progress < 0.75 else "山脚基底"
 
 static func collision_envelopes(mesh: Mesh, slices: int = 8) -> PackedFloat32Array:
-	# Eight conservative circular slabs follow the authored contour, not a full-height cylinder.
+	# Each slab encloses all triangles crossing its bottom, plus higher vertices.
+	# This also works for twin peaks and saddles that are not nested ring contours.
 	var radii := PackedFloat32Array()
-	var vertices: PackedVector3Array = mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+	var arrays := mesh.surface_get_arrays(0)
+	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var indices := PackedInt32Array()
+	if arrays[Mesh.ARRAY_INDEX] != null:
+		indices = arrays[Mesh.ARRAY_INDEX]
+	else:
+		for i in range(vertices.size()):
+			indices.append(i)
 	for slab in range(slices):
 		var bottom := float(slab) / slices
-		var nearest := -1.0
-		for point in vertices:
-			if point.y <= bottom + 0.00001:
-				nearest = maxf(nearest, point.y)
 		var radius := 0.0
 		for point in vertices:
-			if point.y >= nearest - 0.00001 and point.y <= float(slab + 1) / slices:
+			if point.y >= bottom - .00001:
 				radius = maxf(radius, Vector2(point.x, point.z).length())
+		for face in range(0, indices.size(), 3):
+			for edge in range(3):
+				var a := vertices[indices[face + edge]]
+				var b := vertices[indices[face + (edge + 1) % 3]]
+				if (a.y < bottom and b.y > bottom) or (b.y < bottom and a.y > bottom):
+					var point := a.lerp(b, (bottom - a.y) / (b.y - a.y))
+					radius = maxf(radius, Vector2(point.x, point.z).length())
 		radii.append(minf(JWState.MOUNTAIN_COLLISION_RATIO, radius + 0.02))
 	return radii
 

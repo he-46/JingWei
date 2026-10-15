@@ -6,4 +6,5 @@
 albedo_color = Color(1.15, 1.12, 1.00, 1)
 albedo_texture = ExtResource("1")
 roughness = 0.95
+vertex_color_use_as_albedo = true
 texture_filter = 3

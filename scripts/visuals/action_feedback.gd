@@ -22,6 +22,15 @@ var relics: Dictionary = {}
 var events: Dictionary = {}
 var suppressed_flights := 0
 var serial := 0
+var detail_origin := Vector3.ZERO
+var overview := false
+
+func set_detail(origin: Vector3, map_view: bool) -> void:
+	detail_origin = origin
+	overview = map_view
+
+func detail_visible(point: Vector3) -> bool:
+	return not overview and Vector2(point.x - detail_origin.x, point.z - detail_origin.z).length_squared() < 70 * 70
 
 func _ready() -> void:
 	var rock := Models.rock_mesh(2)
@@ -123,11 +132,13 @@ func advance(delta: float) -> void:
 	# Called once by the owner during unpaused frames. No Tween/timer can outlive a world.
 	for slot in bursts:
 		if slot.active:
+			slot.node.visible = detail_visible(slot.point)
 			_advance_burst(slot, delta)
 	for slot in flights:
 		if not slot.active:
 			continue
 		slot.age += delta
+		slot.node.visible = detail_visible(slot.end)
 		var t := minf(float(slot.age) / FLIGHT_SECONDS, 1.0)
 		slot.node.position = slot.start.lerp(slot.end, t) + Vector3.UP * sin(t * PI) * 1.5
 		slot.node.rotation = Vector3(t * 6, t * 9, t * 3)
@@ -146,6 +157,7 @@ func advance(delta: float) -> void:
 			continue
 		slot.age += delta
 		var t := clampf(float(slot.age) / RELIC_SECONDS, 0, 1)
+		slot.node.visible = detail_visible(slot.point)
 		slot.node.position = slot.point + Vector3.UP * (t * .85 + sin(t * PI) * .16)
 		slot.node.rotation.y = t * TAU * .6
 		var sizing := minf(t * 8, 1) * minf((1 - t) * 5, 1)
@@ -163,6 +175,9 @@ func _advance_burst(slot: Dictionary, delta: float) -> void:
 		_update_burst(slot)
 
 func _update_burst(slot: Dictionary) -> void:
+	slot.node.visible = detail_visible(slot.point)
+	if not slot.node.visible:
+		return
 	var t := clampf(float(slot.age) / float(slot.duration), 0, 1)
 	var color: Color = COLORS[slot.kind]
 	color.a = (1 - t) * .80

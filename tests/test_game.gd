@@ -165,7 +165,7 @@ func run() -> void:
 		for batch in game.world.mountain_batches:
 			rendered += batch.instance_count
 			different_meshes[hash(batch.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX])] = true
-		expect(game.state.target_stones == target and rendered == game.state.mountains.size() and different_meshes.size() == 5, "five shared mountain meshes cover all generated mountains")
+		expect(game.state.target_stones == target and rendered == game.state.mountains.size() and different_meshes.size() == (5 if "--imported-visuals" in OS.get_cmdline_user_args() else 8), "shared mountain meshes cover all generated mountains")
 		expect(game.world.npc_views.size() == 1, "larger world still has exactly one pangolin")
 		var first_shape: CylinderShape3D = game.world.mountain_collisions[0].shape
 		var last_shape: CylinderShape3D = game.world.mountain_collisions[-1].shape

@@ -4,29 +4,38 @@ const State = preload("res://scripts/state.gd")
 const Models = preload("res://scripts/models.gd")
 const MountainVisual = preload("res://scripts/visuals/mountain_visual.gd")
 const Coast = preload("res://scripts/visuals/coast_geometry.gd")
+const Catalog = preload("res://scripts/visuals/asset_catalog.gd")
+const SpatialBatch = preload("res://scripts/visuals/spatial_batch.gd")
 const SAMPLE_MOUNTAIN = preload("res://assets/models/environment/strata_mountain.glb")
 @export var bird_scene: PackedScene = preload("res://scenes/actors/jingwei.tscn")
 @export var pangolin_scene: PackedScene = preload("res://scenes/actors/pangolin.tscn")
-@export var mountain_scenes: Array[PackedScene] = [SAMPLE_MOUNTAIN]
+@export var mountain_scenes: Array[PackedScene] = Catalog.scenes(Catalog.MOUNTAINS)
 const CHUNK := 8
 const ROCKS_PER_MOUNTAIN := 32
 
 var camera: Camera3D
 var bird_body: CharacterBody3D
 var bird_model: Node3D
-var stone_mesh: MultiMesh
-var grass_mesh: MultiMesh
-var tree_mesh: MultiMesh
-var shrub_mesh: MultiMesh
-var shore_rocks: MultiMesh
+var stone_mesh: RefCounted
+var grass_mesh: RefCounted
+var tree_mesh: RefCounted
+var shrub_mesh: RefCounted
+var shore_rocks: RefCounted
 var coast_surface: MeshInstance3D
 var water_surface: MeshInstance3D
 var water_material: ShaderMaterial
 var foam_material: ShaderMaterial
 var foliage_material: ShaderMaterial
+var foliage_materials: Array[ShaderMaterial] = []
 var foam_chunks: Dictionary = {}
-var mountain_batches: Array[MultiMesh] = []
+var mountain_batches: Array = []
 var mountain_slots: Array[int] = []
+var mountain_variants: Array[int] = []
+var collision_profiles: Array[PackedFloat32Array] = []
+var detail_batches: Array = []
+var detail_clock := 0.0
+var npc_animation_clock := 0.0
+var sun: DirectionalLight3D
 var flight_ceiling: float = 8.2
 var range_ring: MeshInstance3D
 var fog_layers: Array[MeshInstance3D] = []
@@ -38,9 +47,9 @@ var mountain_ratios: Array[float] = []
 var mountain_collision_groups: Array = []
 var sample_enabled := false
 var sample_collision_radii := PackedFloat32Array()
-var quarry_mesh: MultiMesh
-var quarry_site_mesh: MultiMesh
-var work_chip_mesh: MultiMesh
+var quarry_mesh: RefCounted
+var quarry_site_mesh: RefCounted
+var work_chip_mesh: RefCounted
 var mining_dust: MultiMesh
 var pile_cache: Array[int] = []
 var terrain_chunks: Dictionary = {}
@@ -110,6 +119,7 @@ func _build_lighting(state: JWState) -> void:
 	environment.environment = config
 	add_child(environment)
 	var light := DirectionalLight3D.new()
+	sun = light
 	light.rotation_degrees = Vector3(-50, -33, 0)
 	light.light_color = Color("fff4df")
 	light.light_energy = 0.68
@@ -156,20 +166,40 @@ func _build_boundary_fog(state: JWState) -> void:
 		node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		fog_layers.append(node)
 
+func spatial(meshes: Array[Mesh], transforms: Array[Transform3D], ids: Array[int], material: Material, shadows: bool = false, far_meshes: Array[Mesh] = []):
+	var pool = SpatialBatch.new()
+	var anchors: Array[Vector3] = []
+	for transform in transforms:
+		anchors.append(transform.origin)
+	pool.configure(self, meshes, anchors, ids, material, true, false, shadows, far_meshes)
+	for i in range(transforms.size()):
+		pool.set_instance_transform(i, transforms[i])
+		pool.set_instance_color(i, Color.WHITE)
+	pool.refresh_bounds()
+	detail_batches.append(pool)
+	return pool
+
 func _build_decor(state: JWState) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = state.world_seed + 980
 	foliage_material = preload("res://assets/materials/coast_foliage.tres").duplicate()
-	grass_mesh = batch(MountainVisual.imported_mesh(preload("res://assets/models/environment/coast_grass.glb")), mini(2500, state.grid_size * 40), true, Color.WHITE, foliage_material)
-	(get_child(get_child_count() - 1) as MultiMeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	for index in range(grass_mesh.instance_count):
+	var transforms: Array[Transform3D] = []
+	var ids: Array[int] = []
+	for index in range(mini(2500, state.grid_size * 40)):
 		var p := _decor_point(state, rng, 0.2, -2.7, State.LAND_HEIGHT)
-		grass_mesh.set_instance_transform(index, Transform3D(Basis.IDENTITY, p))
+		transforms.append(Transform3D(Basis.IDENTITY, p))
+		ids.append(Catalog.regional_variant(p, 2, index))
+	var grass_mat: ShaderMaterial = foliage_material.duplicate()
+	grass_mat.set_shader_parameter("detail_distance", 70.0)
+	foliage_materials.append(grass_mat)
+	grass_mesh = spatial(Catalog.meshes(Catalog.GRASSES), transforms, ids, grass_mat)
+	grass_mesh.max_distance = 70
+	for index in range(transforms.size()):
 		grass_mesh.set_instance_color(index, Color.WHITE if index % 4 else Color("e2ddba"))
-	# Distant trees use instancing; no per-tree scripts or animation nodes.
-	tree_mesh = batch(MountainVisual.imported_mesh(preload("res://assets/models/environment/coast_tree.glb")), mini(200, state.grid_size * 2), true, Color.WHITE, foliage_material)
+	transforms.clear()
+	ids.clear()
 	var tree_points := PackedVector2Array()
-	for index in range(tree_mesh.instance_count):
+	for index in range(mini(200, state.grid_size * 2)):
 		var size := rng.randf_range(0.7, 1.2)
 		var p := _decor_point(state, rng, 2.9, -3.5, State.LAND_HEIGHT, 2.7)
 		for attempt in range(8):
@@ -180,25 +210,40 @@ func _build_decor(state: JWState) -> void:
 			if separated:
 				break
 			p = _decor_point(state, rng, 2.9, -3.5, State.LAND_HEIGHT, 2.7) if attempt < 7 else Vector3(0, -40, 0)
+		var variant := Catalog.regional_variant(p, 3, index)
 		if p.y > -10:
 			tree_points.append(Vector2(p.x, p.z))
-			tree_canopies.append(Vector4(p.x, p.y + size * 2.4, p.z, size * 1.05))
-		tree_mesh.set_instance_transform(index, Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * size), p))
+			var crown: Vector2 = Catalog.TREE_CROWNS[variant]
+			tree_canopies.append(Vector4(p.x, p.y + size * crown.x, p.z, size * crown.y))
+		transforms.append(Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * size), p))
+		ids.append(variant)
+	tree_mesh = spatial(Catalog.meshes(Catalog.TREES), transforms, ids, foliage_material, true)
+	tree_mesh.keep_overview = true
+	for index in range(transforms.size()):
 		tree_mesh.set_instance_color(index, Color.WHITE if index % 2 else Color("d8e5ca"))
-	shrub_mesh = batch(MountainVisual.imported_mesh(preload("res://assets/models/environment/coast_shrub.glb")), mini(160, state.grid_size * 2), true, Color.WHITE, foliage_material)
-	for index in range(shrub_mesh.instance_count):
+	transforms.clear()
+	ids.clear()
+	for index in range(mini(160, state.grid_size * 2)):
 		var p := _decor_point(state, rng, 1.2, -2.8, State.LAND_HEIGHT, 1.2)
-		shrub_mesh.set_instance_transform(index, Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * rng.randf_range(.7, 1.0)), p))
-		shrub_mesh.set_instance_color(index, Color.WHITE)
-	shore_rocks = batch(MountainVisual.imported_mesh(preload("res://assets/models/environment/shore_rock.glb")), clampi(state.grid_size * 2, 24, 160), false, Color.WHITE, preload("res://assets/materials/shore_rock.tres"))
-	for index in range(shore_rocks.instance_count):
+		transforms.append(Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * rng.randf_range(.7, 1.0)), p))
+		ids.append(Catalog.regional_variant(p, 2, index))
+	var shrub_mat: ShaderMaterial = foliage_material.duplicate()
+	shrub_mat.set_shader_parameter("detail_distance", 85.0)
+	foliage_materials.append(shrub_mat)
+	shrub_mesh = spatial(Catalog.meshes(Catalog.SHRUBS), transforms, ids, shrub_mat)
+	shrub_mesh.max_distance = 85
+	transforms.clear()
+	ids.clear()
+	for index in range(clampi(state.grid_size * 2, 24, 160)):
 		var z := rng.randf_range(state.map_origin.y + 1, -state.map_origin.y - 1)
 		var x := rng.randf_range(-.4, .8)
 		var size := rng.randf_range(.65, 1.15)
 		var p := Vector3(x, -.08 if x > 0 else .10, z)
 		if not _clear_of_resources(state, Vector2(x, z), 1.1):
 			p.y = -40
-		shore_rocks.set_instance_transform(index, Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * size), p))
+		transforms.append(Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * size), p))
+		ids.append(0)
+	shore_rocks = spatial(Catalog.meshes(["shore_rock"]), transforms, ids, preload("res://assets/materials/shore_rock.tres"))
 
 func _decor_point(state: JWState, rng: RandomNumberGenerator, mountain_margin: float, xmax: float, height: float, resource_margin: float = 0.0) -> Vector3:
 	# Keep future quarry sites clear too; mining never has to remove trees or grass.
@@ -232,71 +277,116 @@ func batch(mesh: Mesh, count: int, colors: bool, color: Color, material_override
 	add_child(node)
 	return result
 
+func resource_pool(meshes: Array[Mesh], anchors: Array[Vector3], ids: Array[int], material: Material, custom: bool = false, far_meshes: Array[Mesh] = []):
+	var pool = SpatialBatch.new()
+	pool.configure(self, meshes, anchors, ids, material, true, custom, true, far_meshes)
+	detail_batches.append(pool)
+	return pool
+
 func _build_resources(state: JWState) -> void:
-	stone_mesh = batch(Models.rock_mesh(), state.stone_positions.size() * 3, true, Color.WHITE)
-	pile_mesh = batch(Models.rock_mesh(4), state.mountains.size() * ROCKS_PER_MOUNTAIN, false, Color("b8b6a6"))
-	drop_mesh = batch(Models.rock_mesh(1), 0, false, Color("e1d3ad"))
-	var counts := [0, 0, 0, 0, 0]
-	for mountain in state.mountains:
-		var shape: int = mountain["shape"]
-		mountain_slots.append(counts[shape])
-		counts[shape] += 1
+	var anchors: Array[Vector3] = []
+	var ids: Array[int] = []
+	var stones := Catalog.meshes(Catalog.STONES)
+	var stone_material := preload("res://assets/materials/quarry_stone.tres")
+	for index in range(state.stone_positions.size()):
+		var point := state.stone_positions[index]
+		for pebble in range(3):
+			var p := Vector3(point.x, State.LAND_HEIGHT, point.y)
+			anchors.append(p)
+			ids.append(Catalog.regional_variant(p, 6, index) if pebble == 0 else (index + pebble) % 6)
+	stone_mesh = resource_pool(stones, anchors, ids, stone_material)
+	# Only a zero-sized legacy adapter remains; all actual stock uses formal stones.
+	pile_mesh = batch(Models.rock_mesh(4), 0, false, Color.WHITE)
+	drop_mesh = batch(stones[1], 0, false, Color.WHITE, stone_material)
+	anchors.clear()
+	ids.clear()
+	var site_anchors: Array[Vector3] = []
+	var site_ids: Array[int] = []
+	var chip_anchors: Array[Vector3] = []
+	var chip_ids: Array[int] = []
+	for index in range(state.mountains.size()):
+		var point := state.mountain_position(index)
+		var p := Vector3(point.x, State.LAND_HEIGHT, point.y)
+		site_anchors.append(p)
+		site_ids.append(0)
+		for part in range(ROCKS_PER_MOUNTAIN):
+			anchors.append(p)
+			ids.append((index + part / 8) % 6)
+		for part in range(8):
+			chip_anchors.append(p)
+			chip_ids.append(part % 6)
+	quarry_mesh = resource_pool(stones, anchors, ids, stone_material)
+	quarry_site_mesh = resource_pool(Catalog.meshes(["quarry_site"]), site_anchors, site_ids, preload("res://assets/materials/quarry_site.tres"))
+	quarry_site_mesh.keep_overview = true
+	work_chip_mesh = resource_pool(stones, chip_anchors, chip_ids, stone_material)
+	var dust_shape := SphereMesh.new()
+	dust_shape.radius = 0.12
+	dust_shape.height = 0.24
+	dust_shape.radial_segments = 8
+	dust_shape.rings = 3
+	mining_dust = batch(dust_shape, 8, true, Color.WHITE)
+	var dust_node := get_child(get_child_count() - 1) as MultiMeshInstance3D
+	var dust_mat := Models.material(Color.WHITE)
+	dust_mat.vertex_color_use_as_albedo = true
+	dust_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	dust_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	dust_node.material_override = dust_mat
+	dust_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mining_dust.visible_instance_count = 0
 	sample_enabled = not mountain_scenes.is_empty() and mountain_scenes[0] == SAMPLE_MOUNTAIN
-	if sample_enabled:
-		var stone := MountainVisual.imported_mesh(preload("res://assets/models/environment/quarry_stone.glb"))
-		quarry_mesh = batch(stone, counts[0] * ROCKS_PER_MOUNTAIN, false, Color.WHITE, preload("res://assets/materials/quarry_stone.tres"))
-		quarry_site_mesh = batch(MountainVisual.imported_mesh(preload("res://assets/models/environment/quarry_site.glb")), counts[0], false, Color.WHITE, preload("res://assets/materials/quarry_site.tres"))
-		work_chip_mesh = batch(stone, counts[0] * 8, false, Color("8d9584"))
-		var dust_shape := SphereMesh.new()
-		dust_shape.radius = 0.12
-		dust_shape.height = 0.24
-		dust_shape.radial_segments = 8
-		dust_shape.rings = 3
-		mining_dust = batch(dust_shape, 8, true, Color.WHITE)
-		var dust_node := get_child(get_child_count() - 1) as MultiMeshInstance3D
-		var dust_mat := Models.material(Color.WHITE)
-		dust_mat.vertex_color_use_as_albedo = true
-		dust_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		dust_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		dust_node.material_override = dust_mat
-		dust_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		mining_dust.visible_instance_count = 0
-	for shape in range(5):
-		var mesh := MultiMesh.new()
-		mesh.transform_format = MultiMesh.TRANSFORM_3D
-		mesh.use_colors = true
-		mesh.use_custom_data = true
-		mesh.mesh = Models.mountain_mesh(shape)
-		if shape < mountain_scenes.size() and mountain_scenes[shape]:
-			var imported := MountainVisual.imported_mesh(mountain_scenes[shape])
-			if imported:
-				mesh.mesh = imported
-		mesh.instance_count = counts[shape]
-		var node := MultiMeshInstance3D.new()
-		node.multimesh = mesh
-		var mat := ShaderMaterial.new()
-		mat.shader = preload("res://shaders/mountain.gdshader")
-		node.material_override = mat
-		if shape == 0 and sample_enabled:
-			node.material_override = preload("res://assets/materials/strata_mountain.tres")
-			sample_collision_radii = MountainVisual.collision_envelopes(mesh.mesh)
-		add_child(node)
-		mountain_batches.append(mesh)
+	var expanded := sample_enabled and mountain_scenes.size() == 8
+	var counts: Array[int] = []
+	counts.resize(8 if expanded else 5)
+	counts.fill(0)
+	for index in range(state.mountains.size()):
+		var shape: int = state.mountains[index]["shape"]
+		var variant := Catalog.mountain_variant(shape, index) if expanded else shape
+		mountain_variants.append(variant)
+		mountain_slots.append(counts[variant])
+		counts[variant] += 1
+	var far_meshes: Array[Mesh] = []
+	if expanded:
+		far_meshes = Catalog.meshes(Catalog.MOUNTAINS, "_far")
+	for variant in range(counts.size()):
+		var asset: Mesh
+		if variant < mountain_scenes.size() and mountain_scenes[variant]:
+			asset = MountainVisual.imported_mesh(mountain_scenes[variant])
+		else:
+			asset = Models.mountain_mesh(variant % 5)
+		var material: Material = preload("res://assets/materials/strata_mountain.tres")
+		if not sample_enabled:
+			var generic := ShaderMaterial.new()
+			generic.shader = preload("res://shaders/mountain.gdshader")
+			material = generic
+		anchors.clear()
+		ids.clear()
+		for index in range(state.mountains.size()):
+			if mountain_variants[index] == variant:
+				anchors.append(site_anchors[index])
+				ids.append(0)
+		var meshes: Array[Mesh] = [asset]
+		var distant: Array[Mesh] = []
+		if expanded:
+			distant.append(far_meshes[variant])
+		var pool = resource_pool(meshes, anchors, ids, material, true, distant)
+		pool.keep_overview = true
+		mountain_batches.append(pool)
+		collision_profiles.append(MountainVisual.collision_envelopes(asset))
+	sample_collision_radii = collision_profiles[0]
 	for index in range(state.mountains.size()):
 		mountain_cache.append(-1)
 		mountain_ratios.append(-1)
 		pile_cache.append(-1)
 		var body := StaticBody3D.new()
 		var visual = MountainVisual.from_state(state, index)
-		var point := state.mountain_position(index)
-		body.position = Vector3(point.x, State.LAND_HEIGHT, point.y)
+		body.position = site_anchors[index]
 		add_child(body)
 		var group: Array[CollisionShape3D] = []
-		var sample := sample_enabled and int(state.mountains[index]["shape"]) == 0
-		for slab in range(8 if sample else 1):
+		var profile: PackedFloat32Array = collision_profiles[mountain_variants[index]]
+		for slab in range(8):
 			var shape := CylinderShape3D.new()
-			shape.radius = visual.radius * sample_collision_radii[slab] if sample else visual.collision_radius
-			shape.height = visual.height / (8 if sample else 1)
+			shape.radius = visual.radius * profile[slab]
+			shape.height = visual.height / 8
 			var collider := CollisionShape3D.new()
 			collider.shape = shape
 			body.add_child(collider)
@@ -308,7 +398,7 @@ func sync(state: JWState) -> void:
 	for index in state.stone_dirty:
 		var point := state.stone_positions[index]
 		for pebble in range(3):
-			var location := Vector3(point.x + (pebble - 1) * 0.28, 0.57, point.y + sin(index + pebble) * 0.18)
+			var location := Vector3(point.x + (pebble - 1) * 0.28, State.LAND_HEIGHT + .02, point.y + sin(index + pebble) * 0.18)
 			if state.stone_amounts[index] == 0:
 				location.y = -40
 			var scale_value := 0.4 + pebble * 0.09
@@ -326,7 +416,7 @@ func sync(state: JWState) -> void:
 			var transform: Transform3D = visual.transform
 			if count == 0:
 				transform.origin.y = -100
-			var mesh := mountain_batches[int(mountain["shape"])]
+			var mesh = mountain_batches[mountain_variants[index]]
 			var slot := mountain_slots[index]
 			mesh.set_instance_transform(slot, transform)
 			mesh.set_instance_custom_data(slot, Color(ratio, 0, 0, 1))
@@ -339,31 +429,19 @@ func sync(state: JWState) -> void:
 				collider.set_deferred("disabled", top <= bottom)
 				collider.shape.height = maxf(0.001, (top - bottom) * visual.height)
 				collider.position.y = (bottom + maxf(bottom, top)) * visual.height * 0.5
-			if sample_enabled and int(mountain["shape"]) == 0:
-				_update_quarry_site(index, visual)
+			_update_quarry_site(index, visual)
 		var stock: int = visual.stock
 		if pile_cache[index] != stock:
 			pile_cache[index] = stock
-			var fraction: float = visual.stock_fraction
-			var point := state.pile_position(index)
 			for part in range(ROCKS_PER_MOUNTAIN):
-				if sample_enabled and int(mountain["shape"]) == 0:
-					quarry_mesh.set_instance_transform(mountain_slots[index] * ROCKS_PER_MOUNTAIN + part, MountainVisual.pile_transform(visual, part))
-					pile_mesh.set_instance_transform(index * ROCKS_PER_MOUNTAIN + part, Transform3D(Basis.IDENTITY, Vector3(0, -50, 0)))
-					continue
-				var angle := part * 2.39996
-				var radius := sqrt(float(part) / ROCKS_PER_MOUNTAIN) * 2.5
-				var location := Vector3(point.x + cos(angle) * radius, 0.6 + (1.0 - radius / 2.6) * fraction * 1.4, point.y + sin(angle) * radius)
-				if part >= ceili(fraction * ROCKS_PER_MOUNTAIN):
-					location.y = -50
-				pile_mesh.set_instance_transform(index * ROCKS_PER_MOUNTAIN + part, Transform3D(Basis.from_euler(Vector3(0, angle, 0)).scaled(Vector3.ONE * (0.6 + (part % 4) * 0.12)), location))
+				quarry_mesh.set_instance_transform(index * ROCKS_PER_MOUNTAIN + part, Catalog.quarry_transform(visual, part, index % 3))
 	if state.piles_dirty:
 		drop_mesh.instance_count = state.land_piles.size() * 3
 		var cursor := 0
 		for key in state.land_piles:
 			var point := state.cell_center(int(key))
 			for part in range(3):
-				drop_mesh.set_instance_transform(cursor, Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.6), Vector3(point.x + (part - 1) * 0.45, 0.65, point.y + sin(part) * 0.4)))
+				drop_mesh.set_instance_transform(cursor, Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 0.6), Vector3(point.x + (part - 1) * 0.45, State.LAND_HEIGHT + .02, point.y + sin(part) * 0.4)))
 				cursor += 1
 		state.piles_dirty = false
 	var dirty_chunks: Dictionary = {}
@@ -381,9 +459,11 @@ func sync(state: JWState) -> void:
 	bird_model.set_load(float(state.carried) / state.capacity())
 	if mining_dust:
 		_update_mining_dust(state)
+	for pool in detail_batches:
+		pool.refresh_bounds()
 
 func _update_quarry_site(index: int, visual) -> void:
-	var slot := mountain_slots[index]
+	var slot := index
 	quarry_site_mesh.set_instance_transform(slot, visual.transform)
 	for part in range(8):
 		var angle := part * TAU / 8
@@ -396,7 +476,9 @@ func _update_quarry_site(index: int, visual) -> void:
 
 func _update_mining_dust(state: JWState) -> void:
 	var index := state.next_mountain()
-	var active := index >= 0 and state.mining_unlocked() and bool(state.mountains[index]["started"])
+	var active := not overview and index >= 0 and state.mining_unlocked() and bool(state.mountains[index]["started"])
+	if active:
+		active = state.mountain_position(index).distance_to(state.player) < 55
 	mining_dust.visible_instance_count = 8 if active else 0
 	if not active:
 		return
@@ -520,18 +602,38 @@ func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aime
 	water_material.set_shader_parameter("wave_time", time)
 	foam_material.set_shader_parameter("wave_time", time)
 	foliage_material.set_shader_parameter("wind_time", time)
+	var detail_origin := bird_body.position
+	foliage_material.set_shader_parameter("detail_origin", detail_origin)
+	foliage_material.set_shader_parameter("overview", float(overview))
+	for material in foliage_materials:
+		material.set_shader_parameter("wind_time", time)
+		material.set_shader_parameter("detail_origin", detail_origin)
 	for layer in fog_layers:
 		layer.material_override.set_shader_parameter("fog_time", time)
 	grass_mesh.visible_instance_count = 0 if overview else -1
 	shrub_mesh.visible_instance_count = 0 if overview else -1
+	detail_clock -= delta
+	if detail_clock <= 0 or delta == 0:
+		detail_clock = .2
+		for pool in detail_batches:
+			pool.set_overview(overview)
+			pool.update_detail(camera, detail_origin)
+		sun.shadow_enabled = not overview
 	if mining_dust:
 		_update_mining_dust(state)
 	update_camera(state, delta)
 	bird_model.set_motion(moving, high_flight)
-	bird_model.advance(delta, time)
+	if not overview:
+		bird_model.advance(delta, time)
+	bird_model.visible = not overview
+	npc_animation_clock += delta
 	for index in npc_views:
 		var animal: Node3D = npc_views[index]["animal"]
-		animal.advance(delta, time)
+		var near := animal.global_position.distance_to(bird_body.position) < 35
+		if not overview and (near or npc_animation_clock >= .1):
+			animal.advance(delta if near else npc_animation_clock, time)
+	if npc_animation_clock >= .1:
+		npc_animation_clock = 0
 	shadow.position = Vector3(state.player.x, 0.48 if state.player.x < 0 else 0.2, state.player.y)
 	range_ring.position = Vector3(state.player.x, 0.58, state.player.y)
 	var reach := state.throw_distance(bird_body.position.y)

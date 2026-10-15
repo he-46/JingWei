@@ -4,7 +4,7 @@ import sys
 import bpy
 
 
-def export(destination):
+def export(destination, materials=True):
     destination = Path(destination).resolve()
     if destination.suffix.lower() != '.glb':
         raise ValueError('Expected a .glb destination')
@@ -16,6 +16,7 @@ def export(destination):
     destination.parent.mkdir(parents=True, exist_ok=True)
     bpy.context.scene.frame_set(1)
     bpy.ops.export_scene.gltf(filepath=str(destination), export_format='GLB',
+                              export_materials='EXPORT' if materials else 'NONE',
                               export_yup=True, export_animations=True,
                               export_animation_mode='NLA_TRACKS', export_skins=True)
 

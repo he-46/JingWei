@@ -8,7 +8,7 @@ const Soundscape = preload("res://scripts/soundscape.gd")
 const Feedback = preload("res://scripts/visuals/action_feedback.gd")
 @export var bird_visual_scene: PackedScene
 @export var pangolin_visual_scene: PackedScene
-@export var mountain_visual_scenes: Array[PackedScene] = [World.SAMPLE_MOUNTAIN]
+@export var mountain_visual_scenes: Array[PackedScene] = World.Catalog.scenes(World.Catalog.MOUNTAINS)
 
 var state: JWState
 var world: Node3D
@@ -157,6 +157,7 @@ func _process(delta: float) -> void:
 	if soundscape != null and hud != null:
 		soundscape.set_context(state.player.x, hud.modal_open, selection_pending)
 		if feedback != null and not hud.modal_open and not selection_pending:
+			feedback.set_detail(world.bird_body.position, world.overview)
 			feedback.advance(delta)
 	if capture_path.is_empty():
 		return

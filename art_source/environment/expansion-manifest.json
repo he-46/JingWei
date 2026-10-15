@@ -1,0 +1,223 @@
+{
+  "generator": "art_source/build_expansion.py",
+  "blender": "4.5.3 LTS",
+  "source": "Original project topology; existing original painted atlases.",
+  "assets": {
+    "spire_mountain": {
+      "triangles": 1918,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/spire_mountain.blend",
+      "model": "assets/models/environment/spire_mountain.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "twin_mountain": {
+      "triangles": 1918,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/twin_mountain.blend",
+      "model": "assets/models/environment/twin_mountain.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "ridge_mountain": {
+      "triangles": 1918,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/ridge_mountain.blend",
+      "model": "assets/models/environment/ridge_mountain.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "mesa_mountain": {
+      "triangles": 1918,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/mesa_mountain.blend",
+      "model": "assets/models/environment/mesa_mountain.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "needle_mountain": {
+      "triangles": 1918,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/needle_mountain.blend",
+      "model": "assets/models/environment/needle_mountain.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "split_mountain": {
+      "triangles": 1918,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/split_mountain.blend",
+      "model": "assets/models/environment/split_mountain.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "crag_mountain": {
+      "triangles": 1918,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/crag_mountain.blend",
+      "model": "assets/models/environment/crag_mountain.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "spire_mountain_far": {
+      "triangles": 478,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/spire_mountain_far.blend",
+      "model": "assets/models/environment/spire_mountain_far.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "twin_mountain_far": {
+      "triangles": 478,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/twin_mountain_far.blend",
+      "model": "assets/models/environment/twin_mountain_far.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "ridge_mountain_far": {
+      "triangles": 478,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/ridge_mountain_far.blend",
+      "model": "assets/models/environment/ridge_mountain_far.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "mesa_mountain_far": {
+      "triangles": 478,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/mesa_mountain_far.blend",
+      "model": "assets/models/environment/mesa_mountain_far.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "needle_mountain_far": {
+      "triangles": 478,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/needle_mountain_far.blend",
+      "model": "assets/models/environment/needle_mountain_far.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "split_mountain_far": {
+      "triangles": 478,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/split_mountain_far.blend",
+      "model": "assets/models/environment/split_mountain_far.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "crag_mountain_far": {
+      "triangles": 478,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/crag_mountain_far.blend",
+      "model": "assets/models/environment/crag_mountain_far.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "strata_mountain_far": {
+      "triangles": 478,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/strata_mountain_far.blend",
+      "model": "assets/models/environment/strata_mountain_far.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "scatter_stone_1": {
+      "triangles": 60,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/scatter_stone_1.blend",
+      "model": "assets/models/environment/scatter_stone_1.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "scatter_stone_2": {
+      "triangles": 52,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/scatter_stone_2.blend",
+      "model": "assets/models/environment/scatter_stone_2.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "scatter_stone_3": {
+      "triangles": 44,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/scatter_stone_3.blend",
+      "model": "assets/models/environment/scatter_stone_3.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "scatter_stone_4": {
+      "triangles": 68,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/scatter_stone_4.blend",
+      "model": "assets/models/environment/scatter_stone_4.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "scatter_stone_5": {
+      "triangles": 76,
+      "materials": 1,
+      "atlas": "strata_paint.png",
+      "source": "art_source/environment/scatter_stone_5.blend",
+      "model": "assets/models/environment/scatter_stone_5.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "coast_pine": {
+      "triangles": 342,
+      "materials": 1,
+      "atlas": "coast_palette.png",
+      "source": "art_source/environment/coast_pine.blend",
+      "model": "assets/models/environment/coast_pine.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "coast_wind_tree": {
+      "triangles": 372,
+      "materials": 1,
+      "atlas": "coast_palette.png",
+      "source": "art_source/environment/coast_wind_tree.blend",
+      "model": "assets/models/environment/coast_wind_tree.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "coast_scrub": {
+      "triangles": 272,
+      "materials": 1,
+      "atlas": "coast_palette.png",
+      "source": "art_source/environment/coast_scrub.blend",
+      "model": "assets/models/environment/coast_scrub.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    },
+    "coast_low_grass": {
+      "triangles": 24,
+      "materials": 1,
+      "atlas": "coast_palette.png",
+      "source": "art_source/environment/coast_low_grass.blend",
+      "model": "assets/models/environment/coast_low_grass.glb",
+      "glb_embedded_materials": 0,
+      "embedded_images": 0
+    }
+  }
+}

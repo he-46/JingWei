@@ -15,7 +15,7 @@ func expect(condition: bool, description: String) -> void:
 		failures += 1
 		push_error("FAIL: " + description)
 
-func visible_stones(mesh: MultiMesh, start: int = 0, count: int = 32) -> int:
+func visible_stones(mesh, start: int = 0, count: int = 32) -> int:
 	var visible := 0
 	for part in range(start, start + count):
 		if mesh.get_instance_transform(part).origin.y > -10:
@@ -71,8 +71,8 @@ func run() -> void:
 		root.add_child(world)
 		world.setup(state)
 		expect(world.sample_enabled and world.mountain_batches[0].mesh == Visual.imported_mesh(World.SAMPLE_MOUNTAIN), "default world uses sample mesh on every scale")
-		expect(world.mountain_collision_groups[0].size() == 8 and world.mountain_collision_groups[1].size() == 1, "sample has eight cheap slabs; other silhouettes retain their adapter")
-		expect(world.quarry_mesh.instance_count == ceili(state.mountains.size() / 5.0) * 32 and world.mining_dust.instance_count == 8, "quarry and dust instance counts remain bounded")
+		expect(world.mountain_collision_groups[0].size() == 8 and world.mountain_collision_groups[1].size() == 8, "every mountain has eight contour slabs")
+		expect(world.quarry_mesh.instance_count == state.mountains.size() * 32 and world.mining_dust.instance_count == 8, "all formal quarries and dust instance counts remain bounded")
 		var visual = Visual.from_state(state, 0)
 		expect(visual.radius < Visual.from_state(state, 5).radius and visual.height < Visual.from_state(state, 5).height, "same authored mountain grows with storage while respecting its plot")
 		expect(int(state.mountains[0]["stock"]) == 0 and world.mining_dust.visible_instance_count == 0, "unmined mountain has no stock or working dust")

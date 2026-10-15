@@ -163,6 +163,7 @@ try {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_pangolin.gd', '--', '--qa') 'pangolin-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_mountain.gd', '--', '--qa') 'mountain-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_environment.gd', '--', '--qa') 'environment-tests.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_expansion.gd', '--', '--qa') 'expansion-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_feedback.gd', '--', '--qa') 'feedback-tests.log'
             Invoke-Engine @('--headless', '--fixed-fps', '60', '--path', $projectRoot, '--script', 'res://tests/test_vertical_slice.gd', '--', '--qa') 'vertical-slice-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_player_locator.gd', '--', '--qa') 'player-locator-tests.log'
