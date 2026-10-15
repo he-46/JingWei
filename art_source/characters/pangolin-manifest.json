@@ -1,0 +1,31 @@
+{
+  "generator": "art_source/build_pangolin.py",
+  "blender": "4.5.3 LTS",
+  "source": "art_source/characters/pangolin.blend",
+  "model": "assets/models/characters/pangolin.glb",
+  "texture": "assets/textures/characters/pangolin_atlas.png",
+  "texture_size": [
+    1024,
+    1024
+  ],
+  "bones": 18,
+  "clips_source_seconds": {
+    "idle": 1.6,
+    "locked": 2.0,
+    "walk": 0.85,
+    "dig": 0.9,
+    "complete": 0.7,
+    "finished": 2.0
+  },
+  "body_topology_verified": {
+    "connected_components": 1,
+    "closed_manifold": true
+  },
+  "scales": {
+    "back": 56,
+    "head": 6,
+    "tail": 24,
+    "shape": "overlapping bevelled shields with shallow ridge"
+  },
+  "license_source": "Original project mesh, UV paint atlas and animation; no third-party art."
+}

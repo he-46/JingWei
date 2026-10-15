@@ -1,4 +1,4 @@
-# 表现层接口（ART-01 建立，ART-02 扩展）
+# 表现层接口（ART-01 建立，ART-02/03 扩展）
 
 `state.gd` 管资源与尺寸，`main.gd` 判断操作并结算，`world.gd` 将已确定的状态送给表现对象。表现控制器不持有 JWState，不保存游戏，不触发采集、投石或开山结算。山体接收一次性数值快照。
 
@@ -21,11 +21,16 @@
 
 | 接口 | 输入与行为 |
 | --- | --- |
-| `set_work(target, active, all_done, fraction)` | 目标山编号、是否开采、是否全部完成、当前山开采比例；状态只读。 |
+| `set_work(target, active, all_done, fraction, is_unlocked=true)` | 目标山编号、是否开采、是否全部完成、当前山开采比例及解锁状态；状态只读。最后一项可省略，兼容 ART-01 示例。 |
+| `set_facing(direction)` | 朝向当前山体工作面，−Z 为模型正前方；根站位仍由逻辑提供。 |
 | `play_complete(completed_target)` | 逻辑 tick 确认整山完成后调用；仅记录并表现完工。 |
 | `advance(delta, clock)` | 同精卫的模拟时钟。 |
 
-动作语义为 `idle`、`dig`、`finished` 循环，`complete` 单次。每个世界仅有一个表现实例，根节点随逻辑对话点更新；动画不移动对话点。一次大步长完成多座山时，沿用原音效的合并规则，只表现该步开始时的目标完工，不逐个补播，库存全部由 tick 正常结算。读档直接显示现状，不补发历史完工事件。
+ART-03 动作语义为 `idle`、`locked`、`walk`、`dig`、`finished` 循环，`complete` 单次。未解锁时选 `locked`，解锁且正在工作时选 `dig`，全部完工时选 `finished`。缺少 locked 的旧占位模型回退到 idle。
+
+普通循环使用 0.10 秒混合。目标切换且仍在开采时，正式角色播放 0.35 秒原地入场步；完工动作持续 0.70 秒，随后进入入场步和新山的挖掘状态。两段计时依次消耗模拟时间，暂停时都停止。此移动动作不模拟两山之间的路径，根节点立即对齐新目标，生产不停顿；`use_arrival_animation` 为 false 的旧示例跳过入场步。
+
+每个世界仅有一个表现实例，根节点随逻辑对话点更新，正面朝向 `mountain_position - npc_position`；骨骼动作不移动对话点或地图标记。一次大步长完成多座山时，沿用原音效的合并规则，只表现该步开始时的目标完工，不逐个补播，库存全部由 tick 正常结算。读档直接显示现状，不补发历史完工或入场事件。`surface_material` 为整只穿山甲设置共享鳞甲材质。
 
 ## 山体：MountainVisual.from_state
 

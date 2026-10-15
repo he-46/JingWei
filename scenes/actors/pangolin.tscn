@@ -1,4 +1,10 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 [ext_resource type="Script" path="res://scripts/visuals/pangolin_visual.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/models/characters/pangolin.glb" id="2"]
+[ext_resource type="Material" path="res://assets/materials/pangolin_keratin.tres" id="3"]
 [node name="PangolinVisual" type="Node3D"]
 script = ExtResource("1")
+model_scene = ExtResource("2")
+surface_material = ExtResource("3")
+use_arrival_animation = true
+blend_seconds = 0.10

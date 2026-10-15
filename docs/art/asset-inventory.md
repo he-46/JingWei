@@ -2,12 +2,12 @@
 
 创建日期：2026-10-14，最近更新：2026-10-15。下表区分当前实现与计划资产。
 
-ART-01 完成导入接口和三个诊断占位模型；ART-02 完成精卫并接入普通游戏入口。实际交付规模见下方独立清单。
+ART-01 完成导入接口和三个诊断占位模型；ART-02/03 完成精卫与穿山甲并接入普通游戏入口。实际交付规模见下方独立清单。
 
 | ID | 对象 | 当前实现/入口 | 计划交付 | 负责包 | 当前状态 |
 | --- | --- | --- | --- | --- | --- |
 | CH-01 | 精卫 | characters/jingwei.glb：连续头身喙、分组羽翼、三簇尾羽、UV 图集与蒙皮 | 连贯网格、骨骼、六类动作、负重表现 | ART-02 | 已完成，7 段动作，3 档负重，主场景已使用 |
-| CH-02 | 穿山甲 | models.gd 的 pangolin()：球体身体、独立锥形鳞片，程序俯仰 | 鳞甲长尾角色、四类动作 | ART-03 | 程序原型可用，正式资产待制作 |
+| CH-02 | 穿山甲 | characters/pangolin.glb：连续长吻与弓背、86 片叠覆鳞甲、长尾与大爪 | 鳞甲长尾角色、四类动作 | ART-03 | 已完成，6 段动作，主场景已使用 |
 | MT-01 | 样板山 | mountain_mesh()：24 角向分段×10 环，五种高度函数；山体 shader 压低顶部 | 一套有岩层的山体、阶段与采空遗迹 | ART-04 | 原型有五种轮廓，正式样板待制作 |
 | MT-02～08 | 扩展山型 | 当前按 shape=0～4 共用五份网格 | 最终合计约 6～8 型及对应开采表现 | ART-08 | 待样板定稿后扩展 |
 | RS-01 | 散石 | rock_mesh() 程序生成；每资源点三块石头，用 MultiMesh 绘制 | 约六种石形、统一材质与资源辨识规范 | ART-04/08 | 原型可用，正式资产待制作 |
@@ -60,3 +60,17 @@ ART-01 完成导入接口和三个诊断占位模型；ART-02 完成精卫并接
 | 场景 | `scenes/actors/jingwei.tscn` 为默认游戏角色；`scenes/art/jingwei_preview.tscn` 提供动作与负重预览。 |
 
 ART-01 小节中“默认主场景仍采用程序模型”是该包交付时的历史状态，ART-02 起精卫已替换；原占位示例保留供接口回归检查。
+
+## ART-03 穿山甲资产
+
+| 字段 | 实际交付 |
+| --- | --- |
+| 源与生成方法 | `art_source/characters/pangolin.blend`、`art_source/build_pangolin.py`、`art_source/mesh_tools.py`；本项目原创网格、UV 绘制图集与动作。 |
+| 游戏模型 | `assets/models/characters/pangolin.glb`，1,321,788 字节。 |
+| 材质/纹理 | `assets/materials/pangolin_keratin.tres`；`assets/textures/characters/pangolin_atlas.png`，1024²、634,352 字节。 |
+| LOD0 | 8,040 三角形，1 个共享材质、1 个蒙皮表面；Godot 生成导入 LOD，无手工 LOD。 |
+| 骨骼/权重 | 18 根骨骼；每顶点不超过 4 个归一化权重。 |
+| 鳞片 | 背部 56、头部 6、尾部 24；浅脊带斜边的片状轮廓，全部并入角色网格。 |
+| 动作 | idle、locked、walk、dig、complete、finished；分别覆盖待机、未解锁、移动、挖掘、完工和休息。 |
+| 站位与碰撞 | 根节点继续使用逻辑 npc_position，正面朝向目标山；不新增角色碰撞或根运动，不改变对话距离及开山数值。 |
+| 来源与场景 | 无第三方美术文件；默认 `scenes/actors/pangolin.tscn`，预览 `scenes/art/pangolin_preview.tscn`。Blender/bpy 不随游戏运行。 |

@@ -294,7 +294,6 @@ func _sync_npcs(state: JWState) -> void:
 		var root := Node3D.new()
 		add_child(root)
 		var animal := pangolin_scene.instantiate()
-		animal.rotation.y = -0.5
 		root.add_child(animal)
 		Models.box(root, Vector3(0.95, 1.0, -0.65), Vector3(0.10, 2.0, 0.10), Color("866b4b"))
 		Models.box(root, Vector3(1.3, 1.8, -0.65), Vector3(0.65, 0.55, 0.06), Color("d5905b"))
@@ -303,7 +302,9 @@ func _sync_npcs(state: JWState) -> void:
 	var point := state.npc_position(index)
 	var view: Dictionary = npc_views[0]
 	view["root"].position = Vector3(point.x, State.NPC_GROUND_HEIGHT, point.y)
-	view["animal"].set_work(index, state.mining_unlocked() and state.next_mountain() >= 0, state.next_mountain() < 0, float(state.mountains[index]["work"]) / float(state.mountains[index]["yield"]))
+	var unlocked := state.mining_unlocked()
+	view["animal"].set_facing(state.mountain_position(index) - point)
+	view["animal"].set_work(index, unlocked and state.next_mountain() >= 0, state.next_mountain() < 0, float(state.mountains[index]["work"]) / float(state.mountains[index]["yield"]), unlocked)
 	var title: Label3D = view["label"]
 	title.position = Vector3(point.x, 3.0, point.y)
 	title.text = "穿山甲"
