@@ -384,14 +384,15 @@ func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aime
 		animal.advance(delta, time)
 	shadow.position = Vector3(state.player.x, 0.48 if state.player.x < 0 else 0.2, state.player.y)
 	range_ring.position = Vector3(state.player.x, 0.58, state.player.y)
-	range_ring.scale = Vector3(state.throw_distance(), 1, state.throw_distance())
+	var reach := state.throw_distance(bird_body.position.y)
+	range_ring.scale = Vector3(reach, 1, reach)
 	range_ring.visible = true
 	cell_marker.visible = aimed_cell >= 0
 	if aimed_cell >= 0:
 		var point := state.cell_center(aimed_cell)
 		cell_marker.position = Vector3(point.x, maxf(0.24, cell_height(state, aimed_cell) + 0.03), point.y)
 		# Grey-red cells are visible but beyond the physical throwing range.
-		cell_marker.material_override.albedo_color = Color("f3d491") if state.can_throw(aim_point) else Color("d38b79")
+		cell_marker.material_override.albedo_color = Color("f3d491") if state.can_throw(aim_point, bird_body.position.y) else Color("d38b79")
 	var nearby := state.closest_stone(state.player)
 	pickup_marker.visible = nearby >= 0 and state.carried < state.capacity() and not overview
 	if nearby >= 0:

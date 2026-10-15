@@ -271,14 +271,15 @@ func deposit_at(point: Vector2) -> int:
 	if not world.point_visible(point):
 		hud.notify("落点不在视野内。")
 		return 0
-	if not state.can_throw(point):
-		hud.notify("超出射程：%.1f / %.1f。" % [state.player.distance_to(point), state.throw_distance()])
+	var flight_height: float = world.bird_body.position.y
+	if not state.can_throw(point, flight_height):
+		hud.notify("超出射程：%.1f / %.1f。" % [state.player.distance_to(point), state.throw_distance(flight_height)])
 		return 0
 	var sea := state.sea_depth[index] >= 0
 	var was_unlocked := state.mining_unlocked()
 	var was_won := state.won
 	var before_cells := state.filled_count
-	var amount := state.deposit(point)
+	var amount := state.deposit(point, flight_height)
 	if not was_unlocked and state.mining_unlocked():
 		soundscape.play("unlock")
 		save_game(false)
@@ -298,7 +299,7 @@ func buy_upgrade(kind: String) -> void:
 			"bag": "负重提升至 %s 石" % State.number(state.capacity()),
 			"mining": "采集提升至 %s 石/次" % State.number(state.gather_power()),
 			"speed": "飞速提升至 %.1f" % state.move_speed(),
-			"throw": "射程提升至 %.1f" % state.throw_distance(),
+			"throw": "基础射程提升至 %.1f" % state.throw_distance(),
 		}
 		hud.notify(descriptions[kind])
 		soundscape.play("upgrade")
@@ -319,7 +320,7 @@ func _refresh() -> void:
 	var npc := state.nearby_mountain(state.player, 2.1, true)
 	var pile := state.nearby_pile(state.player)
 	if world.bird_body.position.y > 2.7:
-		prompt = "松开空格降落"
+		prompt = "高飞 · 射程 %.1f" % state.throw_distance(world.bird_body.position.y) if state.carried > 0 else "松开空格降落"
 	elif npc >= 0:
 		prompt = "穿山甲"
 	elif state.carried >= state.capacity():
@@ -330,7 +331,7 @@ func _refresh() -> void:
 		prompt = "拾回落地石子"
 	elif state.closest_stone(state.player) >= 0:
 		prompt = "散石 · 每次 %s 石" % State.number(state.gather_power())
-	hud.update_state(state, prompt, aimed_cell, target)
+	hud.update_state(state, prompt, aimed_cell, target, world.bird_body.position.y)
 	if world.bird_body.position.y > 2.7:
 		hud.interact_button.disabled = true
 
@@ -353,7 +354,7 @@ func show_menu() -> void:
 func show_help() -> void:
 	if hud.modal_open or selection_pending:
 		return
-	hud.show_modal("操作", "WASD / 方向键  移动\n空格  高飞，松开降落\nE  采集 / 对话（可按住）\nQ / 鼠标左键  射程内投石\n\nU  收起升级栏　Tab  全图\n滚轮  缩放　M  静音　Esc  暂停\n\n陆地石子可拾回；填入海中才获得修行。", [{"text": "返回", "action": "resume"}])
+	hud.show_modal("操作", "WASD / 方向键  移动\n空格  升高增程，松开降落\nE  低空采集 / 对话（可按住）\nQ / 鼠标左键  射程内投石\n\nU  收起升级栏　Tab  全图\n滚轮  缩放　M  静音　Esc  暂停\n\n满高度射程为基础的 2 倍，金圈显示当前范围。\n陆地石子可拾回；填入海中才获得修行。", [{"text": "返回", "action": "resume"}])
 
 func _modal_action(action: String) -> void:
 	if action.begins_with("world_"):

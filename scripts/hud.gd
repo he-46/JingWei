@@ -374,7 +374,7 @@ func set_overview(enabled: bool) -> void:
 	drawer_button.disabled = enabled
 	map_button.text = "返回  Tab" if enabled else "全图  Tab"
 
-func update_state(state: JWState, prompt: String, aimed_cell: int, aimed_point: Vector2 = Vector2.INF) -> void:
+func update_state(state: JWState, prompt: String, aimed_cell: int, aimed_point: Vector2 = Vector2.INF, flight_height: float = State.BIRD_HOVER_HEIGHT) -> void:
 	cargo.text = "%s / %s" % [number(state.carried), number(state.capacity())]
 	cargo.add_theme_color_override("font_color", RUST if state.carried >= state.capacity() else INK)
 	cultivation_label.text = number(state.cultivation)
@@ -436,7 +436,7 @@ func update_state(state: JWState, prompt: String, aimed_cell: int, aimed_point: 
 		target.disabled = price < 0 or state.cultivation < price
 		detail["cost"].add_theme_color_override("font_color", MUTED if target.disabled else ACCENT)
 		detail["value"].add_theme_color_override("font_color", INK if not target.disabled else MUTED)
-		target.tooltip_text = {"bag": "每次最多携带的石子数", "mining": "每次采集量，同时加快穿山甲开山", "throw": "投石的水平距离", "speed": "飞行速度"}[kind]
+		target.tooltip_text = {"bag": "每次最多携带的石子数", "mining": "每次采集量，同时加快穿山甲开山", "throw": "基础水平射程；按住空格升高，最高可达 2 倍", "speed": "飞行速度"}[kind]
 		if price >= 0 and state.cultivation < price:
 			target.tooltip_text += "\n还需 %s 修行" % number(price - state.cultivation)
 	overview_info.text = "%d × %d 格 · %d 座山" % [state.grid_size, state.grid_size, state.mountains.size()]
@@ -445,8 +445,10 @@ func update_state(state: JWState, prompt: String, aimed_cell: int, aimed_point: 
 	if aimed_cell >= 0:
 		var depth := state.sea_depth[aimed_cell]
 		cell_label.text = "%s  %s / %s 石" % [State.DEPTH_NAMES[depth], number(state.sea_fill[aimed_cell]), number(state.sea_capacity[aimed_cell])] if depth >= 0 else "大陆 · 石子可拾回"
-		if aimed_point.is_finite() and not state.can_throw(aimed_point):
-			cell_label.text += "   超出射程"
+		if aimed_point.is_finite():
+			cell_label.text += "   射程 %.1f" % state.throw_distance(flight_height)
+			if not state.can_throw(aimed_point, flight_height):
+				cell_label.text += " · 超距"
 
 func _update_atlas(state: JWState) -> void:
 	var mine_code := ""

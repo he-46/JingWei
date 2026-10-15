@@ -256,11 +256,13 @@ func upgrade_limit(kind: String) -> int:
 		return {100000: 4, 1000000: 6, 10000000: 8, 100000000: 10}[target_stones]
 	return 6 if kind == "speed" else MAX_LEVEL
 
-func throw_distance() -> float:
-	return THROW_DISTANCES[int(upgrades["throw"])]
+func throw_distance(flight_height: float = BIRD_HOVER_HEIGHT) -> float:
+	# Height is transient scene input, so saves and ground-level callers keep their base range.
+	var rise := clampf((flight_height - BIRD_HOVER_HEIGHT) / (high_flight_height() - BIRD_HOVER_HEIGHT), 0.0, 1.0) if is_finite(flight_height) else 0.0
+	return THROW_DISTANCES[int(upgrades["throw"])] * (1.0 + rise)
 
-func can_throw(point: Vector2) -> bool:
-	return cell_at(point) >= 0 and player.distance_to(point) <= throw_distance() + 0.00001
+func can_throw(point: Vector2, flight_height: float = BIRD_HOVER_HEIGHT) -> bool:
+	return cell_at(point) >= 0 and player.distance_to(point) <= throw_distance(flight_height) + 0.00001
 
 func upgrade_cost(kind: String) -> int:
 	if not upgrades.has(kind) or int(upgrades[kind]) >= upgrade_limit(kind):
@@ -461,9 +463,9 @@ func cell_at(point: Vector2) -> int:
 func cell_center(index: int) -> Vector2:
 	return map_origin + Vector2((index % grid_size + 0.5) * CELL_SIZE, (index / grid_size + 0.5) * CELL_SIZE)
 
-func deposit(point: Vector2) -> int:
+func deposit(point: Vector2, flight_height: float = BIRD_HOVER_HEIGHT) -> int:
 	var start := cell_at(point)
-	if start < 0 or carried <= 0 or not can_throw(point):
+	if start < 0 or carried <= 0 or not can_throw(point, flight_height):
 		return 0
 	if sea_depth[start] < 0:
 		var amount := carried

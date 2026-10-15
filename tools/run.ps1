@@ -150,6 +150,7 @@ try {
         if ($Mode -eq 'Test') {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_runner.gd') 'state-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_game.gd', '--', '--qa') 'game-tests.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_throw_height.gd', '--', '--qa') 'throw-height-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_audio.gd', '--', '--qa') 'audio-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_ui.gd', '--', '--qa') 'ui-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_visuals.gd', '--', '--qa') 'visual-tests.log'
