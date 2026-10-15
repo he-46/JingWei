@@ -124,6 +124,9 @@ func _build_lighting(state: JWState) -> void:
 	light.light_color = Color("fff4df")
 	light.light_energy = 0.68
 	light.shadow_enabled = true
+	# A small depth offset suppresses self-shadow stripes on narrow, faceted peaks.
+	light.shadow_bias = 0.2
+	light.shadow_normal_bias = 2.0
 	light.directional_shadow_max_distance = 90.0
 	add_child(light)
 	camera = Camera3D.new()

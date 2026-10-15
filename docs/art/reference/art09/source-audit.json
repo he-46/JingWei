@@ -1,0 +1,327 @@
+{
+  "scope": "Git-tracked plus non-ignored delivery candidates; this audit JSON excludes itself to avoid a self hash. Actual committed ZIP is verified separately.",
+  "files_count_excluding_this_report": 513,
+  "uncompressed_bytes_excluding_this_report": 140063343,
+  "bytes_by_top_directory": {
+    "root_files": 16941,
+    "Godot": 87812810,
+    "art_source": 22239975,
+    "artifacts": 1,
+    "assets": 11227402,
+    "docs": 18316663,
+    "scenes": 3627,
+    "scripts": 167898,
+    "shaders": 8912,
+    "tests": 203922,
+    "tools": 65192
+  },
+  "formal_models": [
+    {
+      "model": "assets/models/characters/jingwei.glb",
+      "model_bytes": 1070952,
+      "model_sha256": "5a54b8889612bf7760ab07df254a838fe9a94d4771d369d8d88355d34b0850e5",
+      "source": "art_source/characters/jingwei.blend",
+      "manifest": "art_source/characters/jingwei-manifest.json",
+      "source_sha256": "5dbb200027255f117978d6a99035bce1d8f9431cc6d063d9e4fd91ff123fc0ac"
+    },
+    {
+      "model": "assets/models/characters/pangolin.glb",
+      "model_bytes": 1321788,
+      "model_sha256": "e850d27b6417573be2a229002615e54bdcc09956f488e61bd5338e36e22daada",
+      "source": "art_source/characters/pangolin.blend",
+      "manifest": "art_source/characters/pangolin-manifest.json",
+      "source_sha256": "0cf6436be62368c00033ddcd00ac753caf6b8fc91097d99859dc42049490bf1e"
+    },
+    {
+      "model": "assets/models/environment/coast_grass.glb",
+      "model_bytes": 129016,
+      "model_sha256": "8093fb51deacf1e85b7a75016ad436c25f29cb15bfd7a65add327d631f3fe221",
+      "source": "art_source/environment/coast_grass.blend",
+      "manifest": "art_source/environment/coast-manifest.json",
+      "source_sha256": "199820ee84d7bd19e0dd96c188efc95a258e9d9c8668528247600945f1787e0a"
+    },
+    {
+      "model": "assets/models/environment/coast_low_grass.glb",
+      "model_bytes": 2680,
+      "model_sha256": "b148d18a4f5c3f2c5867b8e6e125bd2197eb381788cc241e08c41650eb17b5e9",
+      "source": "art_source/environment/coast_low_grass.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "86d708f32268d6f3a41b97825ddcaf5b29647f9260e65829a0c461c10d0b5a20"
+    },
+    {
+      "model": "assets/models/environment/coast_pine.glb",
+      "model_bytes": 21660,
+      "model_sha256": "ae7ae819d9dd0f8821a73658e73600e3d12cb907afed13f35cf624f3b6ae64f2",
+      "source": "art_source/environment/coast_pine.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "1cbb17b2549ada8cec8179ed515458eb0359326467127679010bd73739e308f1"
+    },
+    {
+      "model": "assets/models/environment/coast_scrub.glb",
+      "model_bytes": 16472,
+      "model_sha256": "f1655747eec2c0ea0a55239eded0c2bc3b51c8f745868b03f2ac797492970277",
+      "source": "art_source/environment/coast_scrub.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "0dacb10cc3a2a99acbb4d8d67102b7d8cc456349be3e51f64d6f6bec72e5c6f8"
+    },
+    {
+      "model": "assets/models/environment/coast_shrub.glb",
+      "model_bytes": 139612,
+      "model_sha256": "16ee9f96b08bbbe3a2463defacab464dc5c49f5687f8945f16d7e01e671bde09",
+      "source": "art_source/environment/coast_shrub.blend",
+      "manifest": "art_source/environment/coast-manifest.json",
+      "source_sha256": "0f868a9eafca2c977e60df60eb4816c785c9fc4a513e3164d9df9e6e0a39477d"
+    },
+    {
+      "model": "assets/models/environment/coast_tree.glb",
+      "model_bytes": 161796,
+      "model_sha256": "9a453904bb43a7472f68f1ee242c537022bea32f85034cd82ce93270fc248c90",
+      "source": "art_source/environment/coast_tree.blend",
+      "manifest": "art_source/environment/coast-manifest.json",
+      "source_sha256": "95d4e707c3f314f9ac30f83a59eb721519f160cc5c946d240c496e12fa248d66"
+    },
+    {
+      "model": "assets/models/environment/coast_wind_tree.glb",
+      "model_bytes": 22008,
+      "model_sha256": "f561f3bc69f46d2e92e8ae87fa43eeda96602d80eb0894a69d48d34f3693bd3b",
+      "source": "art_source/environment/coast_wind_tree.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "b8592aa3261922f5047e2d68602ee6702fba44a2b5b39a39138df602b97b4fc8"
+    },
+    {
+      "model": "assets/models/environment/crag_mountain.glb",
+      "model_bytes": 112732,
+      "model_sha256": "fc35ea14ae230c026391f75253dddfdb0c93bf332daf070c1d73e8b197c775b1",
+      "source": "art_source/environment/crag_mountain.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "df5561fecfcbf4be7f408b294fb630342d52ae0d85406f758b18811b0bffb524"
+    },
+    {
+      "model": "assets/models/environment/crag_mountain_far.glb",
+      "model_bytes": 30100,
+      "model_sha256": "097d6cb4bb5122dc23a319314bb43628407c6781c1cf37b919ea6bf3bfa091a4",
+      "source": "art_source/environment/crag_mountain_far.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "2261506019df2ced5050969d406bad2da60e643e13aea3aebf4aedf185f5fe18"
+    },
+    {
+      "model": "assets/models/environment/mesa_mountain.glb",
+      "model_bytes": 135324,
+      "model_sha256": "c91a0d0935dd0104125e99f8e7df9f8a51f6c4a4b9676e5703910e557a310ccd",
+      "source": "art_source/environment/mesa_mountain.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "ef1249d18dd1995da0672d62b8212dea38b00eb5b521035cbdd69da9bcf774c4"
+    },
+    {
+      "model": "assets/models/environment/mesa_mountain_far.glb",
+      "model_bytes": 34548,
+      "model_sha256": "6dc48e3067ff29b7e7503a66138bd16d3f8467a60cc64b3ceb484e3315dbd3aa",
+      "source": "art_source/environment/mesa_mountain_far.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "c99a468d181b1e420fe0b85a0dbafb3e2c3affb95adf8e65135bc78df8b6e3b5"
+    },
+    {
+      "model": "assets/models/environment/needle_mountain.glb",
+      "model_bytes": 107616,
+      "model_sha256": "9dd9c20a531a2e057d9f6d2237a6a8cfcefc0ff76eebe8a0ac84d499511cb96d",
+      "source": "art_source/environment/needle_mountain.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "9dfd170aa4fc2ba00b0ccf4d2dfcbcfc55ce182fe2f91a696b0fd747f8251c57"
+    },
+    {
+      "model": "assets/models/environment/needle_mountain_far.glb",
+      "model_bytes": 29076,
+      "model_sha256": "8bccce3eae8cf2241c79638b6e68748270d45423fa5c6a78773f3629aefdec17",
+      "source": "art_source/environment/needle_mountain_far.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "c34bb7bb4ec4be9a6f8344af7c56077a4961a0972dcffbc7e44e3483f5ea56c5"
+    },
+    {
+      "model": "assets/models/environment/quarry_site.glb",
+      "model_bytes": 415320,
+      "model_sha256": "2f912fa33ac885ebde061327db06befa8f9c42ccb0cbb90b1d9445c0baf48651",
+      "source": "art_source/environment/quarry_site.blend",
+      "manifest": "art_source/environment/mountain-manifest.json",
+      "source_sha256": "c73069d9fb5d537ae9a0cc73e395302879129e9c505343e9204cd11d82712b57"
+    },
+    {
+      "model": "assets/models/environment/quarry_stone.glb",
+      "model_bytes": 404400,
+      "model_sha256": "49bab76f75c7e6e123b69b1f54c67b0a854df9a3f8049e53ef7e2eb608a90f5f",
+      "source": "art_source/environment/quarry_stone.blend",
+      "manifest": "art_source/environment/mountain-manifest.json",
+      "source_sha256": "838d801c493bcdd38af7b32386d84b638c0d9c1b613a021878f45a414f7d975a"
+    },
+    {
+      "model": "assets/models/environment/ridge_mountain.glb",
+      "model_bytes": 115168,
+      "model_sha256": "285ba5eadae7c04ce360c9b5212b9d38ba2a73b4f69e3350078501aebb005677",
+      "source": "art_source/environment/ridge_mountain.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "5273e8b363c255f639c0beeabf468f1f5c54a25e17a3f91fa05ce9d692475dbe"
+    },
+    {
+      "model": "assets/models/environment/ridge_mountain_far.glb",
+      "model_bytes": 30744,
+      "model_sha256": "dfff7e50d35f9d83c5799d2d92b921de7a3ac6072751afddc4c0a6b1b8d73bf8",
+      "source": "art_source/environment/ridge_mountain_far.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "b029481eefe1e0b564f8cc6fdd08d03207569bbc7649b4d8a0e7af1d4f20610d"
+    },
+    {
+      "model": "assets/models/environment/scatter_stone_1.glb",
+      "model_bytes": 4944,
+      "model_sha256": "fdb39592a4eb65719bf05f2db504d55372c3732085bc27af31ab64eccbd06e09",
+      "source": "art_source/environment/scatter_stone_1.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "e53c4d3707b849d0fe0b0cb85109377c84c58ee5fe73be691d91fd0783a25f0c"
+    },
+    {
+      "model": "assets/models/environment/scatter_stone_2.glb",
+      "model_bytes": 4452,
+      "model_sha256": "5b98d834e7d08b0f722aa97e69e8788dd6f5bec9ddba1a307d46a34da55315a7",
+      "source": "art_source/environment/scatter_stone_2.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "e7aff1ed55183dd3f7a250424ea99b0ceb2579b065c26ca85440f59672b9be42"
+    },
+    {
+      "model": "assets/models/environment/scatter_stone_3.glb",
+      "model_bytes": 3952,
+      "model_sha256": "cb35d029bf6fd65df2241f237dee8a0d025eda09cdd94069649ec5cca25d83b1",
+      "source": "art_source/environment/scatter_stone_3.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "80903cf257778dbe3d8aa8ae93e179be875d0620e07a261a873e20cf384c3a7d"
+    },
+    {
+      "model": "assets/models/environment/scatter_stone_4.glb",
+      "model_bytes": 5448,
+      "model_sha256": "468e771ad2fc5348997bd78a8e1f4455cbe8275b3ab405c231caf605312af5d9",
+      "source": "art_source/environment/scatter_stone_4.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "98eeb6505fb3c8bf282f346f9deb5aabace00c9506103747b38b3a04e8491f40"
+    },
+    {
+      "model": "assets/models/environment/scatter_stone_5.glb",
+      "model_bytes": 5940,
+      "model_sha256": "514721670290a4378de6cca15b152eebdb6fdae52ac5b601bdfad3e774fadc9d",
+      "source": "art_source/environment/scatter_stone_5.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "d2c680d3265293aea8c404599365e3f08400da461082944f3db59616493c329b"
+    },
+    {
+      "model": "assets/models/environment/shore_rock.glb",
+      "model_bytes": 133680,
+      "model_sha256": "949afed5a80f3e57edc9e85d1b43d6dc4b1e4b3529e0746c7ed9a2908d7bfb45",
+      "source": "art_source/environment/shore_rock.blend",
+      "manifest": "art_source/environment/coast-manifest.json",
+      "source_sha256": "4c150013bdd1df78659733abc69b2d06bd569b7c2441533787f4ca58f19df2a2"
+    },
+    {
+      "model": "assets/models/environment/spire_mountain.glb",
+      "model_bytes": 135388,
+      "model_sha256": "7516a2456194289d8132a928ec2b3eb558d464993dc793e0b3890609fff9362d",
+      "source": "art_source/environment/spire_mountain.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "35933682c43acf5529ed329edf3e121758b99c1d416aa85efaa5f549cde6230f"
+    },
+    {
+      "model": "assets/models/environment/spire_mountain_far.glb",
+      "model_bytes": 34520,
+      "model_sha256": "ceaf853ee2aaba9af3acd5c6ddb70d13d9283f7968e7769b5c3ea1d3efb00346",
+      "source": "art_source/environment/spire_mountain_far.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "38e90ec07ac11f065e61ca3313b88f0450aa065232e095f42d8e209192399d65"
+    },
+    {
+      "model": "assets/models/environment/split_mountain.glb",
+      "model_bytes": 102496,
+      "model_sha256": "89167ec6808f272b7e425cc975c48f3b3870e33fae503180b06bbad734810bb9",
+      "source": "art_source/environment/split_mountain.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "7c9a315649298d8c9bc239b27ac400b416f2f69f34e585b94a46cc2fe913c64c"
+    },
+    {
+      "model": "assets/models/environment/split_mountain_far.glb",
+      "model_bytes": 28628,
+      "model_sha256": "4d2592ba115b7a49519bea15a8b61598e672d27e8a3435edc07c574f235770d2",
+      "source": "art_source/environment/split_mountain_far.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "23b9f15c4bce2254c795b80e8e7ff39a1bd782f8202ad40a3e5dcd8bdbf5dec7"
+    },
+    {
+      "model": "assets/models/environment/strata_mountain.glb",
+      "model_bytes": 504336,
+      "model_sha256": "c2587a634786305b48a1cbfb9b837498f5821f631a31e1a4316dbe9e43065605",
+      "source": "art_source/environment/strata_mountain.blend",
+      "manifest": "art_source/environment/mountain-manifest.json",
+      "source_sha256": "3c132588a1c001cf2353d10f031153367daf875cb6a5984eb3703a4e9af6ca06"
+    },
+    {
+      "model": "assets/models/environment/strata_mountain_far.glb",
+      "model_bytes": 39068,
+      "model_sha256": "1dea2d0411b1ad5e4ebf116f89d89ed5673581ff42c317e64a17d277b1589753",
+      "source": "art_source/environment/strata_mountain_far.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "18d58c4c10e9e61ed79d18a6890da7623356ae7468b72821d8d463bc61e51b76"
+    },
+    {
+      "model": "assets/models/environment/twin_mountain.glb",
+      "model_bytes": 117468,
+      "model_sha256": "c4645bedfec729ac48304a82b481ff21f87ff1acbafa174f1fc44f634a39ab4e",
+      "source": "art_source/environment/twin_mountain.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "5d941fbf15e460104cff0c8283835c18abbef2ee987d0eff64e63dc6c8e0e418"
+    },
+    {
+      "model": "assets/models/environment/twin_mountain_far.glb",
+      "model_bytes": 31512,
+      "model_sha256": "dd2f391bb0bf8a8bb6dd0793f5970434861300d00c02853f48d8fcf50db2889c",
+      "source": "art_source/environment/twin_mountain_far.blend",
+      "manifest": "art_source/environment/expansion-manifest.json",
+      "source_sha256": "b31c5932a9936bc2f39ddc6ab26c2b8c9d40b6ae1c6e7172b0986f12c7a28467"
+    },
+    {
+      "model": "assets/models/relics/basket.glb",
+      "model_bytes": 51960,
+      "model_sha256": "7028f3b433a248b0650d9677524a4f83d44eebb11c263f7e70d3f38076303fb9",
+      "source": "art_source/relics/basket.blend",
+      "manifest": "art_source/relics/relic-manifest.json",
+      "source_sha256": "0592c7eab664f217386b4c4cee61d943cbae361bf6791b17755ce48f58f77750"
+    },
+    {
+      "model": "assets/models/relics/feather.glb",
+      "model_bytes": 42512,
+      "model_sha256": "1028d8aa82661ef11f1bf0b14a0e00006d0ec03459e395dae121d06e95037546",
+      "source": "art_source/relics/feather.blend",
+      "manifest": "art_source/relics/relic-manifest.json",
+      "source_sha256": "f01df5005f4c728b08321f0bfc06027e5331d84983bc948a06b7296e3fe4708e"
+    },
+    {
+      "model": "assets/models/relics/seal.glb",
+      "model_bytes": 37900,
+      "model_sha256": "f424349b6e2fc06580d86be89392b6fc40e0991c5703dccba2f989a96e0cb66a",
+      "source": "art_source/relics/seal.blend",
+      "manifest": "art_source/relics/relic-manifest.json",
+      "source_sha256": "b73445cce26411821a08cec966448697c366111d822cc143ec86d0ec800275fd"
+    }
+  ],
+  "audio": {
+    "count": 19,
+    "generator": "tools/generate_audio.py",
+    "external_recordings": 0
+  },
+  "font_files_bundled": [],
+  "engine_sha256": "6BF5B2D5BB1580D62615DE321EE4D5896CE0DB452603CA61F1AB9B5157D9AB87",
+  "engine_notices": [
+    {
+      "path": "Godot/LICENSE.txt",
+      "sha256": "b0435e3b3e4e55238f05f4b306f30524a1b2e20147810d436eaa554fa6855c80"
+    },
+    {
+      "path": "Godot/COPYRIGHT.txt",
+      "sha256": "cb1980c88089573bcacd7221d777c689bb8bbd778799f24c27fca0fe5f774d6d"
+    }
+  ],
+  "project_license_file_present": false,
+  "license_note": "Original project assets have provenance records; no project-wide redistribution license has been selected. Godot and its bundled third-party notices remain separate."
+}

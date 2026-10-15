@@ -102,3 +102,9 @@ Godot 中复制角色预制场景，设置 `model_scene`。默认动作名可直
 所有山均为单网格，标准地面 0、峰高 1、水平半径 <0.96。8 份全图模型为每型 478 三角形，正式模型每型 1,918；完整预算及存档家族映射见 [扩展资产清单](expansion-assets.md)。普通游戏的所有山均用正式资产，早期程序山只供导入诊断覆盖接口使用。
 
 实机验证入口 `tools/verify-art-expansion.ps1`，包含 113 项山体、95 项环境、71 项反馈、281 项扩展、31 项定位检查及资产总览；扩展项比无窗口模式多四项实际实例颜色检查。普通 Test.cmd 增加 277 项扩展检查，合计 1,203 项。`tools/measure-art-expansion.ps1 -Output artifacts/art/art08-performance-accepted` 单独运行二十个实际 1080p 渲染压力场景，按引擎报告的游戏进程 ID 采样工作集；`tools/package-expansion-review.py` 整理最终摘要与图片。详见 [性能报告](performance-report.md)。
+
+## ART-09 交付复现
+
+当前 Test.cmd 增加 305 项资源核查和 107 项真实存取档检查，共 1,615 项。`tools/verify-art-release.ps1` 捕获四档、旧档和完成面板，复核窄窗口/遮挡/雾，并重新录制普通资源循环；`tools/package-art-release.py --ffmpeg <路径>` 只处理这些帧，生成最终 JPG 与 14.5 秒无声剪辑，不改前包历史材料。
+
+`tools/audit-release.py` 使用标准 Python 检查跟踪候选文件、36 个正式模型的同名源文件/制作清单与 SHA-256、内附引擎哈希和许可文件。`tools/verify-release-copy.ps1 -Ref HEAD -Destination "artifacts/art/ART09 源码下载验证"` 只归档指定提交并从 ZIP 重建下载环境，调用真正的 Play.cmd/Test.cmd/Sample.cmd 和图形启动；目标目录不可已存在。完整 [发布清单](release-checklist.md)、[更新说明及回滚](art-update-notes.md)、[来源许可](asset-sources-and-licenses.md) 是交付入口。

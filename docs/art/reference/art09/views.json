@@ -1,0 +1,222 @@
+{
+	"note": "Controlled review poses only; resource-cycle walkthrough is recorded separately.",
+	"seed": 10213,
+	"views": [
+		{
+			"camera_position": "(13.5, 29.0, 30.0)",
+			"camera_rotation": "(-42.73845, 30.65067, 0.0)",
+			"camera_size": 29.0,
+			"height": 1.45000004768372,
+			"image_size": [
+				1440,
+				900
+			],
+			"locator_visible": false,
+			"obscured": false,
+			"player": [
+				-2.5,
+				3.0
+			],
+			"view": "coast-normal",
+			"zoom": 1.0
+		},
+		{
+			"camera_position": "(13.5, 29.0, 30.0)",
+			"camera_rotation": "(-42.73845, 30.65067, 0.0)",
+			"camera_size": 29.0,
+			"height": 1.45000004768372,
+			"image_size": [
+				1440,
+				900
+			],
+			"locator_visible": false,
+			"obscured": false,
+			"player": [
+				-2.5,
+				3.0
+			],
+			"view": "coast-ui-collapsed",
+			"zoom": 1.0
+		},
+		{
+			"camera_position": "(7.008361, 29.0, 32.71849)",
+			"camera_rotation": "(-42.73845, 30.65067, 0.0)",
+			"camera_size": 20.8799991607666,
+			"height": 1.45000004768372,
+			"image_size": [
+				1440,
+				900
+			],
+			"locator_visible": true,
+			"obscured": true,
+			"player": [
+				-8.99163913726807,
+				5.71849536895752
+			],
+			"view": "mountain-normal",
+			"zoom": 0.72
+		},
+		{
+			"camera_position": "(1.312286, 29.0, 29.46887)",
+			"camera_rotation": "(-42.73845, 30.65067, 0.0)",
+			"camera_size": 29.0,
+			"height": 1.45000004768372,
+			"image_size": [
+				1440,
+				900
+			],
+			"locator_visible": false,
+			"obscured": true,
+			"player": [
+				-14.6877136230469,
+				2.46886825561523
+			],
+			"view": "mountain-obscured-without-cue",
+			"zoom": 1.0
+		},
+		{
+			"camera_position": "(1.312286, 29.0, 29.46887)",
+			"camera_rotation": "(-42.73845, 30.65067, 0.0)",
+			"camera_size": 29.0,
+			"height": 1.45000004768372,
+			"image_size": [
+				1440,
+				900
+			],
+			"locator_visible": true,
+			"obscured": true,
+			"player": [
+				-14.6877136230469,
+				2.46886825561523
+			],
+			"view": "mountain-obscured-with-cue",
+			"zoom": 1.0
+		},
+		{
+			"camera_position": "(1.312286, 29.0, 29.46887)",
+			"camera_rotation": "(-42.73845, 30.65067, 0.0)",
+			"camera_size": 29.0,
+			"height": 9.02000045776367,
+			"image_size": [
+				1440,
+				900
+			],
+			"locator_visible": false,
+			"obscured": false,
+			"player": [
+				-14.6877136230469,
+				2.46886825561523
+			],
+			"view": "high-flight",
+			"zoom": 1.0
+		},
+		{
+			"camera_position": "(11.50498, 29.0, 33.89439)",
+			"camera_rotation": "(-42.73845, 30.65067, 0.0)",
+			"camera_size": 29.0,
+			"height": 1.45000004768372,
+			"image_size": [
+				1440,
+				900
+			],
+			"locator_visible": true,
+			"obscured": true,
+			"player": [
+				-4.49502229690552,
+				6.89439105987549
+			],
+			"view": "tree-obscured",
+			"zoom": 1.0
+		},
+		{
+			"camera_position": "(29.5, 58.0, 57.0)",
+			"camera_rotation": "(-42.73845, 30.65067, 0.0)",
+			"camera_size": 58.0,
+			"height": 1.45000004768372,
+			"image_size": [
+				1440,
+				900
+			],
+			"locator_visible": false,
+			"obscured": false,
+			"player": [
+				-2.5,
+				3.0
+			],
+			"view": "coast-distant",
+			"zoom": 2.0
+		},
+		{
+			"camera_position": "(4.0, 119.1724, 18.52966)",
+			"camera_rotation": "(-82.40536, 0.0, 0.0)",
+			"camera_size": 76.8000030517578,
+			"height": 1.45000004768372,
+			"image_size": [
+				1440,
+				900
+			],
+			"locator_visible": false,
+			"obscured": false,
+			"player": [
+				-2.5,
+				3.0
+			],
+			"view": "overview",
+			"zoom": 2.0
+		},
+		{
+			"camera_position": "(13.5, 29.0, 30.0)",
+			"camera_rotation": "(-42.73845, 30.65067, 0.0)",
+			"camera_size": 29.0,
+			"height": 1.45000004768372,
+			"image_size": [
+				1152,
+				720
+			],
+			"locator_visible": false,
+			"obscured": false,
+			"player": [
+				-2.5,
+				3.0
+			],
+			"view": "coast-1152",
+			"zoom": 1.0
+		},
+		{
+			"camera_position": "(1.312286, 29.0, 29.46887)",
+			"camera_rotation": "(-42.73845, 30.65067, 0.0)",
+			"camera_size": 29.0,
+			"height": 1.45000004768372,
+			"image_size": [
+				1152,
+				720
+			],
+			"locator_visible": true,
+			"obscured": true,
+			"player": [
+				-14.6877136230469,
+				2.46886825561523
+			],
+			"view": "obscured-1152",
+			"zoom": 1.0
+		},
+		{
+			"camera_position": "(21.0, 29.0, 49.0)",
+			"camera_rotation": "(-42.73845, 30.65067, 0.0)",
+			"camera_size": 29.0,
+			"height": 1.45000004768372,
+			"image_size": [
+				1152,
+				720
+			],
+			"locator_visible": false,
+			"obscured": false,
+			"player": [
+				5.0,
+				22.0
+			],
+			"view": "boundary-water",
+			"zoom": 1.0
+		}
+	]
+}

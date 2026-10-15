@@ -1,0 +1,34 @@
+{
+	"capture_output": "res://artifacts/art/art09-review",
+	"checks": 107,
+	"display_server": "Windows",
+	"failures": 0,
+	"note": "Isolated normal save/load path; controlled regression poses and resource-balanced completion fixtures. No player save accessed.",
+	"save_fixture_folder": "res://artifacts/art/art09-regression/42576-1120456",
+	"scales": [
+		{
+			"archive_preserved": true,
+			"new_target": 1000000,
+			"old_delivered": 100000,
+			"target": 100000
+		},
+		{
+			"archive_preserved": true,
+			"new_target": 100000,
+			"old_delivered": 1000000,
+			"target": 1000000
+		},
+		{
+			"archive_preserved": true,
+			"new_target": 100000,
+			"old_delivered": 10000000,
+			"target": 10000000
+		},
+		{
+			"archive_preserved": true,
+			"new_target": 100000,
+			"old_delivered": 100000000,
+			"target": 100000000
+		}
+	]
+}

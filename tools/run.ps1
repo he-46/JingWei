@@ -167,6 +167,10 @@ try {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_feedback.gd', '--', '--qa') 'feedback-tests.log'
             Invoke-Engine @('--headless', '--fixed-fps', '60', '--path', $projectRoot, '--script', 'res://tests/test_vertical_slice.gd', '--', '--qa') 'vertical-slice-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_player_locator.gd', '--', '--qa') 'player-locator-tests.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_release_assets.gd') 'release-assets-tests.log'
+            # This test exercises real save/load; the script sets every save path
+            # to its own artifacts folder before the main scene enters the tree.
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_release.gd') 'release-regression-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_game.gd', '--', '--qa', '--imported-visuals') 'imported-game-tests.log'
         } elseif ($Check) {
             $entry = if ($Mode -eq 'Sample') { 'res://scenes/art/vertical_slice.tscn' } else { 'res://scenes/main.tscn' }

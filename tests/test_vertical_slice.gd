@@ -84,6 +84,9 @@ func save_clip_frame(label: String) -> void:
 	clip_labels.append(label)
 
 func checkpoint(label: String, record_clip: bool = true) -> void:
+	# The logical completion tick can precede the ordinary 0.15s presentation
+	# refresh. Capture the same settled state in the HUD and resource meshes.
+	game._refresh()
 	var s: JWState = game.state
 	expect(State.from_snapshot(s.snapshot()) != null, label + ": resources and cultivation remain valid save data")
 	records.append({"stage": label, "elapsed_simulation_seconds": s.elapsed,

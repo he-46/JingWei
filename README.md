@@ -129,4 +129,6 @@ ART-06 已接入采集碎屑、飞石、水花、落地、成陆和开山完工�
 
 ART-07 已完成可玩样板技术验收。新增 Sample.cmd；实际飞行采集四趟解锁开山，再搬空第一座山并形成新陆地，首轮共投入 1,152 石。山后、树后仅在遮挡时提示主角位置，并修正边界雾层遮入可达地面的投影。见 [完整评审与问题清单](docs/art/vertical-slice-review.md)、[14.5 秒实机短录像](docs/art/validation/art07/resource-cycle.mp4)。整体审美反馈与发布级性能继续记录，不把自动检查通过视作最终美术批准。
 
-ART-08 扩展全地图资产、按地区组合及分区绘制，为全图使用简化山体。见 [资产与兼容映射](docs/art/expansion-assets.md)、[四档地图性能报告](docs/art/performance-report.md)。下一包 ART-09 为美术版本发布验收与交付，尚不表示已完成独立 EXE 发布。
+ART-08 扩展全地图资产、按地区组合及分区绘制，为全图使用简化山体。见 [资产与兼容映射](docs/art/expansion-assets.md)、[四档地图性能报告](docs/art/performance-report.md)。
+
+ART-09 完成美术源码试玩候选版验收：36 个正式模型、字体与动画核查，四档真实存取档回归，完整 1,615 项检查以及 Git ZIP 的 Play.cmd/Test.cmd 启动验证。见 [发布清单与剩余事项](docs/art/release-checklist.md)、[美术更新说明与回滚](docs/art/art-update-notes.md)、[来源和许可](docs/art/asset-sources-and-licenses.md)、[14.5 秒实机短片](docs/art/validation/art09/resource-cycle.mp4)。ART-00～09 美术任务已完成；独立 EXE、项目级授权与商店发行仍单独待办。
