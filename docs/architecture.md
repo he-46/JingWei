@@ -2,7 +2,9 @@
 
 ## 状态、规则与表现
 
-scripts/state.gd 是纯数据状态，不依赖场景节点。scripts/main.gd 处理输入、视野判断、对话和旅程流程；world.gd 与 models.gd 根据状态生成 3D 表现；hud.gd 显示修行、海图和选择界面；save_store.gd 管理存档。
+scripts/state.gd 是纯数据状态，不依赖场景节点。scripts/main.gd 处理输入、视野判断、对话和旅程流程；world.gd 组织场景，并向 scripts/visuals 的角色控制器和山体快照传递表现状态；models.gd 提供默认程序网格。hud.gd 显示修行、海图和选择界面；save_store.gd 管理存档。
+
+ART-01 为角色建立可替换预制场景，内部可使用 GLB 骨骼动画；world 不再读取 WingLeft、WingRight、Load。角色动画随模拟时钟手动推进，采集、投石与完工事件仅接收逻辑已经结算的结果。山体仍使用五组 MultiMesh，允许替换标准化的单网格 GLB。单位、碰撞尺寸、动作名与导出方法见 [资产流程](art/asset-pipeline.md) 和 [表现接口](art/visual-contract.md)。
 
 石料、库存和修行都用整数。开采工作量和计时用浮点数。投石先结算状态，再播放飞行动画，动画不生成或消耗任何资源。首次选择规模之前，移动、生产、投放和保存均停止。
 

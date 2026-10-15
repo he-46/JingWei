@@ -5,6 +5,9 @@ export_credentials.cfg
 
 # Keep the bundled engine ZIP; exclude extracted executables and local builds.
 .tools/
+__pycache__/
+*.blend1
+*.blend2
 /Godot/*.exe
 /Godot/_sc_
 /Godot/editor_data/

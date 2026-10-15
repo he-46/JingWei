@@ -6,6 +6,9 @@ const HUD = preload("res://scripts/hud.gd")
 const Store = preload("res://scripts/save_store.gd")
 const Models = preload("res://scripts/models.gd")
 const Soundscape = preload("res://scripts/soundscape.gd")
+@export var bird_visual_scene: PackedScene
+@export var pangolin_visual_scene: PackedScene
+@export var mountain_visual_scenes: Array[PackedScene] = []
 
 var state: JWState
 var world: Node3D
@@ -57,6 +60,7 @@ func _ready() -> void:
 	if showcase:
 		_prepare_showcase()
 	world = World.new()
+	_configure_visuals()
 	add_child(world)
 	world.setup(state)
 	hud = HUD.new()
@@ -115,13 +119,13 @@ func _physics_process(delta: float) -> void:
 	var speed := state.move_speed()
 	bird.velocity.x = move_toward(bird.velocity.x, movement.x * speed, delta * speed * 7)
 	bird.velocity.z = move_toward(bird.velocity.z, movement.z * speed, delta * speed * 7)
-	bird.velocity.y = clampf(((world.flight_ceiling if high else 1.45) - bird.position.y) * 7, -6, 8)
+	bird.velocity.y = clampf(((world.flight_ceiling if high else State.BIRD_HOVER_HEIGHT) - bird.position.y) * 7, -6, 8)
 	bird.move_and_slide()
 	bird.position.x = clampf(bird.position.x, state.map_origin.x + 0.1, state.map_origin.x + state.map_side - 0.1)
 	bird.position.z = clampf(bird.position.z, state.map_origin.y + 0.1, state.map_origin.y + state.map_side - 0.1)
 	state.player = Vector2(bird.position.x, bird.position.z)
 	if movement.length_squared() > 0.01:
-		world.bird_model.rotation.y = lerp_angle(world.bird_model.rotation.y, atan2(-movement.x, -movement.z), delta * 12)
+		world.bird_model.set_facing(Vector2(movement.x, movement.z), delta)
 	simulation_clock += delta
 	while simulation_clock >= 0.2:
 		_advance_world(0.2)
@@ -221,6 +225,7 @@ func interact() -> void:
 	else:
 		amount = state.pickup_stone(state.closest_stone(state.player))
 	if amount > 0:
+		world.bird_model.play_gather(amount)
 		soundscape.play("gather")
 	elif state.carried >= state.capacity():
 		hud.notify("负重已满，靠近海面投石。")
@@ -278,6 +283,7 @@ func deposit_at(point: Vector2) -> int:
 		soundscape.play("unlock")
 		save_game(false)
 	if amount > 0:
+		world.bird_model.play_throw(amount)
 		_throw_effect(point, sea, state.filled_count > before_cells, state.won and not was_won)
 	else:
 		hud.notify("海域已填满。")
@@ -384,6 +390,7 @@ func choose_world(target: int) -> bool:
 		remove_child(world)
 		world.queue_free()
 	world = World.new()
+	_configure_visuals()
 	add_child(world)
 	world.setup(state)
 	selection_pending = false
@@ -447,6 +454,13 @@ func _prepare_showcase() -> void:
 	state.pickup_stone(36 % state.stone_positions.size())
 	state.messages.clear()
 
+func _configure_visuals() -> void:
+	if bird_visual_scene:
+		world.bird_scene = bird_visual_scene
+	if pangolin_visual_scene:
+		world.pangolin_scene = pangolin_visual_scene
+	world.mountain_scenes = mountain_visual_scenes
+
 func _advance_world(seconds: float) -> void:
 	var previous_artifacts := state.artifacts.size()
 	var previous_mine := state.next_mountain()
@@ -454,6 +468,7 @@ func _advance_world(seconds: float) -> void:
 	if state.artifacts.size() > previous_artifacts:
 		soundscape.play("relic")
 	if previous_mine >= 0 and state.mountains[previous_mine]["settled"]:
+		world.npc_views[0]["animal"].play_complete(previous_mine)
 		var distance := state.player.distance_to(state.mountain_position(previous_mine))
 		if distance < 60.0:
 			soundscape.play("mined", 1.0 / (1.0 + distance / 12.0))

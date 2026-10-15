@@ -2,6 +2,10 @@ extends Node3D
 
 const State = preload("res://scripts/state.gd")
 const Models = preload("res://scripts/models.gd")
+const MountainVisual = preload("res://scripts/visuals/mountain_visual.gd")
+@export var bird_scene: PackedScene = preload("res://scenes/actors/jingwei.tscn")
+@export var pangolin_scene: PackedScene = preload("res://scenes/actors/pangolin.tscn")
+@export var mountain_scenes: Array[PackedScene] = []
 const CHUNK := 8
 const ROCKS_PER_MOUNTAIN := 32
 
@@ -46,15 +50,14 @@ func setup(state: JWState) -> void:
 	_build_decor(state)
 	_build_resources(state)
 	bird_body = CharacterBody3D.new()
-	bird_body.position = Vector3(state.player.x, 1.45, state.player.y)
+	bird_body.position = Vector3(state.player.x, State.BIRD_HOVER_HEIGHT, state.player.y)
 	bird_body.motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
 	var shape := SphereShape3D.new()
-	shape.radius = 0.32
+	shape.radius = State.BIRD_COLLISION_RADIUS
 	var collider := CollisionShape3D.new()
 	collider.shape = shape
 	bird_body.add_child(collider)
-	bird_model = Models.bird()
-	bird_model.scale = Vector3.ONE * 1.15
+	bird_model = bird_scene.instantiate()
 	bird_body.add_child(bird_model)
 	add_child(bird_body)
 	shadow = disc(Color(0.10, 0.18, 0.15, 0.22), 0.52)
@@ -192,6 +195,10 @@ func _build_resources(state: JWState) -> void:
 		mesh.use_colors = true
 		mesh.use_custom_data = true
 		mesh.mesh = Models.mountain_mesh(shape)
+		if shape < mountain_scenes.size() and mountain_scenes[shape]:
+			var imported := MountainVisual.imported_mesh(mountain_scenes[shape])
+			if imported:
+				mesh.mesh = imported
 		mesh.instance_count = counts[shape]
 		var node := MultiMeshInstance3D.new()
 		node.multimesh = mesh
@@ -204,12 +211,13 @@ func _build_resources(state: JWState) -> void:
 		mountain_cache.append(-1)
 		pile_cache.append(-1)
 		var body := StaticBody3D.new()
+		var visual = MountainVisual.from_state(state, index)
 		var point := state.mountain_position(index)
-		body.position = Vector3(point.x, 0.44, point.y)
+		body.position = Vector3(point.x, State.LAND_HEIGHT, point.y)
 		add_child(body)
 		var shape := CylinderShape3D.new()
-		shape.radius = state.mountain_radius(index) * 0.96
-		shape.height = state.mountain_height(index)
+		shape.radius = visual.collision_radius
+		shape.height = visual.height
 		var collider := CollisionShape3D.new()
 		collider.shape = shape
 		collider.position.y = state.mountain_height(index) * 0.5
@@ -229,14 +237,12 @@ func sync(state: JWState) -> void:
 	state.stone_dirty.clear()
 	for index in range(state.mountains.size()):
 		var mountain: Dictionary = state.mountains[index]
-		var ratio := 1.0 - float(mountain["work"]) / float(mountain["yield"])
+		var visual = MountainVisual.from_state(state, index)
+		var ratio: float = visual.remaining
 		var count := int(ceil(ROCKS_PER_MOUNTAIN * ratio))
 		if mountain_cache[index] != count:
 			mountain_cache[index] = count
-			var point := state.mountain_position(index)
-			var radius := state.mountain_radius(index)
-			var height := state.mountain_height(index)
-			var transform := Transform3D(Basis.from_euler(Vector3(0, float(mountain["yaw"]), 0)).scaled(Vector3(radius, height, radius)), Vector3(point.x, 0.44, point.y))
+			var transform: Transform3D = visual.transform
 			if count == 0:
 				transform.origin.y = -100
 			var mesh := mountain_batches[int(mountain["shape"])]
@@ -247,11 +253,11 @@ func sync(state: JWState) -> void:
 			var collider := mountain_collisions[index]
 			collider.set_deferred("disabled", count == 0)
 			collider.scale.y = maxf(0.05, ratio)
-			collider.position.y = height * 0.5 * ratio
-		var stock := int(mountain["stock"])
+			collider.position.y = visual.height * 0.5 * ratio
+		var stock: int = visual.stock
 		if pile_cache[index] != stock:
 			pile_cache[index] = stock
-			var fraction := float(stock) / float(mountain["yield"])
+			var fraction: float = visual.stock_fraction
 			var point := state.pile_position(index)
 			for part in range(ROCKS_PER_MOUNTAIN):
 				var angle := part * 2.39996
@@ -280,14 +286,14 @@ func sync(state: JWState) -> void:
 		_update_chunk(state, key)
 	state.sea_dirty.clear()
 	_sync_npcs(state)
-	bird_model.get_node("Load").visible = state.carried > 0
+	bird_model.set_load(float(state.carried) / state.capacity())
 
 func _sync_npcs(state: JWState) -> void:
 	# This actor is created once and moves with the worker, regardless of camera range.
 	if npc_views.is_empty():
 		var root := Node3D.new()
 		add_child(root)
-		var animal := Models.pangolin()
+		var animal := pangolin_scene.instantiate()
 		animal.rotation.y = -0.5
 		root.add_child(animal)
 		Models.box(root, Vector3(0.95, 1.0, -0.65), Vector3(0.10, 2.0, 0.10), Color("866b4b"))
@@ -296,7 +302,8 @@ func _sync_npcs(state: JWState) -> void:
 	var index := state.pangolin_mountain()
 	var point := state.npc_position(index)
 	var view: Dictionary = npc_views[0]
-	view["root"].position = Vector3(point.x, 0.45, point.y)
+	view["root"].position = Vector3(point.x, State.NPC_GROUND_HEIGHT, point.y)
+	view["animal"].set_work(index, state.mining_unlocked() and state.next_mountain() >= 0, state.next_mountain() < 0, float(state.mountains[index]["work"]) / float(state.mountains[index]["yield"]))
 	var title: Label3D = view["label"]
 	title.position = Vector3(point.x, 3.0, point.y)
 	title.text = "穿山甲"
@@ -369,14 +376,11 @@ func point_visible(point: Vector2) -> bool:
 func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aimed_cell: int) -> void:
 	time += delta
 	update_camera(state, delta)
-	var flutter := sin(time * (17.0 if moving or high_flight else 8.0)) * (0.65 if moving or high_flight else 0.18)
-	bird_model.get_node("WingLeft").rotation.z = flutter
-	bird_model.get_node("WingRight").rotation.z = -flutter
-	bird_model.rotation.x = lerpf(bird_model.rotation.x, -0.12 if moving else 0.0, delta * 8)
-	bird_model.position.y = sin(time * 3.8) * 0.045
+	bird_model.set_motion(moving, high_flight)
+	bird_model.advance(delta, time)
 	for index in npc_views:
 		var animal: Node3D = npc_views[index]["animal"]
-		animal.rotation.x = sin(time * 8) * 0.1 if state.mining_unlocked() and state.next_mountain() >= 0 else 0.0
+		animal.advance(delta, time)
 	shadow.position = Vector3(state.player.x, 0.48 if state.player.x < 0 else 0.2, state.player.y)
 	range_ring.position = Vector3(state.player.x, 0.58, state.player.y)
 	range_ring.scale = Vector3(state.throw_distance(), 1, state.throw_distance())

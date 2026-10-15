@@ -21,7 +21,7 @@ func move_player(point: Vector2) -> void:
 	game.world.update_camera(game.state, 1.0, true)
 
 func run() -> void:
-	game = load("res://scenes/main.tscn").instantiate()
+	game = load("res://scenes/art/pipeline_preview.tscn" if "--imported-visuals" in OS.get_cmdline_user_args() else "res://scenes/main.tscn").instantiate()
 	root.add_child(game)
 	await process_frame
 	expect(game.selection_pending and game.hud.modal_open, "new journey opens scale picker")

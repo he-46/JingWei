@@ -113,3 +113,5 @@ Windows 存档：%APPDATA%/AzVGames/Jingwei/coast_journey.json，备份为 coast
 建模与美术升级计划见 [上线美术任务包](docs/art-production-tasks.md)，包含 10 个任务包的依赖、交付物与验收标准，先完成可玩样板，再扩展至全地图。
 
 ART-00 的 [风格规范、资产清单与实机基线](docs/art/README.md) 已建立，包含四档地图的 20 个固定对比场景；当前游戏仍使用原有程序模型。
+
+ART-01 已打通 Blender → GLB → Godot 流程并建立角色、山体表现接口。可在编辑器打开 `scenes/art/pipeline_preview.tscn` 后按 F6，游玩使用骨骼占位模型的独立示例；示例禁用存档。普通 Play.cmd 继续使用当前外观，玩家无需安装 Blender。制作与验证方法见 [资产导入流程](docs/art/asset-pipeline.md)。

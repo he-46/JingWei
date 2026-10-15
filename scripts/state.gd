@@ -3,6 +3,11 @@ extends RefCounted
 
 const SAVE_VERSION := 3
 const CELL_SIZE := 4.0
+const LAND_HEIGHT := 0.44
+const BIRD_HOVER_HEIGHT := 1.45
+const BIRD_COLLISION_RADIUS := 0.32
+const MOUNTAIN_COLLISION_RATIO := 0.96
+const NPC_GROUND_HEIGHT := 0.45
 const RESPAWN_SECONDS := 14.0
 const MINING_UNLOCK_STONES := 128
 const MAX_LEVEL := 24

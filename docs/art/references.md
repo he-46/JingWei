@@ -1,4 +1,4 @@
-# ART-00：参考与素材来源
+# 美术参考与素材来源
 
 查阅日期：2026-10-14。
 
@@ -16,3 +16,9 @@
 | [Godot MultiMesh](https://docs.godotengine.org/en/stable/tutorials/performance/using_multimesh.html) | 共享网格与空间分区 | 后续在实测基础上评估分区，不在 ART-00 实施优化。 |
 
 以上为技术参考链接，没有把网页图片或示例资产复制进游戏。每次后续引入外部美术资源，必须在资产清单中追加来源和分发许可，不能以“公开可见”代替可分发授权。
+
+## ART-01 更新（2026-10-15）
+
+本包使用 Blender 4.5.3 的官方 bpy 模块与 glTF 导出器，新增三个项目代码生成的诊断模型，不使用外部模型、纹理或参考图。Blender/bpy 仅是制作工具，不放入游戏文件夹或仓库；可编辑 `.blend` 与运行时 GLB 一并交付。使用方式见 [导入流程](asset-pipeline.md)，实际生成方法及规模见 [资产清单](asset-inventory.md)。
+
+GLB 在 Godot 4.7.2 中直接导入，源文件通过 `.gdignore` 排除；全新源码副本的实际验证落实了上表原先记录的 GLB 路线。

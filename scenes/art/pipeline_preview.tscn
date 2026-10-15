@@ -1,0 +1,10 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="Script" path="res://scripts/visuals/pipeline_preview.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/art/example_jingwei.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/art/example_pangolin.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://assets/models/pipeline_examples/mountain.glb" id="4"]
+[node name="PipelinePreview" type="Node3D"]
+script = ExtResource("1")
+bird_visual_scene = ExtResource("2")
+pangolin_visual_scene = ExtResource("3")
+mountain_visual_scenes = Array[PackedScene]([ExtResource("4")])
