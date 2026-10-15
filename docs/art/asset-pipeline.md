@@ -1,6 +1,6 @@
 # ART-01：资产导入流程
 
-ART-01 建立导入与表现接口，pipeline_examples 仍保留为诊断占位模型。ART-02/03 已将正式精卫与穿山甲接入普通 Play.cmd，ART-04 已接入第 0 类岩层样板山、石料与遗迹。
+ART-01 建立导入与表现接口，pipeline_examples 仍保留为诊断占位模型。ART-02～05 已将两个正式角色、岩层山与海岸环境样板接入普通 Play.cmd。
 
 ## 玩家与制作环境
 
@@ -51,7 +51,7 @@ Godot 中复制角色预制场景，设置 `model_scene`。默认动作名可直
 
 1. 使用 Editor.cmd 打开项目，打开 `scenes/art/pipeline_preview.tscn`，按 F6。示例禁用存档，选择难度后按现有 WASD/E/Q/空格操作。
 2. 示例替换精卫、唯一穿山甲和第 0 类山体，另外四类保留原模型以验证混用。再次选择难度仍保留替换配置。
-3. `tools/run.ps1 -Mode Test` 自动执行状态、玩法、音效、UI、角色与表现、39 项高度增程、84 项山体检查，以及在占位导入场景上重跑的 70 项玩法检查，当前合计 741 项。
+3. `tools/run.ps1 -Mode Test` 自动执行状态、玩法、音效、UI、角色与表现、39 项高度增程、84 项山体、71 项环境检查，以及在占位导入场景上重跑的 70 项玩法检查，当前合计 812 项。
 4. `powershell -NoProfile -ExecutionPolicy Bypass -File tools/verify-clean-art-copy.ps1` 创建新的可分发源码副本，排除本地引擎 EXE、缓存和建模工具，限制 PATH 后由副本内 ZIP 准备引擎并完成全部测试。副本及日志在 `artifacts/art/clean-时间/`。
 5. 实机截图：Godot 运行 `--path . --resolution 1440x900 --script res://tests/capture_pipeline.gd -- --qa`，生成 `artifacts/art/art01/imported-*.png`。默认外观对照继续使用 ART-00 的基线工具。
 
@@ -74,3 +74,9 @@ Godot 中复制角色预制场景，设置 `model_scene`。默认动作名可直
 `blender --background --python art_source/build_mountain.py` 重建一套岩层山、石块、低矮遗迹和共享 1024² 岩层图。三个源文件在 `art_source/environment/`，生成器检查封闭流形，实际重新打开源文件后导出 `assets/models/environment/` 的三个 GLB。清单为 `art_source/environment/mountain-manifest.json`；手工修改后仍使用单资产导出器。GLB 采用内嵌纹理模式 3，正式材质共享外部图并启用 mipmaps。
 
 编辑器 F6 入口为 `scenes/art/mountain_preview.tscn`，可切换六种状态、连续拖动进度和库存、旋转或缩放，不访问玩家旅程或存档。样板自动替换世界第 0 类山体；其余四类保留程序模型。普通 Test.cmd 执行 84 项山体检查；实际图形环境再运行 `--path . --resolution 1152x720 --script res://tests/test_mountain.gd -- --qa`，执行 113 项，包含 29 项 MultiMesh 读回与装饰避让检查。截图入口为 `tests/capture_mountain_art.gd`，详见 [ART-04 交付](deliveries/ART-04.md)。
+
+## ART-05 海岸制作入口
+
+`blender --background --python art_source/build_coast.py` 重建一型树、一型灌木、一型草丛、一型岸石及共用 512² 调色图。源文件在 `art_source/environment/`，运行模型在 `assets/models/environment/`；只覆盖本包四个资产。每个源文件保存后重新打开再导出，GLB 导入模式为 3，不提取重复 PNG。游戏只加载 GLB，不依赖 Blender。
+
+`scripts/visuals/coast_geometry.gd` 统一生成海岸、填海角点/法线与接水线；地表和新陆地材质使用世界坐标，跨区块连续。`scenes/art/coast_preview.tscn` 为 F6 可玩固定样板，沿用正常操作并禁用玩家存档访问。普通 Test.cmd 包含 71 项环境专项；实际图形环境运行 `--path . --resolution 1152x720 --script res://tests/test_environment.gd -- --qa` 为 95 项，额外验证装饰实际位置与避让。截图入口、前后对比与运行记录见 [ART-05 交付](deliveries/ART-05.md)。

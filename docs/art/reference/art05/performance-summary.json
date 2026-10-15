@@ -1,0 +1,232 @@
+{
+  "cases": [
+    {
+      "camera_position": [
+        22.781322479248,
+        45.822395324707,
+        45.6622314453125
+      ],
+      "camera_rotation": [
+        -42.7384490966797,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 45.822395324707,
+      "draw_calls_median": 116.0,
+      "engine_static_memory_peak_mib": 106.670449256897,
+      "fps_mean": 818.602542800814,
+      "frame_ms_max": 18.832,
+      "frame_ms_median": 1.139,
+      "frame_ms_p95": 1.563,
+      "id": "100000000-coast",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 759.0,
+      "physics_ms_p95": 2.164,
+      "player_xz": [
+        -2.5,
+        3.0
+      ],
+      "render_primitives_monitor_median": 1235138.0,
+      "sample_count": 2456,
+      "sample_seconds": 3.000235,
+      "screenshot": "100000000-coast.png",
+      "seed": 271828,
+      "target": 100000000,
+      "view": "coast",
+      "world_setup_ms": 564.818,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        7.2941837310791,
+        32.9921264648438,
+        31.7939300537109
+      ],
+      "camera_rotation": [
+        -42.7384490966797,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 32.9921264648438,
+      "draw_calls_median": 116.0,
+      "engine_static_memory_peak_mib": 116.530041694641,
+      "fps_mean": 759.622832777076,
+      "frame_ms_max": 4.08,
+      "frame_ms_median": 1.221,
+      "frame_ms_p95": 1.79,
+      "id": "100000000-mountain",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 759.0,
+      "physics_ms_p95": 2.31,
+      "player_xz": [
+        -10.9083690643311,
+        1.07712197303772
+      ],
+      "render_primitives_monitor_median": 1236226.0,
+      "sample_count": 2281,
+      "sample_seconds": 3.002806,
+      "screenshot": "100000000-mountain.png",
+      "seed": 271828,
+      "target": 100000000,
+      "view": "mountain",
+      "world_setup_ms": 596.765,
+      "zoom": 0.72
+    },
+    {
+      "camera_position": [
+        -83.8312835693359,
+        45.822395324707,
+        4.27984619140625
+      ],
+      "camera_rotation": [
+        -42.738452911377,
+        30.6506633758545,
+        0.0
+      ],
+      "camera_size": 45.822395324707,
+      "draw_calls_median": 92.0,
+      "engine_static_memory_peak_mib": 116.865872383118,
+      "fps_mean": 891.331550670232,
+      "frame_ms_max": 6.75,
+      "frame_ms_median": 1.051,
+      "frame_ms_p95": 1.446,
+      "id": "100000000-inland",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 759.0,
+      "physics_ms_p95": 1.967,
+      "player_xz": [
+        -109.112602233887,
+        -38.3823852539063
+      ],
+      "render_primitives_monitor_median": 814724.0,
+      "sample_count": 2674,
+      "sample_seconds": 3.000006,
+      "screenshot": "100000000-inland.png",
+      "seed": 271828,
+      "target": 100000000,
+      "view": "inland",
+      "world_setup_ms": 566.245,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        251.281326293945,
+        45.822395324707,
+        44.6622314453125
+      ],
+      "camera_rotation": [
+        -42.7384490966797,
+        30.6506671905518,
+        0.0
+      ],
+      "camera_size": 45.822395324707,
+      "draw_calls_median": 96.0,
+      "engine_static_memory_peak_mib": 117.105202674866,
+      "fps_mean": 1487.14644859629,
+      "frame_ms_max": 20.812,
+      "frame_ms_median": 0.605,
+      "frame_ms_p95": 0.955,
+      "id": "100000000-deep_sea",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 759.0,
+      "physics_ms_p95": 2.044,
+      "player_xz": [
+        226.0,
+        2.0
+      ],
+      "render_primitives_monitor_median": 844564.0,
+      "sample_count": 4462,
+      "sample_seconds": 3.000377,
+      "screenshot": "100000000-deep_sea.png",
+      "seed": 271828,
+      "target": 100000000,
+      "view": "deep_sea",
+      "world_setup_ms": 602.281,
+      "zoom": 1.0
+    },
+    {
+      "camera_position": [
+        40.0,
+        953.379333496094,
+        148.237243652344
+      ],
+      "camera_rotation": [
+        -82.4053573608398,
+        0.0,
+        0.0
+      ],
+      "camera_size": 614.400024414063,
+      "draw_calls_median": 85.0,
+      "engine_static_memory_peak_mib": 116.973473548889,
+      "fps_mean": 750.895875771893,
+      "frame_ms_max": 8.811,
+      "frame_ms_median": 1.248,
+      "frame_ms_p95": 1.711,
+      "id": "100000000-overview",
+      "image_size": [
+        1440,
+        900
+      ],
+      "node_count": 759.0,
+      "physics_ms_p95": 2.415,
+      "player_xz": [
+        -2.5,
+        3.0
+      ],
+      "render_primitives_monitor_median": 1151886.0,
+      "sample_count": 2253,
+      "sample_seconds": 3.000416,
+      "screenshot": "100000000-overview.png",
+      "seed": 271828,
+      "target": 100000000,
+      "view": "overview",
+      "world_setup_ms": 568.809,
+      "zoom": 1.0
+    }
+  ],
+  "metadata": {
+    "captured_at_utc": "2026-10-15T08:06:16",
+    "engine": "4.7.2-stable (official)",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "logical_processors": 32,
+    "msaa_3d": 1,
+    "os": "Windows",
+    "os_version": "10.0.22631",
+    "physics_hz": 60,
+    "processor": "13th Gen Intel(R) Core(TM) i9-13900HX",
+    "rendering_method": "gl_compatibility",
+    "sample_seconds_requested": 3.0,
+    "screen_space_aa": 0,
+    "system_memory": {
+      "available": 47043174400,
+      "free": 3877777408,
+      "physical": 16978403328,
+      "stack": 8388608
+    },
+    "video_driver": "opengl3",
+    "viewport": [
+      1440,
+      900
+    ],
+    "vsync": 0,
+    "warmup_seconds": 3,
+    "window_size": [
+      1440,
+      900
+    ],
+    "workload": "controlled idle; real World/HUD; animation 60 Hz; sync 0.15 s; simulation 0.2 s; no input, sound, saving or combat/throw effects"
+  },
+  "scope": "Five controlled idle views, largest map only; 3 s warmup + 3 s sample, CPU frame intervals, not full gameplay/GPU timing or release acceptance."
+}

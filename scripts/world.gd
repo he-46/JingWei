@@ -3,6 +3,7 @@ extends Node3D
 const State = preload("res://scripts/state.gd")
 const Models = preload("res://scripts/models.gd")
 const MountainVisual = preload("res://scripts/visuals/mountain_visual.gd")
+const Coast = preload("res://scripts/visuals/coast_geometry.gd")
 const SAMPLE_MOUNTAIN = preload("res://assets/models/environment/strata_mountain.glb")
 @export var bird_scene: PackedScene = preload("res://scenes/actors/jingwei.tscn")
 @export var pangolin_scene: PackedScene = preload("res://scenes/actors/pangolin.tscn")
@@ -16,6 +17,14 @@ var bird_model: Node3D
 var stone_mesh: MultiMesh
 var grass_mesh: MultiMesh
 var tree_mesh: MultiMesh
+var shrub_mesh: MultiMesh
+var shore_rocks: MultiMesh
+var coast_surface: MeshInstance3D
+var water_surface: MeshInstance3D
+var water_material: ShaderMaterial
+var foam_material: ShaderMaterial
+var foliage_material: ShaderMaterial
+var foam_chunks: Dictionary = {}
 var mountain_batches: Array[MultiMesh] = []
 var mountain_slots: Array[int] = []
 var flight_ceiling: float = 8.2
@@ -90,17 +99,17 @@ func _build_lighting(state: JWState) -> void:
 	var environment := WorldEnvironment.new()
 	var config := Environment.new()
 	config.background_mode = Environment.BG_COLOR
-	config.background_color = Color("96bcba")
+	config.background_color = Color("a9beb7")
 	config.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	config.ambient_light_color = Color("c6dfd5")
-	config.ambient_light_energy = 0.28
+	config.ambient_light_color = Color("bdcfc4")
+	config.ambient_light_energy = 0.42
 	config.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	environment.environment = config
 	add_child(environment)
 	var light := DirectionalLight3D.new()
-	light.rotation_degrees = Vector3(-52, -25, 0)
-	light.light_color = Color("fff1ce")
-	light.light_energy = 0.7
+	light.rotation_degrees = Vector3(-50, -33, 0)
+	light.light_color = Color("fff4df")
+	light.light_energy = 0.68
 	light.shadow_enabled = true
 	light.directional_shadow_max_distance = 90.0
 	add_child(light)
@@ -114,29 +123,21 @@ func _build_lighting(state: JWState) -> void:
 func _build_land(state: JWState) -> void:
 	var water := PlaneMesh.new()
 	water.size = Vector2.ONE * state.map_side * 5
-	var water_mat := ShaderMaterial.new()
-	water_mat.shader = preload("res://shaders/water.gdshader")
-	water_mat.set_shader_parameter("shallow_end", int(state.bands[0]) * State.CELL_SIZE)
-	water_mat.set_shader_parameter("far_end", (int(state.bands[0]) + int(state.bands[1])) * State.CELL_SIZE)
-	water_mat.set_shader_parameter("sea_end", (state.grid_size - state.land_cols) * State.CELL_SIZE)
-	Models.mesh_part(self, water, water_mat, Vector3(0, 0.16, 0))
+	water_material = ShaderMaterial.new()
+	water_material.shader = preload("res://shaders/water.gdshader")
+	water_material.set_shader_parameter("shallow_end", int(state.bands[0]) * State.CELL_SIZE)
+	water_material.set_shader_parameter("far_end", (int(state.bands[0]) + int(state.bands[1])) * State.CELL_SIZE)
+	water_material.set_shader_parameter("sea_end", (state.grid_size - state.land_cols) * State.CELL_SIZE)
+	water_surface = Models.mesh_part(self, water, water_material, Vector3(0, Coast.WATER_HEIGHT, 0))
+	water_surface.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# Mainland continues west/north/south beyond the square journey boundary.
 	var land := PlaneMesh.new()
-	land.size = Vector2(state.map_side * 3, state.map_side * 5)
-	Models.mesh_part(self, land, Models.material(Color("89a77b")), Vector3(-state.map_side * 1.5, 0.44, 0))
-	var beach := PlaneMesh.new()
-	beach.size = Vector2(0.9, state.map_side * 5)
-	Models.mesh_part(self, beach, Models.material(Color("d9cba4")), Vector3(-0.35, 0.455, 0))
-	var xmin := state.map_origin.x
-	var xmax := xmin + state.map_side
-	var zmin := state.map_origin.y
-	var zmax := zmin + state.map_side
-	var border_color := Color("c8c39a")
-	var border_width := maxf(0.06, state.map_side * 0.0015)
-	Models.box(self, Vector3((xmin + xmax) / 2, 0.5, zmin), Vector3(state.map_side, 0.025, border_width), border_color)
-	Models.box(self, Vector3((xmin + xmax) / 2, 0.5, zmax), Vector3(state.map_side, 0.025, border_width), border_color)
-	Models.box(self, Vector3(xmin, 0.5, 0), Vector3(border_width, 0.025, state.map_side), border_color)
-	Models.box(self, Vector3(xmax, 0.23, 0), Vector3(border_width, 0.025, state.map_side), border_color)
+	land.size = Vector2(state.map_side * 3 - 3, state.map_side * 5)
+	Models.mesh_part(self, land, preload("res://assets/materials/coast_ground.tres"), Vector3(-(state.map_side * 3 + 3) * .5, State.LAND_HEIGHT, 0))
+	coast_surface = Models.mesh_part(self, Coast.coast_mesh(state.map_side), preload("res://assets/materials/coast_ground.tres"), Vector3.ZERO)
+	foam_material = preload("res://assets/materials/shore_foam.tres").duplicate()
+	var foam := Models.mesh_part(self, Coast.mainland_foam(state.map_side), foam_material, Vector3.ZERO)
+	foam.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 func _build_boundary_fog(state: JWState) -> void:
 	for layer in range(3):
@@ -155,36 +156,63 @@ func _build_boundary_fog(state: JWState) -> void:
 func _build_decor(state: JWState) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = state.world_seed + 980
-	var grass_shape := CylinderMesh.new()
-	grass_shape.bottom_radius = 0.065
-	grass_shape.top_radius = 0
-	grass_shape.height = 0.28
-	grass_shape.radial_segments = 3
-	grass_mesh = batch(grass_shape, mini(2500, state.grid_size * 40), true, Color.WHITE)
+	foliage_material = preload("res://assets/materials/coast_foliage.tres").duplicate()
+	grass_mesh = batch(MountainVisual.imported_mesh(preload("res://assets/models/environment/coast_grass.glb")), mini(2500, state.grid_size * 40), true, Color.WHITE, foliage_material)
+	(get_child(get_child_count() - 1) as MultiMeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	for index in range(grass_mesh.instance_count):
-		var p := _decor_point(state, rng, 0.2, -1, 0.56)
+		var p := _decor_point(state, rng, 0.2, -2.7, State.LAND_HEIGHT)
 		grass_mesh.set_instance_transform(index, Transform3D(Basis.IDENTITY, p))
-		grass_mesh.set_instance_color(index, Color("6f905c") if index % 4 else Color("d7c58d"))
+		grass_mesh.set_instance_color(index, Color.WHITE if index % 4 else Color("e2ddba"))
 	# Distant trees use instancing; no per-tree scripts or animation nodes.
-	var tree_shape := CylinderMesh.new()
-	tree_shape.bottom_radius = 0.8
-	tree_shape.top_radius = 0
-	tree_shape.height = 2.8
-	tree_shape.radial_segments = 7
-	tree_mesh = batch(tree_shape, mini(320, state.grid_size * 4), true, Color.WHITE)
+	tree_mesh = batch(MountainVisual.imported_mesh(preload("res://assets/models/environment/coast_tree.glb")), mini(200, state.grid_size * 2), true, Color.WHITE, foliage_material)
+	var tree_points := PackedVector2Array()
 	for index in range(tree_mesh.instance_count):
 		var size := rng.randf_range(0.7, 1.2)
-		var p := _decor_point(state, rng, 2.7, -3, State.LAND_HEIGHT + 1.4 * size)
-		tree_mesh.set_instance_transform(index, Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * size), p))
-		tree_mesh.set_instance_color(index, Color("477d60") if index % 2 else Color("67946b"))
+		var p := _decor_point(state, rng, 2.9, -3.5, State.LAND_HEIGHT, 2.7)
+		for attempt in range(8):
+			var separated := true
+			for other in tree_points:
+				if other.distance_to(Vector2(p.x, p.z)) < 2.8:
+					separated = false
+			if separated:
+				break
+			p = _decor_point(state, rng, 2.9, -3.5, State.LAND_HEIGHT, 2.7) if attempt < 7 else Vector3(0, -40, 0)
+		if p.y > -10:
+			tree_points.append(Vector2(p.x, p.z))
+		tree_mesh.set_instance_transform(index, Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * size), p))
+		tree_mesh.set_instance_color(index, Color.WHITE if index % 2 else Color("d8e5ca"))
+	shrub_mesh = batch(MountainVisual.imported_mesh(preload("res://assets/models/environment/coast_shrub.glb")), mini(160, state.grid_size * 2), true, Color.WHITE, foliage_material)
+	for index in range(shrub_mesh.instance_count):
+		var p := _decor_point(state, rng, 1.2, -2.8, State.LAND_HEIGHT, 1.2)
+		shrub_mesh.set_instance_transform(index, Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * rng.randf_range(.7, 1.0)), p))
+		shrub_mesh.set_instance_color(index, Color.WHITE)
+	shore_rocks = batch(MountainVisual.imported_mesh(preload("res://assets/models/environment/shore_rock.glb")), clampi(state.grid_size * 2, 24, 160), false, Color.WHITE, preload("res://assets/materials/shore_rock.tres"))
+	for index in range(shore_rocks.instance_count):
+		var z := rng.randf_range(state.map_origin.y + 1, -state.map_origin.y - 1)
+		var x := rng.randf_range(-.4, .8)
+		var size := rng.randf_range(.65, 1.15)
+		var p := Vector3(x, -.08 if x > 0 else .10, z)
+		if not _clear_of_resources(state, Vector2(x, z), 1.1):
+			p.y = -40
+		shore_rocks.set_instance_transform(index, Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * size), p))
 
-func _decor_point(state: JWState, rng: RandomNumberGenerator, mountain_margin: float, xmax: float, height: float) -> Vector3:
+func _decor_point(state: JWState, rng: RandomNumberGenerator, mountain_margin: float, xmax: float, height: float, resource_margin: float = 0.0) -> Vector3:
 	# Keep future quarry sites clear too; mining never has to remove trees or grass.
 	for attempt in range(24):
-		var point := Vector2(rng.randf_range(state.map_origin.x + 1, xmax), rng.randf_range(state.map_origin.y + 1, -state.map_origin.y - 1))
-		if state.clear_of_mountains(point, mountain_margin):
+		var point := Vector2(rng.randf_range(state.map_origin.x + 1.5, xmax), rng.randf_range(state.map_origin.y + 1.5, -state.map_origin.y - 1.5))
+		if state.clear_of_mountains(point, mountain_margin) and (resource_margin <= 0 or _clear_of_resources(state, point, resource_margin)):
 			return Vector3(point.x, height, point.y)
 	return Vector3(0, -40, 0)
+
+func _clear_of_resources(state: JWState, point: Vector2, margin: float) -> bool:
+	for stone in state.stone_positions:
+		if point.distance_squared_to(stone) < margin * margin:
+			return false
+	var npc_margin := maxf(3.2, margin + 1.3)
+	for index in range(state.mountains.size()):
+		if point.distance_squared_to(state.npc_position(index)) < npc_margin * npc_margin:
+			return false
+	return true
 
 func batch(mesh: Mesh, count: int, colors: bool, color: Color, material_override: Material = null) -> MultiMesh:
 	var result := MultiMesh.new()
@@ -338,8 +366,9 @@ func sync(state: JWState) -> void:
 	for index in state.sea_dirty:
 		var col: int = index % state.grid_size
 		var row: int = index / state.grid_size
-		for x in range(maxi(state.land_cols, col - 1), mini(state.grid_size, col + 2)):
-			for z in range(maxi(0, row - 1), mini(state.grid_size, row + 2)):
+		# Shared corner normals sample one further ring than the vertex heights.
+		for x in range(maxi(state.land_cols, col - 2), mini(state.grid_size, col + 3)):
+			for z in range(maxi(0, row - 2), mini(state.grid_size, row + 3)):
 				dirty_chunks[Vector2i(x / CHUNK, z / CHUNK)] = true
 	for key in dirty_chunks:
 		_update_chunk(state, key)
@@ -399,50 +428,45 @@ func _sync_npcs(state: JWState) -> void:
 	view["root"].visible = not overview
 
 func cell_height(state: JWState, index: int) -> float:
-	if index < 0 or index >= state.sea_fill.size():
-		return -1.2
-	if state.sea_depth[index] < 0:
-		return 0.44
-	var base := -1.2 - state.sea_depth[index] * 0.65
-	return lerpf(base, 0.49, float(state.sea_fill[index]) / state.sea_capacity[index])
+	return Coast.cell_height(state, index)
 
 func _corner_height(state: JWState, col: int, row: int) -> float:
-	var total := 0.0
-	var count := 0
-	for z in range(row - 1, row + 1):
-		for x in range(col - 1, col + 1):
-			if x >= 0 and x < state.grid_size and z >= 0 and z < state.grid_size:
-				total += cell_height(state, z * state.grid_size + x)
-				count += 1
-	return total / maxi(1, count)
+	return Coast.corner_height(state, col, row)
 
 func _update_chunk(state: JWState, key: Vector2i) -> void:
 	var tool := SurfaceTool.new()
 	tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var foam := SurfaceTool.new()
+	foam.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var foam_segments := 0
 	for row in range(key.y * CHUNK, mini(state.grid_size, (key.y + 1) * CHUNK)):
 		for col in range(maxi(state.land_cols, key.x * CHUNK), mini(state.grid_size, (key.x + 1) * CHUNK)):
-			var index := row * state.grid_size + col
-			var point := state.cell_center(index)
-			var center := Vector3(point.x, cell_height(state, index), point.y)
-			var corners: Array[Vector3] = []
-			for offset in [Vector2i(0, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(1, 0)]:
-				var x: int = col + offset.x
-				var z: int = row + offset.y
-				corners.append(Vector3(state.map_origin.x + x * State.CELL_SIZE, _corner_height(state, x, z), state.map_origin.y + z * State.CELL_SIZE))
-			for edge in range(4):
-				tool.set_color(Color("b6c18b") if state.sea_fill[index] == state.sea_capacity[index] else Color("ece0ba"))
-				for vertex in [center, corners[(edge + 1) % 4], corners[edge]]:
-					tool.add_vertex(vertex)
-	tool.generate_normals()
+			for triangle in Coast.cell_triangles(state, col, row):
+				for vertex in range(3):
+					tool.set_normal(triangle["normals"][vertex])
+					tool.add_vertex(triangle["points"][vertex])
+				var segment := Coast.water_segment(triangle["points"])
+				if segment.size() == 2 and maxf(segment[0].x, segment[1].x) > .20:
+					Coast.foam_strip(foam, segment[0], segment[1])
+					foam_segments += 1
 	if not terrain_chunks.has(key):
 		var node := MeshInstance3D.new()
-		var mat := Models.material(Color.WHITE)
-		mat.vertex_color_use_as_albedo = true
-		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-		node.material_override = mat
+		node.material_override = preload("res://assets/materials/reclaimed_ground.tres")
 		add_child(node)
 		terrain_chunks[key] = node
 	terrain_chunks[key].mesh = tool.commit()
+	if foam_segments > 0:
+		if not foam_chunks.has(key):
+			var node := MeshInstance3D.new()
+			node.material_override = foam_material
+			node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			add_child(node)
+			foam_chunks[key] = node
+		foam_chunks[key].mesh = foam.commit()
+		foam_chunks[key].visible = true
+	elif foam_chunks.has(key):
+		foam_chunks[key].mesh = null
+		foam_chunks[key].visible = false
 
 func update_camera(state: JWState, delta: float, instant: bool = false) -> void:
 	var target := Vector3(state.map_origin.x + state.map_side / 2, 0, state.map_side * 0.055) if overview else Vector3(state.player.x, 0, state.player.y)
@@ -463,6 +487,13 @@ func point_visible(point: Vector2) -> bool:
 
 func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aimed_cell: int) -> void:
 	time += delta
+	water_material.set_shader_parameter("wave_time", time)
+	foam_material.set_shader_parameter("wave_time", time)
+	foliage_material.set_shader_parameter("wind_time", time)
+	for layer in fog_layers:
+		layer.material_override.set_shader_parameter("fog_time", time)
+	grass_mesh.visible_instance_count = 0 if overview else -1
+	shrub_mesh.visible_instance_count = 0 if overview else -1
 	if mining_dust:
 		_update_mining_dust(state)
 	update_camera(state, delta)

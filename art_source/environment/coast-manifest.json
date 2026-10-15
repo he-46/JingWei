@@ -1,0 +1,40 @@
+{
+  "generator": "art_source/build_coast.py",
+  "blender": "4.5.3 LTS",
+  "texture": "assets/textures/environment/coast_palette.png",
+  "texture_size": [
+    512,
+    512
+  ],
+  "source": "Original project mesh and painted palette; no third-party art.",
+  "assets": {
+    "coast_tree": {
+      "triangles": 596,
+      "materials": 1,
+      "source": "art_source/environment/coast_tree.blend",
+      "model": "assets/models/environment/coast_tree.glb",
+      "open_blades": false
+    },
+    "coast_shrub": {
+      "triangles": 196,
+      "materials": 1,
+      "source": "art_source/environment/coast_shrub.blend",
+      "model": "assets/models/environment/coast_shrub.glb",
+      "open_blades": false
+    },
+    "coast_grass": {
+      "triangles": 24,
+      "materials": 1,
+      "source": "art_source/environment/coast_grass.blend",
+      "model": "assets/models/environment/coast_grass.glb",
+      "open_blades": true
+    },
+    "shore_rock": {
+      "triangles": 96,
+      "materials": 1,
+      "source": "art_source/environment/shore_rock.blend",
+      "model": "assets/models/environment/shore_rock.glb",
+      "open_blades": false
+    }
+  }
+}

@@ -1,0 +1,6 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+[ext_resource type="Shader" path="res://shaders/coast_foliage.gdshader" id="1"]
+[ext_resource type="Texture2D" path="res://assets/textures/environment/coast_palette.png" id="2"]
+[resource]
+shader = ExtResource("1")
+shader_parameter/palette = ExtResource("2")
