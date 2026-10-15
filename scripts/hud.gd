@@ -15,6 +15,7 @@ const MUTED := Color("78847a")
 const RUST := Color("ab7044")
 const PAPER := Color("f4f2e7")
 const ACCENT := Color("547b61")
+const RELIC_ICONS := [preload("res://assets/icons/relics/basket.png"), preload("res://assets/icons/relics/feather.png"), preload("res://assets/icons/relics/seal.png")]
 
 var root: Control
 var cargo: Label
@@ -30,6 +31,7 @@ var notice_panel: Control
 var save_label: Label
 var cell_label: Label
 var relic_labels: Array[Label] = []
+var relic_icons: Array[TextureRect] = []
 var atlas: TextureRect
 var map_caption: Label
 var side_panels: Array[Control] = []
@@ -235,7 +237,19 @@ func _build_drawer() -> void:
 	relic_page.add_theme_constant_override("separation", 18)
 	box.add_child(relic_page)
 	for index in range(3):
-		relic_labels.append(text(relic_page, "", 14, MUTED, true))
+		var relic_row := HBoxContainer.new()
+		relic_row.add_theme_constant_override("separation", 10)
+		relic_page.add_child(relic_row)
+		var icon := TextureRect.new()
+		icon.texture = RELIC_ICONS[index]
+		icon.custom_minimum_size = Vector2(44, 48)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		relic_row.add_child(icon)
+		relic_icons.append(icon)
+		var label := text(relic_row, "", 14, MUTED, true)
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		relic_labels.append(label)
 	select_tab("upgrades")
 
 func _build_map() -> void:
@@ -406,6 +420,7 @@ func update_state(state: JWState, prompt: String, aimed_cell: int, aimed_point: 
 		var found := state.artifacts.has(String(item["id"]))
 		relic_labels[index].text = "%s\n%s" % [item["name"], item["effect"]] if found else "未发现\n%s" % state.mountain_name(int(item["mountain"]))
 		relic_labels[index].add_theme_color_override("font_color", INK if found else MUTED)
+		relic_icons[index].modulate = Color.WHITE if found else Color(.22, .28, .24, .32)
 	for kind in upgrade_buttons:
 		var target: Button = upgrade_buttons[kind]
 		var detail: Dictionary = upgrade_details[kind]

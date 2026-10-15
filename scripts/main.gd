@@ -4,8 +4,8 @@ const State = preload("res://scripts/state.gd")
 const World = preload("res://scripts/world.gd")
 const HUD = preload("res://scripts/hud.gd")
 const Store = preload("res://scripts/save_store.gd")
-const Models = preload("res://scripts/models.gd")
 const Soundscape = preload("res://scripts/soundscape.gd")
+const Feedback = preload("res://scripts/visuals/action_feedback.gd")
 @export var bird_visual_scene: PackedScene
 @export var pangolin_visual_scene: PackedScene
 @export var mountain_visual_scenes: Array[PackedScene] = [World.SAMPLE_MOUNTAIN]
@@ -29,6 +29,7 @@ var capture_frames: int = 0
 var showcase: bool = false
 var win_shown: bool = false
 var soundscape: Node
+var feedback: Node3D
 
 func _ready() -> void:
 	_setup_input()
@@ -63,6 +64,7 @@ func _ready() -> void:
 	_configure_visuals()
 	add_child(world)
 	world.setup(state)
+	_setup_feedback()
 	hud = HUD.new()
 	add_child(hud)
 	hud.interact_requested.connect(interact)
@@ -144,14 +146,16 @@ func _physics_process(delta: float) -> void:
 	if save_clock >= 15:
 		save_game(false)
 		save_clock = 0
-	if state.won and not win_shown:
+	if state.won and not win_shown and not feedback.completion_pending():
 		win_shown = true
 		hud.show_modal("填海完成", "已填入 %s 石。精卫完成了自己的心愿。" % State.number(state.target_stones), [{"text": "继续探索", "action": "resume"}, {"text": "保存", "action": "save"}])
 		save_game(false)
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if soundscape != null and hud != null:
 		soundscape.set_context(state.player.x, hud.modal_open, selection_pending)
+		if feedback != null and not hud.modal_open and not selection_pending:
+			feedback.advance(delta)
 	if capture_path.is_empty():
 		return
 	capture_frames += 1
@@ -218,15 +222,22 @@ func interact() -> void:
 	var amount := 0
 	var pile := state.nearby_pile(state.player)
 	var drop := state.closest_drop(state.player)
+	var source := state.player
 	if drop >= 0:
+		source = state.cell_center(drop)
 		amount = state.pickup_drop(drop)
 	elif pile >= 0:
+		source = state.pile_position(pile)
 		amount = state.pickup_pile(pile)
 	else:
-		amount = state.pickup_stone(state.closest_stone(state.player))
+		var stone := state.closest_stone(state.player)
+		if stone >= 0:
+			source = state.stone_positions[stone]
+		amount = state.pickup_stone(stone)
 	if amount > 0:
 		world.bird_model.play_gather(amount)
 		soundscape.play("gather")
+		feedback.burst("gather", Vector3(source.x, .38, source.y), world.bird_body.position)
 	elif state.carried >= state.capacity():
 		hud.notify("负重已满，靠近海面投石。")
 	else:
@@ -394,6 +405,7 @@ func choose_world(target: int) -> bool:
 	_configure_visuals()
 	add_child(world)
 	world.setup(state)
+	_setup_feedback()
 	selection_pending = false
 	choosing_again = false
 	save_blocked = false
@@ -465,9 +477,25 @@ func _configure_visuals() -> void:
 func _advance_world(seconds: float) -> void:
 	var previous_artifacts := state.artifacts.size()
 	var previous_mine := state.next_mountain()
+	var unfinished: Array[int] = []
+	for index in range(state.mountains.size()):
+		if not state.mountains[index]["settled"]:
+			unfinished.append(index)
 	state.tick(seconds)
 	if state.artifacts.size() > previous_artifacts:
 		soundscape.play("relic")
+		for index in range(previous_artifacts, state.artifacts.size()):
+			var id: String = state.artifacts[index]
+			for item in state.artifact_plan:
+				if item["id"] == id:
+					var point: Vector2 = state.mountain_position(int(item["mountain"]))
+					point.x += state.mountain_radius(int(item["mountain"])) + .4
+					feedback.discover(id, Vector3(point.x, 2.1, point.y))
+	for index in unfinished:
+		if state.mountains[index]["settled"]:
+			var point := state.mountain_position(index)
+			if state.player.distance_to(point) < 60.0:
+				feedback.burst("mined", Vector3(point.x, .5, point.y), Vector3.ZERO, minf(state.mountain_radius(index), 3.0))
 	if previous_mine >= 0 and state.mountains[previous_mine]["settled"]:
 		world.npc_views[0]["animal"].play_complete(previous_mine)
 		var distance := state.player.distance_to(state.mountain_position(previous_mine))
@@ -475,31 +503,20 @@ func _advance_world(seconds: float) -> void:
 			soundscape.play("mined", 1.0 / (1.0 + distance / 12.0))
 
 func _throw_effect(target: Vector2, sea: bool, formed_land: bool, completed: bool) -> void:
-	var journey := state
-	var audio_epoch: int = soundscape.epoch
 	soundscape.play("throw")
-	var rock := Models.mesh_part(self, Models.rock_mesh(2), Models.material(Color("d9ceb3")), world.bird_body.position, Vector3.ONE * 0.3)
-	var start: Vector3 = rock.position
-	var end := Vector3(target.x, maxf(0.25, world.cell_height(state, state.cell_at(target)) + 0.04), target.y)
-	var tween := create_tween()
-	tween.tween_method(func(t: float) -> void:
-		rock.position = start.lerp(end, t) + Vector3.UP * sin(t * PI) * 1.5
-		rock.rotation += Vector3(0.1, 0.15, 0.05)
-	, 0.0, 1.0, 0.48)
-	tween.tween_callback(func() -> void:
-		rock.queue_free()
-		if journey != state:
-			return
-		if audio_epoch == soundscape.epoch:
-			soundscape.play("water" if sea else "land")
-			if completed:
-				soundscape.play("complete")
-			elif formed_land:
-				soundscape.play("fill")
-		var ripple: MeshInstance3D = world.ring(Color("e9e8c8"), 0.35, 0.04)
-		ripple.position = end
-		add_child(ripple)
-		var fade := create_tween()
-		fade.tween_property(ripple, "scale", Vector3(3, 0.1, 3), 0.55)
-		fade.tween_callback(ripple.queue_free)
-	)
+	var end := Vector3(target.x, maxf(.25, world.cell_height(state, state.cell_at(target)) + .04), target.y)
+	feedback.throw_stone(world.bird_body.position, end, sea, formed_land, completed, soundscape.epoch)
+
+func _setup_feedback() -> void:
+	feedback = Feedback.new()
+	world.add_child(feedback)
+	feedback.landed.connect(_impact_audio)
+
+func _impact_audio(sea: bool, formed_land: bool, completed: bool, audio_epoch: int) -> void:
+	if audio_epoch != soundscape.epoch:
+		return
+	soundscape.play("water" if sea else "land")
+	if completed:
+		soundscape.play("complete")
+	elif formed_land:
+		soundscape.play("fill")

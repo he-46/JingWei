@@ -1,4 +1,4 @@
-# 表现层接口（ART-01 建立，ART-02～05 扩展）
+# 表现层接口（ART-01 建立，ART-02～06 扩展）
 
 `state.gd` 管资源与尺寸，`main.gd` 判断操作并结算，`world.gd` 将已确定的状态送给表现对象。表现控制器不持有 JWState，不保存游戏，不触发采集、投石或开山结算。山体接收一次性数值快照。
 
@@ -55,10 +55,18 @@ world 按既有 dirty 数据更新投放位置周围两格涉及的区块，重�
 ## 时序、暂停与存档
 
 - `main.interact` 结算成功 → `play_gather` → 原采集音效 → 刷新负重。
-- `main.deposit_at` 校验并结算 → `play_throw` → 原投射物与音效 → 刷新负重。投射物仍用原 0.48 秒时序；正式投石动作应对齐该时序，不反向决定扣库存时机。
+- `main.deposit_at` 校验并结算 → `play_throw` → 效果池投射物与音效 → 刷新负重。投射物仍用 0.48 秒时序；正式投石动作对齐该时序，不反向决定扣库存时机。
 - `main._advance_world` 调用 state.tick → 完工展示 → 原开山/神器音效。拒绝的操作不发送动作事件。
-- AnimationPlayer 使用手动推进，world.animate 不调用时角色动作停止。既有投射物 Tween 沿用原行为，本包没有更改其暂停策略。
+- AnimationPlayer 使用手动推进，world.animate 不调用时角色动作停止。ART-06 用效果池替换投射物 Tween；主场景只在未暂停且已选地图时推进效果与落点音时钟。
 - 动画不使用方法轨道调用游戏逻辑。以后增加声音/粒子帧事件只能作用于表现对象，需避免与 main 的现有音效重复。
 - `choose_world` 销毁旧 world，动作和骨骼随实例销毁；新世界重新应用预制场景配置。表现状态不进入存档，SAVE_VERSION 继续为 3。
 
 验证入口为 `tests/test_visuals.gd`；`tests/test_game.gd -- --qa --imported-visuals` 在同一套玩法检查中使用导入模型。真实 GLB 含骨骼与动作，且没有 `WingLeft` / `WingRight` / `Load` 节点，能直接检验旧节点依赖是否已解除。
+
+## 事件反馈：ActionFeedback
+
+`scripts/visuals/action_feedback.gd` 不持有状态对象。main 仅在结算成功后发送 `burst(kind, point, target, radius)`、`throw_stone(start, end, sea, formed, completed, audio_epoch)` 和 `discover(id, point)`。采集位置来自实际散石、碎石场或落地石堆；发现模型展示在对应山体外侧上方，不改变碰撞。
+
+`main._process` 在未暂停的每帧调用一次 `advance(delta)`。0.48 秒时发出 `landed`，main 比较起投时的音频 epoch 后播放落点、成陆或完成音。新建爆发只推进落点后的剩余帧时间，避免低帧率下提前老化。静音只关闭音频，画面继续；静音再开启不会补播旧落点。
+
+每世界固定 12 个飞石、24 个爆发（每个一圈与一个 8 实例 MultiMesh）及三个神器模型；不创建逐事件 Tween、计时器、刚体或节点。爆发满额替换最旧槽；飞石满额省略普通新效果，成陆可替换普通飞石，最终完成优先替换非完成飞石。被省略的落点声音也不补播，资源结算保持完整。三件神器各复用一槽，2.2 秒内升起、旋转、缩小；不弹出强制模态面板。换图时随旧 world 一并释放，新存档加载不重放已发现神器。详情、事件表和复现方法见 [ART-06 交付](deliveries/ART-06.md)。

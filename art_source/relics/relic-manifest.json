@@ -1,0 +1,29 @@
+{
+  "generator": "art_source/build_relics.py",
+  "license": "Original project art; no third-party assets.",
+  "palette": "assets/textures/relics/relic_palette.png",
+  "icons": "256x256 RGBA, rendered from each exported source mesh",
+  "assets": {
+    "basket": {
+      "triangles": 872,
+      "materials": 1,
+      "model": "assets/models/relics/basket.glb",
+      "source": "art_source/relics/basket.blend",
+      "icon": "assets/icons/relics/basket.png"
+    },
+    "feather": {
+      "triangles": 172,
+      "materials": 1,
+      "model": "assets/models/relics/feather.glb",
+      "source": "art_source/relics/feather.blend",
+      "icon": "assets/icons/relics/feather.png"
+    },
+    "seal": {
+      "triangles": 108,
+      "materials": 1,
+      "model": "assets/models/relics/seal.glb",
+      "source": "art_source/relics/seal.blend",
+      "icon": "assets/icons/relics/seal.png"
+    }
+  }
+}
