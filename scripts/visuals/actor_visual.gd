@@ -2,6 +2,7 @@ extends Node3D
 ## Presentation only. The caller advances animation on the simulation clock.
 @export var model_scene: PackedScene
 @export var animation_names: Dictionary = {}
+@export_range(0.0, 0.3) var blend_seconds := 0.0
 var model: Node3D
 var animation_player: AnimationPlayer
 var current_action: StringName = &""
@@ -40,7 +41,7 @@ func _model_changed() -> void:
 func _animation_name(key: StringName) -> StringName:
 	return StringName(animation_names.get(String(key), String(key)))
 
-func _play(key: StringName, looped: bool) -> void:
+func _play(key: StringName, looped: bool, speed: float = 1.0, blend: float = -1.0) -> void:
 	if not animation_player:
 		return
 	var clip := _animation_name(key)
@@ -59,7 +60,7 @@ func _play(key: StringName, looped: bool) -> void:
 		var library_name := clip.get_slice("/", 0) if "/" in clip else ""
 		animation_player.remove_animation_library(library_name)
 		animation_player.add_animation_library(library_name, library)
-	animation_player.play(clip)
+	animation_player.play(clip, blend_seconds if blend < 0 else blend, speed)
 	animation_player.advance(0)
 
 func _set_loop(key: StringName) -> void:
@@ -75,9 +76,10 @@ func _action(key: StringName, duration: float) -> void:
 	if animation_player:
 		var clip := _animation_name(key)
 		if animation_player.has_animation(clip):
-			_remaining = animation_player.get_animation(clip).length
+			var length := animation_player.get_animation(clip).length
+			_remaining = duration if duration > 0 else length
 			animation_player.stop()
-			_play(key, false)
+			_play(key, false, length / maxf(_remaining, 0.001), 0.0)
 
 func _advance_animation(delta: float) -> void:
 	if animation_player:

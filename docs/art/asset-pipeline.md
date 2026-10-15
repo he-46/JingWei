@@ -1,6 +1,6 @@
 # ART-01：资产导入流程
 
-本包完成导入与表现接口，示例是诊断用占位模型。正常 Play.cmd 继续显示程序模型；正式精卫、穿山甲与山体分别由 ART-02～04 制作。
+ART-01 建立导入与表现接口，pipeline_examples 仍保留为诊断占位模型。ART-02 已将正式精卫接入普通 Play.cmd；穿山甲与山体分别由 ART-03/04 制作。
 
 ## 玩家与制作环境
 
@@ -51,8 +51,14 @@ Godot 中复制角色预制场景，设置 `model_scene`。默认动作名可直
 
 1. 使用 Editor.cmd 打开项目，打开 `scenes/art/pipeline_preview.tscn`，按 F6。示例禁用存档，选择难度后按现有 WASD/E/Q/空格操作。
 2. 示例替换精卫、唯一穿山甲和第 0 类山体，另外四类保留原模型以验证混用。再次选择难度仍保留替换配置。
-3. `tools/run.ps1 -Mode Test` 自动执行原有玩法测试、41 项表现检查，以及在导入场景上重跑的 70 项玩法检查。
+3. `tools/run.ps1 -Mode Test` 自动执行原有玩法测试、41 项表现检查、39 项精卫检查，以及在占位导入场景上重跑的 70 项玩法检查。
 4. `powershell -NoProfile -ExecutionPolicy Bypass -File tools/verify-clean-art-copy.ps1` 创建新的可分发源码副本，排除本地引擎 EXE、缓存和建模工具，限制 PATH 后由副本内 ZIP 准备引擎并完成全部测试。副本及日志在 `artifacts/art/clean-时间/`。
 5. 实机截图：Godot 运行 `--path . --resolution 1440x900 --script res://tests/capture_pipeline.gd -- --qa`，生成 `artifacts/art/art01/imported-*.png`。默认外观对照继续使用 ART-00 的基线工具。
 
 检查骨骼确实变形、朝向正确、携带物显隐、暂停不前进、连投重启动作、换地图清理旧实例、开山后碰撞解除、资源不因动画重放改变。测试过后记录引擎版本、日志和截图；本包不把占位外观或无界面测试当作最终美术验收。
+
+## ART-02 精卫制作入口
+
+`blender --background --python art_source/build_jingwei.py` 重建本项目的精卫源模型、1024² UV 绘制图集、7 段动作和 GLB；仅用于重建该资产，会覆盖对应文件。生成器检查身体、头部和喙的连接性及封闭性，制作清单在 `art_source/characters/jingwei-manifest.json`。手工编辑源文件后继续使用上面的单资产导出器。
+
+角色场景使用 `assets/materials/jingwei_feather.tres` 共享外部图集，并启用线性过滤和 mipmaps。GLB 导入设置采用内嵌纹理模式 3，避免额外生成 `assets/models/` 下的重复 PNG。默认游戏与精卫预览都使用同一个 `scenes/actors/jingwei.tscn`；独立 F6 预览入口为 `scenes/art/jingwei_preview.tscn`。具体动作时序、预算与画面见 [ART-02 交付](deliveries/ART-02.md)。

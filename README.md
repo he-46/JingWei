@@ -106,12 +106,14 @@ Windows 存档：%APPDATA%/AzVGames/Jingwei/coast_journey.json，备份为 coast
 
 存档保存生成后的地图、山体、神器计划、石料、修行、升级、投海进度和刷新计时。主文件损坏时尝试上一份有效备份；两份均损坏时不会自动覆盖，重开前仍先保留副本。
 
-角色和场景目前是程序生成的低多边形模型。尚无正式美术、任意挖洞的体素系统、自动搬运和发布安装包。数值属于可玩原型的第一轮标定，后续可按试玩节奏调整。
+精卫已使用独立 GLB 模型、骨骼动作和三档负重表现；穿山甲与环境继续采用当前程序原型。尚无任意挖洞的体素系统、自动搬运和发布安装包。数值属于可玩原型的第一轮标定，后续可按试玩节奏调整。
 
 底层设计见 docs/architecture.md，测试记录见 docs/verification.md。
 
 建模与美术升级计划见 [上线美术任务包](docs/art-production-tasks.md)，包含 10 个任务包的依赖、交付物与验收标准，先完成可玩样板，再扩展至全地图。
 
-ART-00 的 [风格规范、资产清单与实机基线](docs/art/README.md) 已建立，包含四档地图的 20 个固定对比场景；当前游戏仍使用原有程序模型。
+ART-00 的 [风格规范、资产清单与实机基线](docs/art/README.md) 已建立，包含四档地图的 20 个固定对比场景。
 
-ART-01 已打通 Blender → GLB → Godot 流程并建立角色、山体表现接口。可在编辑器打开 `scenes/art/pipeline_preview.tscn` 后按 F6，游玩使用骨骼占位模型的独立示例；示例禁用存档。普通 Play.cmd 继续使用当前外观，玩家无需安装 Blender。制作与验证方法见 [资产导入流程](docs/art/asset-pipeline.md)。
+ART-01 已打通 Blender → GLB → Godot 流程并建立角色、山体表现接口。可在编辑器打开 `scenes/art/pipeline_preview.tscn` 后按 F6，游玩使用骨骼占位模型的独立示例；示例禁用存档。玩家无需安装 Blender。制作与验证方法见 [资产导入流程](docs/art/asset-pipeline.md)。
+
+ART-02 的新精卫已接入 Play.cmd：赤冠青羽、连续头身、分组羽翼、三簇尾羽，包含待机、飞行、左右转向、采石、负重飞行与投石动作。背包占比不超过 65% 显示轻载，超过后显示满载石篓，空载隐藏。编辑器打开 `scenes/art/jingwei_preview.tscn` 后按 F6 可单独检查模型、动作与负重；详见 [交付画面与记录](docs/art/deliveries/ART-02.md)。

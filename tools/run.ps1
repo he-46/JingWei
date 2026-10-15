@@ -153,6 +153,7 @@ try {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_audio.gd', '--', '--qa') 'audio-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_ui.gd', '--', '--qa') 'ui-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_visuals.gd', '--', '--qa') 'visual-tests.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_jingwei.gd', '--', '--qa') 'jingwei-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_game.gd', '--', '--qa', '--imported-visuals') 'imported-game-tests.log'
         } elseif ($Check) {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--quit-after', '6', '--', '--qa') 'startup-check.log'

@@ -1,4 +1,4 @@
-# ART-01：表现层接口
+# 表现层接口（ART-01 建立，ART-02 扩展）
 
 `state.gd` 管资源与尺寸，`main.gd` 判断操作并结算，`world.gd` 将已确定的状态送给表现对象。表现控制器不持有 JWState，不保存游戏，不触发采集、投石或开山结算。山体接收一次性数值快照。
 
@@ -7,15 +7,15 @@
 | 接口 | 输入与行为 |
 | --- | --- |
 | `set_facing(direction: Vector2, delta)` | 世界 X/Z 平面方向，非零方向平滑转向；Godot −Z 为正前。 |
-| `set_motion(moving, high_flight)` | 选择待机、飞行或负重飞行；高空悬停也拍翼。 |
-| `set_load(fraction)` | 负重/容量，钳制到 0～1；当前附件只区分空载和有载，轻载/满载细分留给 ART-02。 |
+| `set_motion(moving, high_flight)` | 选择待机、飞行或负重飞行；高空悬停也拍翼。正式角色在转向期间选择对应左右转动作。 |
+| `set_load(fraction)` | 负重/容量，钳制到 0～1；0 为空载，(0, 0.65] 为轻载，(0.65, 1] 为满载。 |
 | `play_gather(amount)` | 只在采集成功后调用，amount > 0 才播放。 |
 | `play_throw(amount)` | 只在投石成功、库存已扣除后调用；连投重新开始动作，旧动作可中断。 |
 | `advance(delta, clock)` | 唯一动画推进入口，跟随现有模拟暂停。clock 给旧程序模型保持原有拍翼与起伏相位。 |
 
-动作语义为 `idle`、`fly`、`carry_fly`、`gather`、`throw`。前三者循环，后两者单次，单次结束后回到最新运动状态。动作别名通过预制场景的 `animation_names` 字典配置；缺失动作跳过播放，保留姿态，不影响玩法。正式资产验收必须检查所需动作齐全。
+动作语义为 `idle`、`fly`、`carry_fly`、`gather`、`throw`，ART-02 正式模型另有 `turn_left` / `turn_right`。循环动作采用 0.09 秒交叉混合，转向额外叠加小幅平滑侧倾。采集动作持续 0.42 秒，投石持续 0.48 秒；控制器按实际导入片长调整播放速度，避免导出帧取整改变操作时序。单次结束后回到最新运动状态。动作别名通过预制场景的 `animation_names` 字典配置；缺失动作跳过播放，保留姿态，不影响玩法。正式资产验收必须检查所需动作齐全。
 
-`cargo_path` 是模型根下的可选 Node3D 路径。更复杂的负重分段在精卫控制器内扩展，world/main 不读取附件、翅膀或骨骼节点。`replace_model(scene)` 用于预览时替换模型并中断当前动作；保留朝向、负重数值，恢复循环。运行时更换不同附件层级前须同步配置 `cargo_path`。
+`cargo_path` 和 `full_cargo_path` 是模型根下轻载、满载附件的可选 Node3D 路径。正式模型为 `Rig/Skeleton3D/CargoLight` 与 `Rig/Skeleton3D/CargoFull`，两组网格随 Spine 蒙皮，同一时刻最多显示一组。没有 full_cargo_path 的 ART-01 示例继续使用旧的有载/空载显隐。world/main 不读取附件、翅膀或骨骼节点。`surface_material` 为三个网格设置同一共享材质。`replace_model(scene)` 中断当前动作，保留朝向和负重数值，恢复循环；更换层级前须同步配置附件路径。
 
 ## 穿山甲：scenes/actors/pangolin.tscn
 

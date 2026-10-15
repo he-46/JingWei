@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3]
+[ext_resource type="Texture2D" path="res://assets/textures/characters/jingwei_atlas.png" id="1"]
+[resource]
+resource_name = "Jingwei painted feather"
+albedo_texture = ExtResource("1")
+roughness = 0.86
+metallic_specular = 0.22
+texture_filter = 3

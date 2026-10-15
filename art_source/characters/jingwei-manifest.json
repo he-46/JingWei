@@ -1,0 +1,27 @@
+{
+  "generator": "art_source/build_jingwei.py",
+  "blender": "4.5.3 LTS",
+  "source": "art_source/characters/jingwei.blend",
+  "model": "assets/models/characters/jingwei.glb",
+  "texture": "assets/textures/characters/jingwei_atlas.png",
+  "texture_size": [
+    1024,
+    1024
+  ],
+  "bones": 12,
+  "clips_source_seconds": {
+    "idle": 1.5,
+    "fly": 0.66,
+    "carry_fly": 0.82,
+    "turn_left": 0.66,
+    "turn_right": 0.66,
+    "gather": 0.42,
+    "throw": 0.48
+  },
+  "body_topology": "single continuous watertight loft from rump to beak; blended Spine/Head weights",
+  "body_topology_verified": {
+    "connected_components": 1,
+    "closed_manifold": true
+  },
+  "license_source": "Original project geometry, UV paint atlas and animation; no third-party art."
+}
