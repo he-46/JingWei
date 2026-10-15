@@ -15,6 +15,7 @@ Godot 文件夹内约 84 MiB 的 ZIP 是随项目提供的引擎，启动时无�
 
 - **Open-Editor.cmd**：打开编辑器；也可在 Godot 中导入 project.godot，等待导入完成后按 F5。
 - **Test.cmd**：先导入，再运行规则、存档、场景、音效和界面检查，使用独立测试存档目录。
+- **Sample.cmd**：固定种子的可玩美术样板，使用普通采集、投海和开山流程；本次进度不保存，不影响 Play.cmd 的旅程。
 - 支持 GODOT_EXE 环境变量、PATH 中的 godot / godot4，或 `Play.cmd -GodotPath "D:\Godot\Godot_v4.7.2-stable_win64.exe"` 指定引擎。
 - 如原工作区旁有 RainyArrow 的引擎，可作为最后的可选查找位置；独立下载不依赖它。
 
@@ -125,3 +126,5 @@ ART-04 的第一类岩层山已接入 Play.cmd：开采断面连续降低，完�
 ART-05 的海岸样板已接入 Play.cmd：宽窄变化的沙滩、湿岸与浅水石，分叉树冠、灌木和草丛，柔和的海水深浅过渡。填成的新陆地使用石质表面，泡沫跟随实际接水边缘，跨区块共用顶点与明暗；装饰避让采集点和未来工作位置。编辑器打开 `scenes/art/coast_preview.tscn` 后按 F6 可游玩不保存进度的样板；详见 [前后对比与交付记录](docs/art/deliveries/ART-05.md)。
 
 ART-06 已接入采集碎屑、飞石、水花、落地、成陆和开山完工反馈，以及神农石篓、乘风羽、开山印三个模型与配套图标。投石与落点音共用 0.48 秒时序，暂停冻结，静音不补播旧声音，换图清理；固定效果池限制连续操作开销。神器短暂出土展示，详情仍在现有页签。编辑器打开 `scenes/art/feedback_preview.tscn` 后 F6 可游玩禁用存档的样板；详见 [ART-06 交付与实机画面](docs/art/deliveries/ART-06.md)。
+
+ART-07 已完成可玩样板技术验收。新增 Sample.cmd；实际飞行采集四趟解锁开山，再搬空第一座山并形成新陆地，首轮共投入 1,152 石。山后、树后仅在遮挡时提示主角位置，并修正边界雾层遮入可达地面的投影。见 [完整评审与问题清单](docs/art/vertical-slice-review.md)、[14.5 秒实机短录像](docs/art/validation/art07/resource-cycle.mp4)。整体审美反馈与发布级性能继续记录，不把自动检查通过视作最终美术批准。

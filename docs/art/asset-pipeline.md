@@ -51,7 +51,7 @@ Godot 中复制角色预制场景，设置 `model_scene`。默认动作名可直
 
 1. 使用 Editor.cmd 打开项目，打开 `scenes/art/pipeline_preview.tscn`，按 F6。示例禁用存档，选择难度后按现有 WASD/E/Q/空格操作。
 2. 示例替换精卫、唯一穿山甲和第 0 类山体，另外四类保留原模型以验证混用。再次选择难度仍保留替换配置。
-3. `tools/run.ps1 -Mode Test` 自动执行状态、玩法、音效、UI、角色与表现、39 项高度增程、84 项山体、71 项环境、65 项反馈检查，以及在占位导入场景上重跑的 70 项玩法检查，当前合计 877 项。
+3. `tools/run.ps1 -Mode Test` 自动执行状态、玩法、音效、UI、角色与表现、39 项高度增程、84 项山体、71 项环境、65 项反馈检查，以及在占位导入场景上重跑的 70 项玩法检查，当前合计 926 项，包含 33 项真实路线与 16 项样板隔离/遮挡检查。
 4. `powershell -NoProfile -ExecutionPolicy Bypass -File tools/verify-clean-art-copy.ps1` 创建新的可分发源码副本，排除本地引擎 EXE、缓存和建模工具，限制 PATH 后由副本内 ZIP 准备引擎并完成全部测试。副本及日志在 `artifacts/art/clean-时间/`。
 5. 实机截图：Godot 运行 `--path . --resolution 1440x900 --script res://tests/capture_pipeline.gd -- --qa`，生成 `artifacts/art/art01/imported-*.png`。默认外观对照继续使用 ART-00 的基线工具。
 
@@ -84,3 +84,13 @@ Godot 中复制角色预制场景，设置 `model_scene`。默认动作名可直
 ## ART-06 神器与反馈制作入口
 
 `blender --background --python art_source/build_relics.py` 重建三个 `.blend`、三个 GLB、256² 调色图及三个透明图标。模型先保存、重开并导出，再使用同一网格与图集在固定正交镜头渲染 256² RGBA 图标。制作需要 Blender 4.5 的 Python API 与 numpy；运行不需要。资产目录、事件表、固定池边界及实机命令见 [ART-06 交付](deliveries/ART-06.md)。Test.cmd 包含 65 项反馈专项；使用实际图形环境运行同一脚本为 71 项。F6 可玩入口为 `scenes/art/feedback_preview.tscn`，截图脚本为 `tools/capture-feedback.gd`，两者均不访问玩家存档。
+
+## ART-07 样板与评审复现
+
+双击 Sample.cmd 或编辑器 F6 打开 `scenes/art/vertical_slice.tscn`，种子 10213、十万石；不读取、写入或备份玩家旅程。Play.cmd 保持普通入口。`Sample.cmd -Check -NonInteractive` 验证独立样板启动；全新源码验证器会额外执行此启动路径。
+
+真实路线与录像原始帧：`--path . --fixed-fps 60 --script res://tests/test_vertical_slice.gd -- --qa --capture-output=res://artifacts/art/art07-walk-final`。使用实际移动、E 和投放入口，没有注入资源或跳过模拟时间。镜头与遮挡/迷雾像素复核：`--path . --script res://tests/test_player_locator.gd -- --qa --review-out=res://artifacts/art/art07-review-final`。两者需要实际图形环境来保存画面；Test.cmd 默认以无窗口模式验证逻辑。
+
+性能单独运行 `--path . --script res://tests/art_slice_benchmark.gd -- --qa`；此脚本拒绝无窗口和固定帧率模式，使用实际时钟，输出 `artifacts/art/art07-performance/results.json`。不要与录制、编码或其他重负载作业同时运行。
+
+`tools/package-slice-review.py --walk artifacts/art/art07-walk-final --views artifacts/art/art07-review-final --performance artifacts/art/art07-performance/results.json --ffmpeg <ffmpeg.exe 路径>` 生成审阅 JPG、性能摘要和带章节说明的无声 MP4。制作工具需要 Python/Pillow、中文字体与 ffmpeg；只处理已捕获帧，游戏运行不需要这些工具。可选 `--fog-before <修正前 PNG>` 重建本包边界对照。原始帧和编码器留在忽略目录；已提交的对照图可直接审阅。完整证据、范围与下一包见 [样板评审](vertical-slice-review.md)。

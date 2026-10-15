@@ -1,0 +1,11 @@
+extends "res://scripts/main.gd"
+## Fixed seed 10213. Ordinary gameplay, no staged resources and no player-save access.
+func _ready() -> void:
+	save_enabled = false
+	super._ready()
+	choose_world(100000)
+	hud.save_label.text = "样板旅程 · 本次进度不保存"
+
+func save_game(manual: bool = false) -> void:
+	if manual and hud != null:
+		hud.notify("样板进度只保留在本次运行中。")

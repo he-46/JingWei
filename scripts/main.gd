@@ -141,6 +141,8 @@ func _physics_process(delta: float) -> void:
 		_refresh()
 		refresh_clock = 0
 	world.animate(state, delta, direction.length_squared() > 0.01, high, aimed_cell)
+	var locator_point: Vector2 = world.update_player_locator(delta)
+	hud.locate_player(locator_point, world.player_obscured)
 	_drain_messages()
 	save_clock += delta
 	if save_clock >= 15:

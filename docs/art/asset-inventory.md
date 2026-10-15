@@ -104,3 +104,9 @@ ART-01 小节中“默认主场景仍采用程序模型”是该包交付时的�
 ## ART-06 神器与反馈
 
 三个单网格单材质神器、256² 图集与三个透明图标均由 `art_source/build_relics.py` 生成，源文件在 `art_source/relics/`，清单为 `relic-manifest.json`。图标由相同模型、UV 与配色渲染。反馈控制器为 `scripts/visuals/action_feedback.gd`，世界固定预建 12 飞石、24 爆发、3 展示槽；暂停与换图语义见 [表现接口](visual-contract.md)，实机记录见 [ART-06 交付](deliveries/ART-06.md)。
+
+## ART-07 集成状态与扩展出口
+
+`Sample.cmd` / `scenes/art/vertical_slice.tscn` 提供种子10213、十万石的普通可玩样板，禁用玩家存档访问。精卫、单只穿山甲、第一类岩层山及其库存/山址、环境、神器、效果和简洁HUD均已集成。真实路线搬空第一座山并形成新陆地；样板预算已在风格规范v2复核。
+
+新增 `player_locator.gd`、world中的CPU树冠包络与山体射线：仅遮挡时显示小菱形，不添加逐树碰撞或透明材质。`boundary_fog.gdshader` 修正高层雾的投影范围。21张审阅图、14.5秒实机剪辑、真实资源账目和实时性能摘要见 [ART-07评审](vertical-slice-review.md)。这些资产不包含完整山型/散石/植被变体，MT-02～08、RS-01扩展及其他组合继续留在ART-08，审美反馈与发布性能范围保持独立记录。

@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('Run', 'Editor', 'Test')][string]$Mode = 'Run',
+    [ValidateSet('Run', 'Editor', 'Test', 'Sample')][string]$Mode = 'Run',
     [string]$GodotPath,
     [switch]$NonInteractive,
     [switch]$Check
@@ -140,6 +140,11 @@ try {
         New-Item -ItemType Directory -Path $env:APPDATA -Force | Out-Null
         New-Item -ItemType Directory -Path $env:LOCALAPPDATA -Force | Out-Null
     }
+    if ($Mode -eq 'Sample' -and -not $Check) {
+        $env:APPDATA = Join-Path $logRoot 'sample-profile'
+        $env:LOCALAPPDATA = Join-Path $logRoot 'sample-profile\local'
+        New-Item -ItemType Directory -Path $env:APPDATA, $env:LOCALAPPDATA -Force | Out-Null
+    }
     if ($Mode -eq 'Editor') {
         Invoke-Engine @('--path', $projectRoot, '--editor') 'editor-launch.log'
     } else {
@@ -159,10 +164,15 @@ try {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_mountain.gd', '--', '--qa') 'mountain-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_environment.gd', '--', '--qa') 'environment-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_feedback.gd', '--', '--qa') 'feedback-tests.log'
+            Invoke-Engine @('--headless', '--fixed-fps', '60', '--path', $projectRoot, '--script', 'res://tests/test_vertical_slice.gd', '--', '--qa') 'vertical-slice-tests.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_player_locator.gd', '--', '--qa') 'player-locator-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_game.gd', '--', '--qa', '--imported-visuals') 'imported-game-tests.log'
         } elseif ($Check) {
-            Invoke-Engine @('--headless', '--path', $projectRoot, '--quit-after', '6', '--', '--qa') 'startup-check.log'
+            $entry = if ($Mode -eq 'Sample') { 'res://scenes/art/vertical_slice.tscn' } else { 'res://scenes/main.tscn' }
+            Invoke-Engine @('--headless', '--path', $projectRoot, $entry, '--quit-after', '6', '--', '--qa') 'startup-check.log'
             Write-Host 'Fresh-start check passed.'
+        } elseif ($Mode -eq 'Sample') {
+            Invoke-Engine @('--path', $projectRoot, 'res://scenes/art/vertical_slice.tscn') 'sample-launch.log'
         } else {
             Invoke-Engine @('--path', $projectRoot) 'game-launch.log'
         }

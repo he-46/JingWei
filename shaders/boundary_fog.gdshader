@@ -19,7 +19,15 @@ float cloud_noise(vec2 p) {
 		mix(noise_hash(cell + vec2(0.0, 1.0)), noise_hash(cell + vec2(1.0)), f.x), f.y);
 }
 
-void vertex() { world_point = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xz; }
+void vertex() {
+	vec3 world_position = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+	// The game uses an orthographic camera. Evaluate the boundary at the low
+	// coastal reference plane along its view ray, not at the elevated fog sheet.
+	// Otherwise the upper sheets project several reachable units into the map.
+	vec3 forward = -INV_VIEW_MATRIX[2].xyz;
+	float drop = (0.2 - world_position.y) / min(forward.y, -0.0001);
+	world_point = world_position.xz + forward.xz * drop;
+}
 
 void fragment() {
 	float edge = max(max(map_bounds.x - world_point.x, world_point.x - map_bounds.z),

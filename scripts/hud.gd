@@ -10,6 +10,7 @@ signal help_requested
 signal modal_action(action: String)
 
 const State = preload("res://scripts/state.gd")
+const Locator = preload("res://scripts/visuals/player_locator.gd")
 const INK := Color("29413b")
 const MUTED := Color("78847a")
 const RUST := Color("ab7044")
@@ -61,12 +62,15 @@ var interact_button: Button
 var throw_button: Button
 var map_button: Button
 var seen_relics := 0
+var player_locator: Control
 
 func _ready() -> void:
 	root = Control.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
+	player_locator = Locator.new()
+	root.add_child(player_locator)
 	var theme := Theme.new()
 	var font := SystemFont.new()
 	font.font_names = PackedStringArray(["Microsoft YaHei", "Noto Sans SC", "SimHei"])
@@ -324,6 +328,7 @@ func _build_modal() -> void:
 	modal.visible = false
 
 func show_modal(title: String, body: String, choices: Array) -> void:
+	player_locator.hide()
 	modal_open = true
 	modal.visible = true
 	modal_title.text = title
@@ -382,11 +387,16 @@ func select_tab(id: String) -> void:
 	drawer.set_deferred("size", Vector2(278, 0))
 
 func set_overview(enabled: bool) -> void:
+	player_locator.hide()
 	overview = enabled
 	overview_panel.visible = enabled
 	drawer.visible = drawer_open and not enabled
 	drawer_button.disabled = enabled
 	map_button.text = "返回  Tab" if enabled else "全图  Tab"
+
+func locate_player(point: Vector2, obscured: bool) -> void:
+	player_locator.position = point
+	player_locator.visible = obscured and not modal_open and not overview
 
 func update_state(state: JWState, prompt: String, aimed_cell: int, aimed_point: Vector2 = Vector2.INF, flight_height: float = State.BIRD_HOVER_HEIGHT) -> void:
 	cargo.text = "%s / %s" % [number(state.carried), number(state.capacity())]

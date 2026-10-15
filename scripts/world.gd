@@ -57,6 +57,9 @@ var zoom: float = 1.0
 var focus := Vector3.ZERO
 var normal_size: float = 29.0
 var camera_offset := Vector3(16, 29, 27)
+var tree_canopies: Array[Vector4] = []
+var locator_clock := 0.0
+var player_obscured := false
 
 func setup(state: JWState) -> void:
 	font = SystemFont.new()
@@ -179,6 +182,7 @@ func _build_decor(state: JWState) -> void:
 			p = _decor_point(state, rng, 2.9, -3.5, State.LAND_HEIGHT, 2.7) if attempt < 7 else Vector3(0, -40, 0)
 		if p.y > -10:
 			tree_points.append(Vector2(p.x, p.z))
+			tree_canopies.append(Vector4(p.x, p.y + size * 2.4, p.z, size * 1.05))
 		tree_mesh.set_instance_transform(index, Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * size), p))
 		tree_mesh.set_instance_color(index, Color.WHITE if index % 2 else Color("d8e5ca"))
 	shrub_mesh = batch(MountainVisual.imported_mesh(preload("res://assets/models/environment/coast_shrub.glb")), mini(160, state.grid_size * 2), true, Color.WHITE, foliage_material)
@@ -484,6 +488,32 @@ func update_camera(state: JWState, delta: float, instant: bool = false) -> void:
 func point_visible(point: Vector2) -> bool:
 	var position := Vector3(point.x, 0.2, point.y)
 	return not camera.is_position_behind(position) and get_viewport().get_visible_rect().has_point(camera.unproject_position(position))
+
+func player_occluded() -> bool:
+	# One ray through real mountain collisions and at most 200 analytic canopy tests.
+	# Trees remain instanced decoration without added physics bodies.
+	if overview or bird_body.position.x >= 0:
+		return false
+	var start := camera.global_position
+	var end := bird_body.global_position + Vector3.UP * .15
+	var query := PhysicsRayQueryParameters3D.create(start, end)
+	query.exclude = [bird_body.get_rid()]
+	if not get_world_3d().direct_space_state.intersect_ray(query).is_empty():
+		return true
+	var direction := end - start
+	for canopy in tree_canopies:
+		var center := Vector3(canopy.x, canopy.y, canopy.z)
+		var t := clampf((center - start).dot(direction) / direction.length_squared(), 0, 1)
+		if t < .99 and (start + direction * t).distance_squared_to(center) < canopy.w * canopy.w:
+			return true
+	return false
+
+func update_player_locator(delta: float) -> Vector2:
+	locator_clock -= delta
+	if locator_clock <= 0:
+		locator_clock = .1
+		player_obscured = player_occluded()
+	return camera.unproject_position(bird_body.global_position + Vector3.UP * .15)
 
 func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aimed_cell: int) -> void:
 	time += delta

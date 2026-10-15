@@ -1,0 +1,102 @@
+{
+  "cases": [
+    {
+      "case": "coast-actions",
+      "draw_calls_median": 135.0,
+      "engine_static_memory_peak_mib": 101.554145812988,
+      "events_during_sample": {
+        "fill": 4,
+        "gather": 6,
+        "launch": 7,
+        "throw": 7,
+        "water": 7
+      },
+      "frame_ms_max": 17.142,
+      "frame_ms_median": 0.635,
+      "frame_ms_p95": 1.359,
+      "frames": 15812,
+      "locator_visible_frames": 0,
+      "seconds": 16.000875,
+      "seed": 10213,
+      "state_valid": true,
+      "target": 100000
+    },
+    {
+      "case": "quarry-actions",
+      "draw_calls_median": 139.0,
+      "engine_static_memory_peak_mib": 101.5461769104,
+      "events_during_sample": {
+        "discover": 0,
+        "gather": 14,
+        "land": 13,
+        "launch": 13,
+        "mined": 0,
+        "relic": 0,
+        "throw": 13
+      },
+      "frame_ms_max": 14.323,
+      "frame_ms_median": 0.679,
+      "frame_ms_p95": 1.485,
+      "frames": 7323,
+      "locator_visible_frames": 0,
+      "seconds": 8.000736,
+      "seed": 10213,
+      "state_valid": true,
+      "target": 100000
+    },
+    {
+      "case": "occluded-flight",
+      "draw_calls_median": 116.0,
+      "engine_static_memory_peak_mib": 101.846659660339,
+      "events_during_sample": {},
+      "frame_ms_max": 13.855,
+      "frame_ms_median": 0.639,
+      "frame_ms_p95": 1.316,
+      "frames": 7900,
+      "locator_visible_frames": 2348,
+      "seconds": 8.000359,
+      "seed": 10213,
+      "state_valid": true,
+      "target": 100000
+    },
+    {
+      "case": "large-overview",
+      "draw_calls_median": 85.0,
+      "engine_static_memory_peak_mib": 108.60009765625,
+      "events_during_sample": {},
+      "frame_ms_max": 15.572,
+      "frame_ms_median": 1.26,
+      "frame_ms_p95": 11.013,
+      "frames": 4100,
+      "locator_visible_frames": 0,
+      "seconds": 8.001105,
+      "seed": 10213,
+      "state_valid": true,
+      "target": 100000000
+    }
+  ],
+  "metadata": {
+    "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+    "engine": "4.7.2-stable (official)",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "logical_processors": 32,
+    "msaa_3d": 1,
+    "note": "CPU frame intervals in this desktop session; not GPU time, a release build, long-duration stress or minimum-spec acceptance. Audio muted. Setup excluded; normal main simulation and bounded feedback active.",
+    "os": "Windows",
+    "os_version": "10.0.22631",
+    "physics_hz": 60,
+    "rendering_method": "gl_compatibility",
+    "sample_seconds": "coast-actions=16; other cases=8",
+    "video_driver": "opengl3",
+    "viewport": [
+      1440,
+      900
+    ],
+    "vsync": 0,
+    "warmup_seconds": 3,
+    "window_size": [
+      1440,
+      900
+    ]
+  }
+}

@@ -28,6 +28,8 @@ try {
         $env:PYTHONPATH = ''
         & "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Destination 'tools\run.ps1') -Mode Test -NonInteractive
         if ($LASTEXITCODE -ne 0) { throw 'Clean source import/game tests failed.' }
+        & "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Destination 'tools\run.ps1') -Mode Sample -Check -NonInteractive
+        if ($LASTEXITCODE -ne 0) { throw 'Clean source sample launcher check failed.' }
     } finally {
         $env:PATH = $previousPath
         $env:PYTHONPATH = $previousPythonPath
