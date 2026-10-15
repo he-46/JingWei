@@ -1,4 +1,4 @@
-# 表现层接口（ART-01 建立，ART-02/03 扩展）
+# 表现层接口（ART-01 建立，ART-02～04 扩展）
 
 `state.gd` 管资源与尺寸，`main.gd` 判断操作并结算，`world.gd` 将已确定的状态送给表现对象。表现控制器不持有 JWState，不保存游戏，不触发采集、投石或开山结算。山体接收一次性数值快照。
 
@@ -34,11 +34,15 @@ ART-03 动作语义为 `idle`、`locked`、`walk`、`dig`、`finished` 循环，
 
 ## 山体：MountainVisual.from_state
 
-快照包含 `radius`、`height`、`remaining`、`stock`、`stock_fraction`、`transform`、`collision_radius` 和 `collision_height`。所有字段均为值，不向表现对象暴露资源字典引用。尺寸从 state 的 mountain_radius/height 和常量统一取得。
+快照包含 `radius`、`height`、`remaining`、`progress`、`settled`、`stock`、`stock_fraction`、`transform`、`collision_radius` 和 `collision_height`。所有字段均为值，不向表现对象暴露资源字典引用。尺寸从 state 的 mountain_radius/height 和常量统一取得。`stage_name()` 仅提供预览中的阶段描述，不触发任何模拟事件。
 
-world 保留 5 组共享 MultiMesh，每山 32 个上限固定的石堆实例。`mountain_scenes` 的第 0～4 项可分别替换对应轮廓；空缺继续使用原程序网格。导入约束为单网格、地面原点、单位变换、标准化尺度。
+world 保留 5 组共享 MultiMesh，每山 32 个上限固定的石堆实例。`mountain_scenes` 的第 0～4 项可分别替换对应轮廓；空缺继续使用原程序网格。默认第 0 项为 `strata_mountain.glb`，只替换对应山型，ART-01 占位示例显式覆盖它时继续使用诊断模型及旧材质。导入约束为单网格、地面原点、单位变换、标准化尺度。
 
-开采按原有 32 段刷新预算更新削顶比例与碰撞，库存改变时刷新石堆数量；stock=0 隐藏全部石料，remaining=0 隐藏山体并禁用碰撞。比例更新保留原有分段节奏；快照中的理论碰撞高度为 `height * max(0.05, remaining)`，碰撞中心仍按原公式 `height * remaining / 2`。最终雕刻或独立坍塌模型不得改变可采库存。
+ART-04 起开采比例变化就更新削顶面，取消原先 1/32 刷新门槛。快照中的总碰撞高度为 `height * remaining`。样板使用八层圆柱包络，半径从共享导入网格按高度区间取得并留 0.02 单位归一化余量，不超过原 0.96 山脚上限；顶部层按当前剩余高度截短，移除的层全部禁用。其他山使用单圆柱；碰撞不再保留 5% 最低高度。圆柱是保守包络，不承诺逐三角形贴合岩层凹口。
+
+库存改变时调用 `pile_transform` 计算样板石堆位置、堆高与最多 32 组显隐；stock=0 隐藏全部资源石块，remaining=0 隐藏山体并禁用所有碰撞。`quarry_site.glb` 为无碰撞、无采集能力的低矮遗迹，最大高度为山原高度的 2.4%。开采中每样板八块装饰碎屑和全世界最多八团扬尘都不进入资源层；扬尘只随 world.animate 的模拟时钟推进，暂停不动，换图随世界释放。
+
+样板与石堆共享一张 1024² 岩层图；正式山、石料与遗迹分别使用可复用材质。Compatibility 实例自定义颜色读回存在半精度误差，实机检查按 0.0005 的归一化绝对误差验收，碰撞仍以完整逻辑比例计算。正式雕刻或视觉重放不得改变可采库存。
 
 ## 时序、暂停与存档
 

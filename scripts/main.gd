@@ -8,7 +8,7 @@ const Models = preload("res://scripts/models.gd")
 const Soundscape = preload("res://scripts/soundscape.gd")
 @export var bird_visual_scene: PackedScene
 @export var pangolin_visual_scene: PackedScene
-@export var mountain_visual_scenes: Array[PackedScene] = []
+@export var mountain_visual_scenes: Array[PackedScene] = [World.SAMPLE_MOUNTAIN]
 
 var state: JWState
 var world: Node3D

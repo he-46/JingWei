@@ -1,6 +1,6 @@
 # ART-01：资产导入流程
 
-ART-01 建立导入与表现接口，pipeline_examples 仍保留为诊断占位模型。ART-02/03 已将正式精卫与穿山甲接入普通 Play.cmd；样板山体由 ART-04 制作。
+ART-01 建立导入与表现接口，pipeline_examples 仍保留为诊断占位模型。ART-02/03 已将正式精卫与穿山甲接入普通 Play.cmd，ART-04 已接入第 0 类岩层样板山、石料与遗迹。
 
 ## 玩家与制作环境
 
@@ -24,7 +24,7 @@ ART-01 建立导入与表现接口，pipeline_examples 仍保留为诊断占位�
 | 骨骼 | 一个 `Rig`、一个 `Root`，左右后缀 `_L`/`_R`；无负缩放，每顶点最多 4 权重。逻辑不读取骨骼名，名称供制作维护。 |
 | 动画 | 独立命名 NLA 轨道，起点第 1 帧，24 fps 源文件；导出 NLA Tracks。无根运动位移、物理节点、脚本或资源结算方法轨道。 |
 
-角色动作语义、可选附件和事件时序见[表现接口](visual-contract.md)。正式山体目前沿用公共顶点色削顶着色器；GLB 材质不会覆盖该着色器。更复杂岩层材质与阶段模型在 ART-04 扩展，不能直接套多网格场景并期望保留各子节点变换。
+角色动作语义、可选附件和事件时序见[表现接口](visual-contract.md)。ART-04 样板山使用共享岩层着色器，兼容连续削顶和断面法线；其余原型/诊断山沿用顶点色削顶材质。GLB 材质不会覆盖世界指定的共享材质，不能直接套多网格场景并期望保留各子节点变换。
 
 ## 可复现制作步骤
 
@@ -51,7 +51,7 @@ Godot 中复制角色预制场景，设置 `model_scene`。默认动作名可直
 
 1. 使用 Editor.cmd 打开项目，打开 `scenes/art/pipeline_preview.tscn`，按 F6。示例禁用存档，选择难度后按现有 WASD/E/Q/空格操作。
 2. 示例替换精卫、唯一穿山甲和第 0 类山体，另外四类保留原模型以验证混用。再次选择难度仍保留替换配置。
-3. `tools/run.ps1 -Mode Test` 自动执行原有玩法测试、41 项表现检查、39 项精卫检查、55 项穿山甲检查，以及在占位导入场景上重跑的 70 项玩法检查。
+3. `tools/run.ps1 -Mode Test` 自动执行状态、玩法、音效、UI、角色与表现、39 项高度增程、84 项山体检查，以及在占位导入场景上重跑的 70 项玩法检查，当前合计 741 项。
 4. `powershell -NoProfile -ExecutionPolicy Bypass -File tools/verify-clean-art-copy.ps1` 创建新的可分发源码副本，排除本地引擎 EXE、缓存和建模工具，限制 PATH 后由副本内 ZIP 准备引擎并完成全部测试。副本及日志在 `artifacts/art/clean-时间/`。
 5. 实机截图：Godot 运行 `--path . --resolution 1440x900 --script res://tests/capture_pipeline.gd -- --qa`，生成 `artifacts/art/art01/imported-*.png`。默认外观对照继续使用 ART-00 的基线工具。
 
@@ -68,3 +68,9 @@ Godot 中复制角色预制场景，设置 `model_scene`。默认动作名可直
 `blender --background --python art_source/build_pangolin.py` 重建穿山甲源文件、1024² 鳞甲图集、6 段动作和 GLB；仅覆盖对应穿山甲资产。`art_source/mesh_tools.py` 提供该生成器的网格、UV 与蒙皮构建工具。源文件保留相对纹理路径；手工编辑后仍使用单资产导出器。
 
 生成器检查头身长吻为连续封闭网格，将 86 片浅脊鳞片、肢体和长尾合为一个蒙皮表面。`assets/materials/pangolin_keratin.tres` 使用外部图集、线性 mipmaps 和 0.88 粗糙度。GLB 内嵌纹理模式同样为 3；无需提交额外抽取的同名 PNG。默认角色为 `scenes/actors/pangolin.tscn`，独立 F6 入口为 `scenes/art/pangolin_preview.tscn`。源文件清单、动作与工作状态验证见 [ART-03 交付](deliveries/ART-03.md)。
+
+## ART-04 山体制作入口
+
+`blender --background --python art_source/build_mountain.py` 重建一套岩层山、石块、低矮遗迹和共享 1024² 岩层图。三个源文件在 `art_source/environment/`，生成器检查封闭流形，实际重新打开源文件后导出 `assets/models/environment/` 的三个 GLB。清单为 `art_source/environment/mountain-manifest.json`；手工修改后仍使用单资产导出器。GLB 采用内嵌纹理模式 3，正式材质共享外部图并启用 mipmaps。
+
+编辑器 F6 入口为 `scenes/art/mountain_preview.tscn`，可切换六种状态、连续拖动进度和库存、旋转或缩放，不访问玩家旅程或存档。样板自动替换世界第 0 类山体；其余四类保留程序模型。普通 Test.cmd 执行 84 项山体检查；实际图形环境再运行 `--path . --resolution 1152x720 --script res://tests/test_mountain.gd -- --qa`，执行 113 项，包含 29 项 MultiMesh 读回与装饰避让检查。截图入口为 `tests/capture_mountain_art.gd`，详见 [ART-04 交付](deliveries/ART-04.md)。

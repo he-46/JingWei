@@ -1,0 +1,33 @@
+{
+  "generator": "art_source/build_mountain.py",
+  "blender": "4.5.3 LTS",
+  "texture": "assets/textures/environment/strata_paint.png",
+  "texture_size": [
+    1024,
+    1024
+  ],
+  "source": "Original authored topology and painted rock; no third-party art.",
+  "assets": {
+    "strata_mountain": {
+      "triangles": 1918,
+      "materials": 1,
+      "source": "art_source/environment/strata_mountain.blend",
+      "model": "assets/models/environment/strata_mountain.glb",
+      "closed_manifold": true
+    },
+    "quarry_stone": {
+      "triangles": 68,
+      "materials": 1,
+      "source": "art_source/environment/quarry_stone.blend",
+      "model": "assets/models/environment/quarry_stone.glb",
+      "closed_manifold": true
+    },
+    "quarry_site": {
+      "triangles": 252,
+      "materials": 1,
+      "source": "art_source/environment/quarry_site.blend",
+      "model": "assets/models/environment/quarry_site.glb",
+      "closed_manifold": true
+    }
+  }
+}

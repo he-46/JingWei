@@ -3,9 +3,10 @@ extends Node3D
 const State = preload("res://scripts/state.gd")
 const Models = preload("res://scripts/models.gd")
 const MountainVisual = preload("res://scripts/visuals/mountain_visual.gd")
+const SAMPLE_MOUNTAIN = preload("res://assets/models/environment/strata_mountain.glb")
 @export var bird_scene: PackedScene = preload("res://scenes/actors/jingwei.tscn")
 @export var pangolin_scene: PackedScene = preload("res://scenes/actors/pangolin.tscn")
-@export var mountain_scenes: Array[PackedScene] = []
+@export var mountain_scenes: Array[PackedScene] = [SAMPLE_MOUNTAIN]
 const CHUNK := 8
 const ROCKS_PER_MOUNTAIN := 32
 
@@ -13,6 +14,8 @@ var camera: Camera3D
 var bird_body: CharacterBody3D
 var bird_model: Node3D
 var stone_mesh: MultiMesh
+var grass_mesh: MultiMesh
+var tree_mesh: MultiMesh
 var mountain_batches: Array[MultiMesh] = []
 var mountain_slots: Array[int] = []
 var flight_ceiling: float = 8.2
@@ -22,6 +25,14 @@ var pile_mesh: MultiMesh
 var drop_mesh: MultiMesh
 var mountain_collisions: Array[CollisionShape3D] = []
 var mountain_cache: Array[int] = []
+var mountain_ratios: Array[float] = []
+var mountain_collision_groups: Array = []
+var sample_enabled := false
+var sample_collision_radii := PackedFloat32Array()
+var quarry_mesh: MultiMesh
+var quarry_site_mesh: MultiMesh
+var work_chip_mesh: MultiMesh
+var mining_dust: MultiMesh
 var pile_cache: Array[int] = []
 var terrain_chunks: Dictionary = {}
 var npc_views: Dictionary = {}
@@ -149,24 +160,33 @@ func _build_decor(state: JWState) -> void:
 	grass_shape.top_radius = 0
 	grass_shape.height = 0.28
 	grass_shape.radial_segments = 3
-	var grass := batch(grass_shape, mini(2500, state.grid_size * 40), true, Color.WHITE)
-	for index in range(grass.instance_count):
-		var p := Vector3(rng.randf_range(state.map_origin.x, -1), 0.56, rng.randf_range(state.map_origin.y, -state.map_origin.y))
-		grass.set_instance_transform(index, Transform3D(Basis.IDENTITY, p))
-		grass.set_instance_color(index, Color("6f905c") if index % 4 else Color("d7c58d"))
+	grass_mesh = batch(grass_shape, mini(2500, state.grid_size * 40), true, Color.WHITE)
+	for index in range(grass_mesh.instance_count):
+		var p := _decor_point(state, rng, 0.2, -1, 0.56)
+		grass_mesh.set_instance_transform(index, Transform3D(Basis.IDENTITY, p))
+		grass_mesh.set_instance_color(index, Color("6f905c") if index % 4 else Color("d7c58d"))
 	# Distant trees use instancing; no per-tree scripts or animation nodes.
 	var tree_shape := CylinderMesh.new()
 	tree_shape.bottom_radius = 0.8
 	tree_shape.top_radius = 0
 	tree_shape.height = 2.8
 	tree_shape.radial_segments = 7
-	var trees := batch(tree_shape, mini(320, state.grid_size * 4), true, Color.WHITE)
-	for index in range(trees.instance_count):
-		var p := Vector3(rng.randf_range(state.map_origin.x + 1, -3), 1.84, rng.randf_range(state.map_origin.y + 1, -state.map_origin.y - 1))
-		trees.set_instance_transform(index, Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * rng.randf_range(0.7, 1.2)), p))
-		trees.set_instance_color(index, Color("477d60") if index % 2 else Color("67946b"))
+	tree_mesh = batch(tree_shape, mini(320, state.grid_size * 4), true, Color.WHITE)
+	for index in range(tree_mesh.instance_count):
+		var size := rng.randf_range(0.7, 1.2)
+		var p := _decor_point(state, rng, 2.7, -3, State.LAND_HEIGHT + 1.4 * size)
+		tree_mesh.set_instance_transform(index, Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * size), p))
+		tree_mesh.set_instance_color(index, Color("477d60") if index % 2 else Color("67946b"))
 
-func batch(mesh: Mesh, count: int, colors: bool, color: Color) -> MultiMesh:
+func _decor_point(state: JWState, rng: RandomNumberGenerator, mountain_margin: float, xmax: float, height: float) -> Vector3:
+	# Keep future quarry sites clear too; mining never has to remove trees or grass.
+	for attempt in range(24):
+		var point := Vector2(rng.randf_range(state.map_origin.x + 1, xmax), rng.randf_range(state.map_origin.y + 1, -state.map_origin.y - 1))
+		if state.clear_of_mountains(point, mountain_margin):
+			return Vector3(point.x, height, point.y)
+	return Vector3(0, -40, 0)
+
+func batch(mesh: Mesh, count: int, colors: bool, color: Color, material_override: Material = null) -> MultiMesh:
 	var result := MultiMesh.new()
 	result.transform_format = MultiMesh.TRANSFORM_3D
 	result.use_colors = colors
@@ -176,7 +196,7 @@ func batch(mesh: Mesh, count: int, colors: bool, color: Color) -> MultiMesh:
 	node.multimesh = result
 	var mat := Models.material(color)
 	mat.vertex_color_use_as_albedo = colors
-	node.material_override = mat
+	node.material_override = material_override if material_override else mat
 	add_child(node)
 	return result
 
@@ -189,6 +209,26 @@ func _build_resources(state: JWState) -> void:
 		var shape: int = mountain["shape"]
 		mountain_slots.append(counts[shape])
 		counts[shape] += 1
+	sample_enabled = not mountain_scenes.is_empty() and mountain_scenes[0] == SAMPLE_MOUNTAIN
+	if sample_enabled:
+		var stone := MountainVisual.imported_mesh(preload("res://assets/models/environment/quarry_stone.glb"))
+		quarry_mesh = batch(stone, counts[0] * ROCKS_PER_MOUNTAIN, false, Color.WHITE, preload("res://assets/materials/quarry_stone.tres"))
+		quarry_site_mesh = batch(MountainVisual.imported_mesh(preload("res://assets/models/environment/quarry_site.glb")), counts[0], false, Color.WHITE, preload("res://assets/materials/quarry_site.tres"))
+		work_chip_mesh = batch(stone, counts[0] * 8, false, Color("8d9584"))
+		var dust_shape := SphereMesh.new()
+		dust_shape.radius = 0.12
+		dust_shape.height = 0.24
+		dust_shape.radial_segments = 8
+		dust_shape.rings = 3
+		mining_dust = batch(dust_shape, 8, true, Color.WHITE)
+		var dust_node := get_child(get_child_count() - 1) as MultiMeshInstance3D
+		var dust_mat := Models.material(Color.WHITE)
+		dust_mat.vertex_color_use_as_albedo = true
+		dust_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		dust_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		dust_node.material_override = dust_mat
+		dust_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mining_dust.visible_instance_count = 0
 	for shape in range(5):
 		var mesh := MultiMesh.new()
 		mesh.transform_format = MultiMesh.TRANSFORM_3D
@@ -205,24 +245,32 @@ func _build_resources(state: JWState) -> void:
 		var mat := ShaderMaterial.new()
 		mat.shader = preload("res://shaders/mountain.gdshader")
 		node.material_override = mat
+		if shape == 0 and sample_enabled:
+			node.material_override = preload("res://assets/materials/strata_mountain.tres")
+			sample_collision_radii = MountainVisual.collision_envelopes(mesh.mesh)
 		add_child(node)
 		mountain_batches.append(mesh)
 	for index in range(state.mountains.size()):
 		mountain_cache.append(-1)
+		mountain_ratios.append(-1)
 		pile_cache.append(-1)
 		var body := StaticBody3D.new()
 		var visual = MountainVisual.from_state(state, index)
 		var point := state.mountain_position(index)
 		body.position = Vector3(point.x, State.LAND_HEIGHT, point.y)
 		add_child(body)
-		var shape := CylinderShape3D.new()
-		shape.radius = visual.collision_radius
-		shape.height = visual.height
-		var collider := CollisionShape3D.new()
-		collider.shape = shape
-		collider.position.y = state.mountain_height(index) * 0.5
-		body.add_child(collider)
-		mountain_collisions.append(collider)
+		var group: Array[CollisionShape3D] = []
+		var sample := sample_enabled and int(state.mountains[index]["shape"]) == 0
+		for slab in range(8 if sample else 1):
+			var shape := CylinderShape3D.new()
+			shape.radius = visual.radius * sample_collision_radii[slab] if sample else visual.collision_radius
+			shape.height = visual.height / (8 if sample else 1)
+			var collider := CollisionShape3D.new()
+			collider.shape = shape
+			body.add_child(collider)
+			group.append(collider)
+		mountain_collisions.append(group[0])
+		mountain_collision_groups.append(group)
 
 func sync(state: JWState) -> void:
 	for index in state.stone_dirty:
@@ -240,7 +288,8 @@ func sync(state: JWState) -> void:
 		var visual = MountainVisual.from_state(state, index)
 		var ratio: float = visual.remaining
 		var count := int(ceil(ROCKS_PER_MOUNTAIN * ratio))
-		if mountain_cache[index] != count:
+		if mountain_ratios[index] != ratio:
+			mountain_ratios[index] = ratio
 			mountain_cache[index] = count
 			var transform: Transform3D = visual.transform
 			if count == 0:
@@ -250,16 +299,26 @@ func sync(state: JWState) -> void:
 			mesh.set_instance_transform(slot, transform)
 			mesh.set_instance_custom_data(slot, Color(ratio, 0, 0, 1))
 			mesh.set_instance_color(slot, Color("e5ead3") if index % 3 == 0 else Color.WHITE)
-			var collider := mountain_collisions[index]
-			collider.set_deferred("disabled", count == 0)
-			collider.scale.y = maxf(0.05, ratio)
-			collider.position.y = visual.height * 0.5 * ratio
+			var group: Array = mountain_collision_groups[index]
+			for slab in range(group.size()):
+				var collider: CollisionShape3D = group[slab]
+				var bottom := float(slab) / group.size()
+				var top := minf(float(slab + 1) / group.size(), ratio)
+				collider.set_deferred("disabled", top <= bottom)
+				collider.shape.height = maxf(0.001, (top - bottom) * visual.height)
+				collider.position.y = (bottom + maxf(bottom, top)) * visual.height * 0.5
+			if sample_enabled and int(mountain["shape"]) == 0:
+				_update_quarry_site(index, visual)
 		var stock: int = visual.stock
 		if pile_cache[index] != stock:
 			pile_cache[index] = stock
 			var fraction: float = visual.stock_fraction
 			var point := state.pile_position(index)
 			for part in range(ROCKS_PER_MOUNTAIN):
+				if sample_enabled and int(mountain["shape"]) == 0:
+					quarry_mesh.set_instance_transform(mountain_slots[index] * ROCKS_PER_MOUNTAIN + part, MountainVisual.pile_transform(visual, part))
+					pile_mesh.set_instance_transform(index * ROCKS_PER_MOUNTAIN + part, Transform3D(Basis.IDENTITY, Vector3(0, -50, 0)))
+					continue
 				var angle := part * 2.39996
 				var radius := sqrt(float(part) / ROCKS_PER_MOUNTAIN) * 2.5
 				var location := Vector3(point.x + cos(angle) * radius, 0.6 + (1.0 - radius / 2.6) * fraction * 1.4, point.y + sin(angle) * radius)
@@ -287,6 +346,34 @@ func sync(state: JWState) -> void:
 	state.sea_dirty.clear()
 	_sync_npcs(state)
 	bird_model.set_load(float(state.carried) / state.capacity())
+	if mining_dust:
+		_update_mining_dust(state)
+
+func _update_quarry_site(index: int, visual) -> void:
+	var slot := mountain_slots[index]
+	quarry_site_mesh.set_instance_transform(slot, visual.transform)
+	for part in range(8):
+		var angle := part * TAU / 8
+		var location: Vector3 = visual.transform.origin + Vector3(cos(angle), 0, sin(angle)) * visual.radius * 0.80
+		location.y += 0.025
+		# Work fragments remain decorative: no pickup stock before the mine settles.
+		if visual.progress <= 0 or visual.settled:
+			location.y = -50
+		work_chip_mesh.set_instance_transform(slot * 8 + part, Transform3D(Basis.from_euler(Vector3(0, angle, 0)).scaled(Vector3.ONE * minf(0.35, visual.radius * 0.15)), location))
+
+func _update_mining_dust(state: JWState) -> void:
+	var index := state.next_mountain()
+	var active := index >= 0 and state.mining_unlocked() and bool(state.mountains[index]["started"])
+	mining_dust.visible_instance_count = 8 if active else 0
+	if not active:
+		return
+	var point := state.mountain_position(index)
+	var radius := state.mountain_radius(index)
+	for puff in range(8):
+		var phase := fposmod(time * 1.15 + puff / 8.0, 1.0)
+		var position := Vector3(point.x + radius * 0.92 + phase * 0.40, State.LAND_HEIGHT + 0.12 + phase * 0.60, point.y + sin(puff * 7.1) * phase * 0.40)
+		mining_dust.set_instance_transform(puff, Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * (0.25 + phase * 0.8)), position))
+		mining_dust.set_instance_color(puff, Color(0.74, 0.70, 0.55, sin(phase * PI) * 0.16))
 
 func _sync_npcs(state: JWState) -> void:
 	# This actor is created once and moves with the worker, regardless of camera range.
@@ -376,6 +463,8 @@ func point_visible(point: Vector2) -> bool:
 
 func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aimed_cell: int) -> void:
 	time += delta
+	if mining_dust:
+		_update_mining_dust(state)
 	update_camera(state, delta)
 	bird_model.set_motion(moving, high_flight)
 	bird_model.advance(delta, time)
