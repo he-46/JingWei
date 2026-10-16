@@ -425,13 +425,15 @@ func _process(delta: float) -> void:
 	if notification_time <= 0:
 		notice_panel.visible = false
 
-func show_world_picker(can_cancel: bool = false) -> void:
+func show_world_picker(can_cancel: bool = false, plain_background: bool = false) -> void:
 	var choices: Array = []
 	for profile in State.PROFILES:
 		choices.append({"text": "%s 石" % number(int(profile["target"])), "action": "world_%d" % profile["target"]})
 	if can_cancel:
 		choices.append({"text": "返回", "action": "resume"})
 	show_modal("选择填海规模", "规模越大，海域越广，山也越多。", choices)
+	if plain_background:
+		modal_shade.color = Color("e1e7dd")
 
 func toggle_drawer() -> void:
 	if modal_open or overview:

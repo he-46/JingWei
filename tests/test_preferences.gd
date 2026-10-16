@@ -93,6 +93,7 @@ func run() -> void:
 	expect(game.hud.modal_open and game.hud.modal_title.text == "设置", "pause routes to settings without resuming")
 	await shot("settings-standard-1152")
 	game.hud.settings_quality.pressed.emit()
+	await game.wait_until_ready()
 	expect(game.preferences.quality == "smooth" and game.world.reduced_detail, "real quality button applies smooth preset")
 	expect(not game.world.sun.shadow_enabled and game.world.grass_mesh.visible_instance_count == 0, "smooth disables shadows and decorative grass")
 	expect(root.msaa_3d == Viewport.MSAA_DISABLED and is_equal_approx(root.scaling_3d_scale, .75), "smooth changes real viewport settings")
@@ -147,6 +148,7 @@ func run() -> void:
 	game.show_menu()
 	game._modal_action("settings")
 	game.hud.settings_quality.pressed.emit()
+	await game.wait_until_ready()
 	expect(not game.world.reduced_detail and game.world.sun.shadow_enabled and game.world.grass_mesh.visible_instance_count == -1, "standard restores original details")
 	expect(root.msaa_3d == Viewport.MSAA_2X and root.scaling_3d_scale == 1, "standard restores original viewport")
 	if not capture_folder.is_empty():
@@ -162,6 +164,7 @@ func run() -> void:
 		game.show_menu()
 		game._modal_action("settings")
 		game.hud.settings_quality.pressed.emit()
+		await game.wait_until_ready()
 		expect(game.state.snapshot() == ledger and game.world.reduced_detail and not game.world.sun.shadow_enabled, "smooth switches safely on scale %d" % target)
 		game._modal_action("resume")
 		game.toggle_overview()
@@ -174,6 +177,7 @@ func run() -> void:
 		game.show_menu()
 		game._modal_action("settings")
 		game.hud.settings_quality.pressed.emit()
+		await game.wait_until_ready()
 		expect(game.state.snapshot() == ledger and game.world.sun.shadow_enabled and game.world.grass_mesh.visible_instance_count == -1, "standard restores safely on scale %d" % target)
 		game._modal_action("resume")
 	await close()
@@ -183,8 +187,24 @@ func run() -> void:
 	game.show_menu()
 	game._modal_action("settings")
 	game.hud.settings_quality.pressed.emit()
+	await game.wait_until_ready()
 	game._process(1)
 	expect(FileAccess.get_file_as_bytes(game.preferences_path) == pref_bytes, "sample preview changes never overwrite player preferences")
+	await close()
+	var initial := Prefs.DEFAULTS.duplicate()
+	initial.quality = "smooth"
+	initial.fullscreen = true
+	Prefs.save_preferences(folder.path_join("preferences.json"), initial)
+	game = Main.new()
+	game.save_path = folder.path_join("unstarted.json")
+	game.preferences_path = folder.path_join("preferences.json")
+	root.add_child(game)
+	await game.wait_until_ready()
+	expect(game.selection_pending and game.world == null, "unstarted journey can restore preferences without building a coast")
+	expect(root.msaa_3d == Viewport.MSAA_DISABLED and is_equal_approx(root.scaling_3d_scale, .75), "stored quality applies before scale selection")
+	if DisplayServer.get_name() != "headless":
+		expect(root.mode == Window.MODE_FULLSCREEN, "stored fullscreen applies before the first world exists")
+		root.mode = Window.MODE_WINDOWED
 	await close()
 	await create_timer(.1).timeout
 	print("PREFERENCES TESTS: %d checks, %d failures" % [checks, failures])

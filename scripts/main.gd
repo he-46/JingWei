@@ -9,6 +9,7 @@ const Store = preload("res://scripts/save_store.gd")
 const Soundscape = preload("res://scripts/soundscape.gd")
 const Feedback = preload("res://scripts/visuals/action_feedback.gd")
 const Preferences = preload("res://scripts/preferences.gd")
+const RenderWarmup = preload("res://scripts/visuals/render_warmup.gd")
 @export var bird_visual_scene: PackedScene
 @export var pangolin_visual_scene: PackedScene
 @export var mountain_visual_scenes: Array[PackedScene] = World.Catalog.scenes(World.Catalog.MOUNTAINS)
@@ -20,6 +21,7 @@ var save_path: String = "user://coast_journey.json"
 var save_enabled: bool = true
 var save_blocked: bool = false
 var selection_pending: bool = false
+var skip_scale_picker := false
 var choosing_again: bool = false
 var muted: bool = false
 var simulation_clock: float = 0
@@ -42,6 +44,7 @@ var preferences_clock := 0.0
 var preferences_error_shown := false
 var loading := false
 var loading_thread: Thread
+var warmup_report: Dictionary = {}
 
 func _ready() -> void:
 	_setup_input()
@@ -90,13 +93,14 @@ func _ready() -> void:
 	hud.modal_action.connect(_modal_action)
 	hud.setting_changed.connect(change_setting)
 	get_tree().auto_accept_quit = false
+	_apply_preferences()
 	loading = true
 	hud.show_loading("读取旅程", 0)
 	# Let the first waiting screen draw before reading or constructing a world.
 	await get_tree().process_frame
 	var loaded: Dictionary = await _background(func() -> Dictionary:
 		var result: Dictionary = Store.load_game(save_path) if save_enabled else {"state": null, "status": "new"}
-		result.selection = result.state == null and not showcase
+		result.selection = result.state == null and not showcase and not skip_scale_picker
 		if result.state == null:
 			result.state = State.new(target)
 		return result)
@@ -105,6 +109,14 @@ func _ready() -> void:
 	selection_pending = loaded.selection
 	if showcase:
 		_prepare_showcase()
+	if selection_pending:
+		# A first-time choice does not need a disposable 3D coast or GPU compilation.
+		loading = false
+		hud.show_world_picker(false, true)
+		if save_blocked:
+			hud.modal_text.text = "现有旅程无法读取。选择新旅程后会保留原文件副本。\n选择这次心愿的大小，再出发。"
+		loading_finished.emit()
+		return
 	await _build_world()
 	if atlas_view:
 		world.overview = true
@@ -163,9 +175,19 @@ func _build_world() -> void:
 	add_child(world)
 	hud.show_loading("铺设海岸", .06)
 	await get_tree().process_frame
-	await world.setup(state, true, hud.show_loading)
+	await world.setup(state, true, func(stage: String, fraction: float) -> void: hud.show_loading(stage, .06 + fraction * .75))
 	_setup_feedback()
 	_apply_preferences()
+	await _prepare_rendering()
+
+func _prepare_rendering() -> void:
+	var warmup := RenderWarmup.new()
+	add_child(warmup)
+	warmup_report = await warmup.prepare(world, feedback, String(preferences.quality), hud.show_loading)
+	warmup.queue_free()
+	# Keep the opaque panel and simulation freeze through the actual world draw.
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
 
 func _setup_input() -> void:
 	var keys := {
@@ -455,8 +477,9 @@ func show_menu() -> void:
 
 func _apply_preferences() -> void:
 	var smooth: bool = preferences.quality == "smooth"
-	world.reduced_detail = smooth
-	world.animate(state, 0, false, false, aimed_cell)
+	if world != null:
+		world.reduced_detail = smooth
+		world.animate(state, 0, false, false, aimed_cell)
 	get_viewport().scaling_3d_scale = .75 if smooth else 1.0
 	get_viewport().msaa_3d = Viewport.MSAA_DISABLED if smooth else Viewport.MSAA_2X
 	if preferences_enabled and DisplayServer.get_name() != "headless":
@@ -465,7 +488,7 @@ func _apply_preferences() -> void:
 			get_window().mode = mode
 
 func change_setting(key: String, value: Variant) -> void:
-	if not hud.modal_open or hud.modal_title.text != "设置" or not Preferences.DEFAULTS.has(key) or key == "version":
+	if loading or not hud.modal_open or hud.modal_title.text != "设置" or not Preferences.DEFAULTS.has(key) or key == "version":
 		return
 	preferences[key] = value
 	preferences = Preferences.sanitize(preferences)
@@ -480,6 +503,16 @@ func change_setting(key: String, value: Variant) -> void:
 	preferences_clock = .4
 	if key != "volume":
 		_save_preferences()
+	if key == "quality" and world != null and DisplayServer.get_name() != "headless":
+		loading = true
+		_prepare_quality()
+
+func _prepare_quality() -> void:
+	hud.show_loading("准备画面", 0)
+	await _prepare_rendering()
+	loading = false
+	hud.show_settings(preferences)
+	loading_finished.emit()
 
 func _save_preferences() -> void:
 	if not preferences_enabled or not preferences_dirty:

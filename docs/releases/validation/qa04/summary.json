@@ -1,0 +1,1214 @@
+{
+  "before": {
+    "source_commit": "6a5c659469bc9aac0b2b2198289e91bcece5b69e",
+    "source_dirty": true,
+    "pack_sha256": "8458E08074BD627DBE63BDAF359AFE80F34BCE094A30BA221D95F8AD9D2444A3",
+    "baseline": true,
+    "headless": false,
+    "binary": "D:\\AzVGames\\Jingwei\\Godot\\Godot_v4.7.2-stable_win64.exe",
+    "passes": [
+      {
+        "pass": "first",
+        "cache_files_before": 0,
+        "cache_files_after": 22,
+        "report": {
+          "baseline": true,
+          "checks": 10,
+          "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+          "display": "Windows",
+          "engine": "4.7.2-stable (official)",
+          "failures": 0,
+          "first_ready_draw_ms": 6127.983,
+          "first_waiting_draw_ms": 357.896,
+          "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+          "note": "Default-entry resource loading included. Independent real frame observer, first post-draw events, and final world draw. Balanced controlled fixtures, isolated normal save/settings. Same-profile repeated process tests application cache reuse, not a cleared system GPU driver cache. Editor harness explicitly mounts shipping PCK, not release EXE performance.",
+          "records": [
+            {
+              "case": "entry",
+              "frames": 14,
+              "max_frame_ms": 2612.624,
+              "wall_ms": 6131.548
+            },
+            {
+              "case": "first-world",
+              "frames": 17,
+              "max_frame_ms": 24.214,
+              "wall_ms": 155.525
+            },
+            {
+              "case": "first-effects",
+              "frames": 7,
+              "max_frame_ms": 685.506,
+              "wall_ms": 716.776
+            },
+            {
+              "case": "first-reclaimed-surface",
+              "frames": 2,
+              "max_frame_ms": 838.796,
+              "wall_ms": 849.693
+            },
+            {
+              "case": "second-world",
+              "frames": 17,
+              "max_frame_ms": 22.746,
+              "wall_ms": 155.422
+            },
+            {
+              "case": "smooth-preparation",
+              "frames": 2,
+              "max_frame_ms": 453.785,
+              "wall_ms": 461.044
+            }
+          ],
+          "repeat": false
+        }
+      },
+      {
+        "pass": "repeat",
+        "cache_files_before": 22,
+        "cache_files_after": 22,
+        "report": {
+          "baseline": true,
+          "checks": 9,
+          "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+          "display": "Windows",
+          "engine": "4.7.2-stable (official)",
+          "failures": 0,
+          "first_ready_draw_ms": 724.412,
+          "first_waiting_draw_ms": 266.971,
+          "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+          "note": "Default-entry resource loading included. Independent real frame observer, first post-draw events, and final world draw. Balanced controlled fixtures, isolated normal save/settings. Same-profile repeated process tests application cache reuse, not a cleared system GPU driver cache. Editor harness explicitly mounts shipping PCK, not release EXE performance.",
+          "records": [
+            {
+              "case": "entry",
+              "frames": 14,
+              "max_frame_ms": 255.154,
+              "wall_ms": 727.798
+            },
+            {
+              "case": "first-effects",
+              "frames": 7,
+              "max_frame_ms": 51.585,
+              "wall_ms": 83.28
+            },
+            {
+              "case": "first-reclaimed-surface",
+              "frames": 2,
+              "max_frame_ms": 50.351,
+              "wall_ms": 61.054
+            },
+            {
+              "case": "second-world",
+              "frames": 17,
+              "max_frame_ms": 25.082,
+              "wall_ms": 156.632
+            },
+            {
+              "case": "smooth-preparation",
+              "frames": 2,
+              "max_frame_ms": 127.441,
+              "wall_ms": 133.003
+            }
+          ],
+          "repeat": true
+        }
+      }
+    ]
+  },
+  "after": {
+    "source_commit": "6a5c659469bc9aac0b2b2198289e91bcece5b69e",
+    "source_dirty": true,
+    "pack_sha256": "6694D46D152C595F3689700C09725612778D73B329C5CE971895BB13DD80EA35",
+    "baseline": false,
+    "headless": false,
+    "binary": "D:\\AzVGames\\Jingwei\\Godot\\Godot_v4.7.2-stable_win64.exe",
+    "passes": [
+      {
+        "pass": "first",
+        "cache_files_before": 0,
+        "cache_files_after": 22,
+        "report": {
+          "baseline": false,
+          "checks": 16,
+          "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+          "display": "Windows",
+          "engine": "4.7.2-stable (official)",
+          "failures": 0,
+          "first_ready_draw_ms": 341.995,
+          "first_waiting_draw_ms": 80.382,
+          "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+          "note": "Default-entry resource loading included. Independent real frame observer, first post-draw events, and final world draw. Balanced controlled fixtures, isolated normal save/settings. Same-profile repeated process tests application cache reuse, not a cleared system GPU driver cache. Editor harness explicitly mounts shipping PCK, not release EXE performance.",
+          "records": [
+            {
+              "case": "entry",
+              "frames": 24,
+              "max_frame_ms": 130.603,
+              "wall_ms": 353.151,
+              "warmup": {}
+            },
+            {
+              "case": "first-world",
+              "frames": 47,
+              "max_frame_ms": 1710.778,
+              "wall_ms": 7716.665,
+              "warmup": {
+                "drawn": 28,
+                "evidence": [
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986506348842"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|PlaneMesh|shader:-9223371998602721556"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|34359738375|shader:-9223371998602721556"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738391|shader:-9223371996321020161"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986204358962"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/coast_grass.glb::ArrayMesh_8jffy:multi|0|truefalse|34896613399|shader:-9223371999189924121"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/coast_wind_tree.glb::ArrayMesh_wg7le:multi|1|truefalse|34896613399|shader:-9223371999189924121"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/shore_rock.glb::ArrayMesh_3q3y2:multi|0|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/scatter_stone_5.glb::ArrayMesh_5vow0:multi|1|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":multi|1|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/scatter_stone_1.glb::ArrayMesh_r4oac:multi|1|falsefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/quarry_site.glb::ArrayMesh_t8ypr:multi|1|truefalse|34896613399|shader:-9223371997243767048"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|truefalse|SphereMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/strata_mountain.glb::ArrayMesh_084d0:multi|1|truetrue|34896613399|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/strata_mountain_far.glb::ArrayMesh_1l3af:multi|0|truetrue|34896613399|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/mesa_mountain.glb::ArrayMesh_k5mqx:multi|1|truetrue|34359742487|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/mesa_mountain_far.glb::ArrayMesh_tmmuq:multi|0|truetrue|34359742487|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|CylinderMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|BoxMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/relics/basket.glb::ArrayMesh_ypeii:mesh|1|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/relics/feather.glb::ArrayMesh_yeodl:mesh|1|34359742487|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|34359738375|shader:-9223371996522346770"
+                  },
+                  {
+                    "draw_calls": 6,
+                    "name": "res://scenes/actors/jingwei.tscn"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://scenes/actors/pangolin.tscn"
+                  }
+                ],
+                "samples": 28,
+                "session_reused": false,
+                "skipped": "",
+                "wall_ms": 3419.544
+              }
+            },
+            {
+              "case": "first-effects",
+              "frames": 7,
+              "max_frame_ms": 5.633,
+              "wall_ms": 38.904,
+              "warmup": {
+                "drawn": 28,
+                "evidence": [
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986506348842"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|PlaneMesh|shader:-9223371998602721556"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|34359738375|shader:-9223371998602721556"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738391|shader:-9223371996321020161"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986204358962"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/coast_grass.glb::ArrayMesh_8jffy:multi|0|truefalse|34896613399|shader:-9223371999189924121"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/coast_wind_tree.glb::ArrayMesh_wg7le:multi|1|truefalse|34896613399|shader:-9223371999189924121"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/shore_rock.glb::ArrayMesh_3q3y2:multi|0|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/scatter_stone_5.glb::ArrayMesh_5vow0:multi|1|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":multi|1|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/scatter_stone_1.glb::ArrayMesh_r4oac:multi|1|falsefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/quarry_site.glb::ArrayMesh_t8ypr:multi|1|truefalse|34896613399|shader:-9223371997243767048"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|truefalse|SphereMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/strata_mountain.glb::ArrayMesh_084d0:multi|1|truetrue|34896613399|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/strata_mountain_far.glb::ArrayMesh_1l3af:multi|0|truetrue|34896613399|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/mesa_mountain.glb::ArrayMesh_k5mqx:multi|1|truetrue|34359742487|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/mesa_mountain_far.glb::ArrayMesh_tmmuq:multi|0|truetrue|34359742487|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|CylinderMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|BoxMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/relics/basket.glb::ArrayMesh_ypeii:mesh|1|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/relics/feather.glb::ArrayMesh_yeodl:mesh|1|34359742487|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|34359738375|shader:-9223371996522346770"
+                  },
+                  {
+                    "draw_calls": 6,
+                    "name": "res://scenes/actors/jingwei.tscn"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://scenes/actors/pangolin.tscn"
+                  }
+                ],
+                "samples": 28,
+                "session_reused": false,
+                "skipped": "",
+                "wall_ms": 3419.544
+              }
+            },
+            {
+              "case": "first-reclaimed-surface",
+              "frames": 2,
+              "max_frame_ms": 6.574,
+              "wall_ms": 10.874,
+              "warmup": {
+                "drawn": 28,
+                "evidence": [
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986506348842"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|PlaneMesh|shader:-9223371998602721556"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|34359738375|shader:-9223371998602721556"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738391|shader:-9223371996321020161"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986204358962"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/coast_grass.glb::ArrayMesh_8jffy:multi|0|truefalse|34896613399|shader:-9223371999189924121"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/coast_wind_tree.glb::ArrayMesh_wg7le:multi|1|truefalse|34896613399|shader:-9223371999189924121"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/shore_rock.glb::ArrayMesh_3q3y2:multi|0|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/scatter_stone_5.glb::ArrayMesh_5vow0:multi|1|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":multi|1|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/scatter_stone_1.glb::ArrayMesh_r4oac:multi|1|falsefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/quarry_site.glb::ArrayMesh_t8ypr:multi|1|truefalse|34896613399|shader:-9223371997243767048"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|truefalse|SphereMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/strata_mountain.glb::ArrayMesh_084d0:multi|1|truetrue|34896613399|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/strata_mountain_far.glb::ArrayMesh_1l3af:multi|0|truetrue|34896613399|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/mesa_mountain.glb::ArrayMesh_k5mqx:multi|1|truetrue|34359742487|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/mesa_mountain_far.glb::ArrayMesh_tmmuq:multi|0|truetrue|34359742487|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|CylinderMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|BoxMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/relics/basket.glb::ArrayMesh_ypeii:mesh|1|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/relics/feather.glb::ArrayMesh_yeodl:mesh|1|34359742487|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|34359738375|shader:-9223371996522346770"
+                  },
+                  {
+                    "draw_calls": 6,
+                    "name": "res://scenes/actors/jingwei.tscn"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://scenes/actors/pangolin.tscn"
+                  }
+                ],
+                "samples": 28,
+                "session_reused": false,
+                "skipped": "",
+                "wall_ms": 3419.544
+              }
+            },
+            {
+              "case": "second-world",
+              "frames": 20,
+              "max_frame_ms": 25.109,
+              "wall_ms": 172.176,
+              "warmup": {
+                "drawn": 0,
+                "session_reused": true,
+                "skipped": ""
+              }
+            },
+            {
+              "case": "smooth-preparation",
+              "frames": 32,
+              "max_frame_ms": 523.46,
+              "wall_ms": 1327.517,
+              "warmup": {
+                "drawn": 28,
+                "evidence": [
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986506348842"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|PlaneMesh|shader:-9223371998602721556"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|34359738375|shader:-9223371998602721556"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738391|shader:-9223371996321020161"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986204358962"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/coast_grass.glb::ArrayMesh_8jffy:multi|0|truefalse|34896613399|shader:-9223371999189924121"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/coast_wind_tree.glb::ArrayMesh_wg7le:multi|1|truefalse|34896613399|shader:-9223371999189924121"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/shore_rock.glb::ArrayMesh_3q3y2:multi|0|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/scatter_stone_5.glb::ArrayMesh_5vow0:multi|1|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|1|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/scatter_stone_1.glb::ArrayMesh_r4oac:multi|1|falsefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/quarry_site.glb::ArrayMesh_t8ypr:multi|1|truefalse|34896613399|shader:-9223371997243767048"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|truefalse|SphereMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/strata_mountain.glb::ArrayMesh_084d0:multi|1|truetrue|34896613399|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/strata_mountain_far.glb::ArrayMesh_1l3af:multi|0|truetrue|34896613399|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/mesa_mountain.glb::ArrayMesh_k5mqx:multi|1|truetrue|34359742487|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/mesa_mountain_far.glb::ArrayMesh_tmmuq:multi|0|truetrue|34359742487|shader:-9223371996019030279"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|CylinderMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|BoxMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/relics/basket.glb::ArrayMesh_ypeii:mesh|1|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/relics/feather.glb::ArrayMesh_yeodl:mesh|1|34359742487|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|34359738375|shader:-9223371996522346770"
+                  },
+                  {
+                    "draw_calls": 3,
+                    "name": "res://scenes/actors/jingwei.tscn"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://scenes/actors/pangolin.tscn"
+                  }
+                ],
+                "samples": 28,
+                "session_reused": false,
+                "skipped": "",
+                "wall_ms": 1308.217
+              }
+            }
+          ],
+          "repeat": false
+        }
+      },
+      {
+        "pass": "repeat",
+        "cache_files_before": 22,
+        "cache_files_after": 22,
+        "report": {
+          "baseline": false,
+          "checks": 14,
+          "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+          "display": "Windows",
+          "engine": "4.7.2-stable (official)",
+          "failures": 0,
+          "first_ready_draw_ms": 1008.772,
+          "first_waiting_draw_ms": 30.602,
+          "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+          "note": "Default-entry resource loading included. Independent real frame observer, first post-draw events, and final world draw. Balanced controlled fixtures, isolated normal save/settings. Same-profile repeated process tests application cache reuse, not a cleared system GPU driver cache. Editor harness explicitly mounts shipping PCK, not release EXE performance.",
+          "records": [
+            {
+              "case": "entry",
+              "frames": 64,
+              "max_frame_ms": 137.01,
+              "wall_ms": 1014.28,
+              "warmup": {
+                "drawn": 28,
+                "evidence": [
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986556680462"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|PlaneMesh|shader:-9223371998686607637"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|34359738375|shader:-9223371998686607637"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738391|shader:-9223371996371351819"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986254690587"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/coast_grass.glb::ArrayMesh_8jffy:multi|0|truefalse|34896613399|shader:-9223371999273810202"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/coast_wind_tree.glb::ArrayMesh_wg7le:multi|1|truefalse|34896613399|shader:-9223371999273810202"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/shore_rock.glb::ArrayMesh_3q3y2:multi|0|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/scatter_stone_5.glb::ArrayMesh_5vow0:multi|1|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":multi|1|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/scatter_stone_1.glb::ArrayMesh_r4oac:multi|1|falsefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/quarry_site.glb::ArrayMesh_t8ypr:multi|1|truefalse|34896613399|shader:-9223371997294098696"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|truefalse|SphereMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/strata_mountain.glb::ArrayMesh_084d0:multi|1|truetrue|34896613399|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/strata_mountain_far.glb::ArrayMesh_1l3af:multi|0|truetrue|34896613399|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/mesa_mountain.glb::ArrayMesh_k5mqx:multi|1|truetrue|34359742487|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/mesa_mountain_far.glb::ArrayMesh_tmmuq:multi|0|truetrue|34359742487|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|CylinderMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|BoxMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/relics/basket.glb::ArrayMesh_ypeii:mesh|1|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/relics/feather.glb::ArrayMesh_yeodl:mesh|1|34359742487|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|34359738375|shader:-9223371996572678399"
+                  },
+                  {
+                    "draw_calls": 6,
+                    "name": "res://scenes/actors/jingwei.tscn"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://scenes/actors/pangolin.tscn"
+                  }
+                ],
+                "samples": 28,
+                "session_reused": false,
+                "skipped": "",
+                "wall_ms": 368.202
+              }
+            },
+            {
+              "case": "first-effects",
+              "frames": 7,
+              "max_frame_ms": 5.572,
+              "wall_ms": 38.917,
+              "warmup": {
+                "drawn": 28,
+                "evidence": [
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986556680462"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|PlaneMesh|shader:-9223371998686607637"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|34359738375|shader:-9223371998686607637"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738391|shader:-9223371996371351819"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986254690587"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/coast_grass.glb::ArrayMesh_8jffy:multi|0|truefalse|34896613399|shader:-9223371999273810202"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/coast_wind_tree.glb::ArrayMesh_wg7le:multi|1|truefalse|34896613399|shader:-9223371999273810202"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/shore_rock.glb::ArrayMesh_3q3y2:multi|0|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/scatter_stone_5.glb::ArrayMesh_5vow0:multi|1|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":multi|1|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/scatter_stone_1.glb::ArrayMesh_r4oac:multi|1|falsefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/quarry_site.glb::ArrayMesh_t8ypr:multi|1|truefalse|34896613399|shader:-9223371997294098696"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|truefalse|SphereMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/strata_mountain.glb::ArrayMesh_084d0:multi|1|truetrue|34896613399|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/strata_mountain_far.glb::ArrayMesh_1l3af:multi|0|truetrue|34896613399|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/mesa_mountain.glb::ArrayMesh_k5mqx:multi|1|truetrue|34359742487|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/mesa_mountain_far.glb::ArrayMesh_tmmuq:multi|0|truetrue|34359742487|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|CylinderMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|BoxMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/relics/basket.glb::ArrayMesh_ypeii:mesh|1|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/relics/feather.glb::ArrayMesh_yeodl:mesh|1|34359742487|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|34359738375|shader:-9223371996572678399"
+                  },
+                  {
+                    "draw_calls": 6,
+                    "name": "res://scenes/actors/jingwei.tscn"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://scenes/actors/pangolin.tscn"
+                  }
+                ],
+                "samples": 28,
+                "session_reused": false,
+                "skipped": "",
+                "wall_ms": 368.202
+              }
+            },
+            {
+              "case": "first-reclaimed-surface",
+              "frames": 2,
+              "max_frame_ms": 6.336,
+              "wall_ms": 11.183,
+              "warmup": {
+                "drawn": 28,
+                "evidence": [
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986556680462"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|PlaneMesh|shader:-9223371998686607637"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|34359738375|shader:-9223371998686607637"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738391|shader:-9223371996371351819"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986254690587"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/coast_grass.glb::ArrayMesh_8jffy:multi|0|truefalse|34896613399|shader:-9223371999273810202"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/coast_wind_tree.glb::ArrayMesh_wg7le:multi|1|truefalse|34896613399|shader:-9223371999273810202"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/shore_rock.glb::ArrayMesh_3q3y2:multi|0|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/scatter_stone_5.glb::ArrayMesh_5vow0:multi|1|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":multi|1|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/scatter_stone_1.glb::ArrayMesh_r4oac:multi|1|falsefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/quarry_site.glb::ArrayMesh_t8ypr:multi|1|truefalse|34896613399|shader:-9223371997294098696"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|truefalse|SphereMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/strata_mountain.glb::ArrayMesh_084d0:multi|1|truetrue|34896613399|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/strata_mountain_far.glb::ArrayMesh_1l3af:multi|0|truetrue|34896613399|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/environment/mesa_mountain.glb::ArrayMesh_k5mqx:multi|1|truetrue|34359742487|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/mesa_mountain_far.glb::ArrayMesh_tmmuq:multi|0|truetrue|34359742487|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|CylinderMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|BoxMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/relics/basket.glb::ArrayMesh_ypeii:mesh|1|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://assets/models/relics/feather.glb::ArrayMesh_yeodl:mesh|1|34359742487|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": ":mesh|1|34359738375|shader:-9223371996572678399"
+                  },
+                  {
+                    "draw_calls": 6,
+                    "name": "res://scenes/actors/jingwei.tscn"
+                  },
+                  {
+                    "draw_calls": 2,
+                    "name": "res://scenes/actors/pangolin.tscn"
+                  }
+                ],
+                "samples": 28,
+                "session_reused": false,
+                "skipped": "",
+                "wall_ms": 368.202
+              }
+            },
+            {
+              "case": "second-world",
+              "frames": 20,
+              "max_frame_ms": 25.59,
+              "wall_ms": 166.674,
+              "warmup": {
+                "drawn": 0,
+                "session_reused": true,
+                "skipped": ""
+              }
+            },
+            {
+              "case": "smooth-preparation",
+              "frames": 32,
+              "max_frame_ms": 139.214,
+              "wall_ms": 450.028,
+              "warmup": {
+                "drawn": 28,
+                "evidence": [
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986556680462"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|PlaneMesh|shader:-9223371998686607637"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|34359738375|shader:-9223371998686607637"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738391|shader:-9223371996371351819"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|PlaneMesh|shader:-9223371986254690587"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/coast_grass.glb::ArrayMesh_8jffy:multi|0|truefalse|34896613399|shader:-9223371999273810202"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/coast_wind_tree.glb::ArrayMesh_wg7le:multi|1|truefalse|34896613399|shader:-9223371999273810202"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/shore_rock.glb::ArrayMesh_3q3y2:multi|0|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/scatter_stone_5.glb::ArrayMesh_5vow0:multi|1|truefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|1|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/scatter_stone_1.glb::ArrayMesh_r4oac:multi|1|falsefalse|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/quarry_site.glb::ArrayMesh_t8ypr:multi|1|truefalse|34896613399|shader:-9223371997294098696"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|truefalse|SphereMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=true;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/strata_mountain.glb::ArrayMesh_084d0:multi|1|truetrue|34896613399|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/strata_mountain_far.glb::ArrayMesh_1l3af:multi|0|truetrue|34896613399|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/mesa_mountain.glb::ArrayMesh_k5mqx:multi|1|truetrue|34359742487|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/environment/mesa_mountain_far.glb::ArrayMesh_tmmuq:multi|0|truetrue|34359742487|shader:-9223371996069361923"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|CylinderMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|BoxMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|0|TorusMesh|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":multi|0|falsefalse|34359738375|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=1;blend_mode=0;cull_mode=0;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=0;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture_force_srgb=false;albedo_texture_msdf=false;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/relics/basket.glb::ArrayMesh_ypeii:mesh|1|34896613399|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://assets/models/relics/feather.glb::ArrayMesh_yeodl:mesh|1|34359742487|StandardMaterial3D;resource_local_to_scene=false;render_priority=0;transparency=0;blend_mode=0;cull_mode=2;depth_draw_mode=0;no_depth_test=false;depth_test=0;shading_mode=1;diffuse_mode=0;specular_mode=0;disable_ambient_light=false;disable_fog=false;disable_specular_occlusion=false;vertex_color_use_as_albedo=false;vertex_color_is_srgb=false;albedo_texture=texture;albedo_texture_force_srgb=false;albedo_texture_msdf=false;metallic_texture_channel=0;roughness_texture_channel=0;emission_enabled=false;emission_operator=0;emission_on_uv2=false;normal_enabled=false;bent_normal_enabled=false;rim_enabled=false;clearcoat_enabled=false;anisotropy_enabled=false;ao_enabled=false;ao_on_uv2=false;ao_texture_channel=0;heightmap_enabled=false;heightmap_deep_parallax=false;heightmap_flip_tangent=false;heightmap_flip_binormal=false;heightmap_flip_texture=false;subsurf_scatter_enabled=false;subsurf_scatter_skin_mode=false;subsurf_scatter_transmittance_enabled=false;backlight_enabled=false;refraction_enabled=false;refraction_texture_channel=0;detail_enabled=false;detail_blend_mode=0;detail_uv_layer=0;uv1_triplanar=false;uv1_world_triplanar=false;uv2_triplanar=false;uv2_world_triplanar=false;texture_filter=3;texture_repeat=true;disable_receive_shadows=false;shadow_to_opacity=false;billboard_mode=0;billboard_keep_scale=false;grow=false;fixed_size=false;use_point_size=false;use_particle_trails=false;use_z_clip_scale=false;use_fov_override=false;proximity_fade_enabled=false;distance_fade_mode=0;stencil_mode=0;stencil_flags=0;stencil_compare=0;stencil_reference=1;metadata/_gltf_primary_texture_coord=0"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": ":mesh|1|34359738375|shader:-9223371996572678399"
+                  },
+                  {
+                    "draw_calls": 3,
+                    "name": "res://scenes/actors/jingwei.tscn"
+                  },
+                  {
+                    "draw_calls": 1,
+                    "name": "res://scenes/actors/pangolin.tscn"
+                  }
+                ],
+                "samples": 28,
+                "session_reused": false,
+                "skipped": "",
+                "wall_ms": 431.647
+              }
+            }
+          ],
+          "repeat": true
+        }
+      }
+    ]
+  },
+  "scope": "Actual default-entry resource load and post-draw observation. Explicit editor harness mounts exact shipping/candidate PCK. Independent frame observer. First/new application cache then same-profile new process; system GPU driver cache is not cleared. Controlled balanced fixtures; not minimum-spec or release EXE performance."
+}

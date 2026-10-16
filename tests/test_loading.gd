@@ -75,8 +75,11 @@ func ready() -> void:
 	active = false
 	expect(not progress_backwards and not unfrozen, "loading progress is monotonic and simulation stays frozen")
 	if not baseline:
-		expect(loading_frames >= 2 and stages.size() >= 2, "real player loading spans multiple observable frames and stages")
-		expect(not game.loading and not game.hud.loading_bar.visible and game.world.visible, "complete world replaces loading screen")
+		if game.world == null:
+			expect(game.selection_pending and loading_frames >= 1, "initial scale choice needs no disposable 3D world")
+		else:
+			expect(loading_frames >= 2 and stages.size() >= 2, "real world construction spans observable frames and stages")
+		expect(not game.loading and not game.hud.loading_bar.visible and (game.selection_pending or game.world.visible), "complete world or initial choice replaces loading screen")
 
 func record(name: String, target: int, start: int) -> void:
 	var sorted := frames.duplicate()
@@ -100,8 +103,8 @@ func boot(path: String, name: String, target: int) -> void:
 	record(name, target, start)
 
 func close() -> void:
-	var old: WeakRef = weakref(game.world)
-	var effects: WeakRef = weakref(game.feedback)
+	var old: WeakRef = weakref(game.world) if game.world != null else WeakRef.new()
+	var effects: WeakRef = weakref(game.feedback) if game.feedback != null else WeakRef.new()
 	game.queue_free()
 	game = null
 	frozen_state = null
@@ -142,7 +145,7 @@ func run() -> void:
 		expect(game.selection_pending, "empty save opens selector")
 		frozen_state = game.state
 		frozen_elapsed = game.state.elapsed
-		var old: WeakRef = weakref(game.world)
+		var old: WeakRef = weakref(game.world) if game.world != null else WeakRef.new()
 		var start: int = await begin()
 		game._modal_action("world_%d" % target)
 		if not baseline:

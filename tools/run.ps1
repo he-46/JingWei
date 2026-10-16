@@ -160,6 +160,8 @@ try {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_ui.gd', '--', '--qa') 'ui-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_preferences.gd') 'preferences-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_loading.gd') 'loading-tests.log'
+            $startupFixture = Join-Path $logRoot ('startup-test-' + [Guid]::NewGuid().ToString('N'))
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_startup.gd', '--', ('--startup-out=' + $startupFixture), ('--save-path=' + (Join-Path $startupFixture 'journey.json'))) 'startup-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_visuals.gd', '--', '--qa') 'visual-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_jingwei.gd', '--', '--qa') 'jingwei-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_pangolin.gd', '--', '--qa') 'pangolin-tests.log'
@@ -175,8 +177,8 @@ try {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_release.gd') 'release-regression-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_game.gd', '--', '--qa', '--imported-visuals') 'imported-game-tests.log'
         } elseif ($Check) {
-            $entry = if ($Mode -eq 'Sample') { 'res://scenes/art/vertical_slice.tscn' } else { 'res://scenes/main.tscn' }
-            Invoke-Engine @('--headless', '--path', $projectRoot, $entry, '--quit-after', '60', '--', '--qa') 'startup-check.log'
+            $entry = if ($Mode -eq 'Sample') { 'res://scenes/art/vertical_slice.tscn' } else { 'res://scenes/startup.tscn' }
+            Invoke-Engine @('--headless', '--path', $projectRoot, $entry, '--quit-after', '120', '--', '--qa') 'startup-check.log'
             Write-Host 'Fresh-start check passed.'
         } elseif ($Mode -eq 'Sample') {
             Invoke-Engine @('--path', $projectRoot, 'res://scenes/art/vertical_slice.tscn') 'sample-launch.log'

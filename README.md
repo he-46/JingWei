@@ -4,7 +4,7 @@ Godot 4.7.2 / GDScript 的单机 3D 增量游戏原型。从大陆海岸出发�
 
 ## 开始试玩
 
-当前 **Windows 64 位独立试玩包 QA-03 · 0.3.0**：解压独立包后双击 **Jingwei.exe**，与 Jingwei.pck 放在同一目录即可。无需 Godot、首次导入或联网，与源码版共用旅程。本包增加 [分阶段加载、等待反馈与响应性验收](docs/releases/QA-03.md)，保留 [运行设置](docs/releases/QA-01.md) 和 [持续运行复现工具](docs/releases/QA-02.md)。独立 ZIP 是构建产物，不随 Git 源码归档附带。
+当前 **Windows 64 位独立试玩包 QA-04 · 0.4.0**：解压独立包后双击 **Jingwei.exe**，与 Jingwei.pck 放在同一目录即可。无需 Godot、首次导入或联网，与源码版共用旅程。本包增加 [轻量启动页、画面预热与缓存复用验收](docs/releases/QA-04.md)，保留 [分阶段加载](docs/releases/QA-03.md)、[运行设置](docs/releases/QA-01.md) 和 [持续运行复现工具](docs/releases/QA-02.md)。独立 ZIP 是构建产物，不随 Git 源码归档附带。
 
 从 GitHub 下载的仓库 ZIP 仍是 **源码 + 随附 Godot 4.7.2 引擎**，无需另行安装 Godot：
 

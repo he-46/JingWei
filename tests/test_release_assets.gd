@@ -59,6 +59,8 @@ func inspect_model(path: String) -> void:
 	model.free()
 
 func run() -> void:
+	dependencies("res://scenes/startup.tscn")
+	dependencies("res://assets/startup_bundle.tres")
 	dependencies("res://scenes/main.tscn")
 	dependencies("res://scenes/actors/jingwei.tscn")
 	dependencies("res://scenes/actors/pangolin.tscn")
@@ -66,6 +68,20 @@ func run() -> void:
 	models.append_array(files("res://assets/models/environment", "glb"))
 	models.append_array(files("res://assets/models/relics", "glb"))
 	models.sort()
+	var expected_bundle: Array[String] = models.duplicate()
+	expected_bundle.append_array(files("res://assets/materials", "tres"))
+	expected_bundle.append_array(files("res://assets/audio", "wav"))
+	expected_bundle.append_array(files("res://assets/icons/relics", "png"))
+	expected_bundle.sort()
+	var bundle: Resource = load("res://assets/startup_bundle.tres")
+	var paths: Array[String] = []
+	var native_only := true
+	for resource in bundle.get_meta("assets"):
+		paths.append(resource.resource_path)
+		native_only = native_only and resource.get_script() == null
+	paths.sort()
+	expect(paths == expected_bundle, "startup bundle covers current formal models, materials, sounds and relic icons")
+	expect(native_only, "background startup bundle contains native resources rather than gameplay scripts")
 	expect(models.size() == 36, "release contains 36 formal GLBs, excluding three diagnostic examples")
 	for path in models:
 		inspect_model(path)

@@ -28,6 +28,7 @@ foreach ($file in $info.files) {
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_windows_pack.gd') -Destination (Join-Path $qa 'pack.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_preferences.gd') -Destination (Join-Path $qa 'preferences.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_loading.gd') -Destination (Join-Path $qa 'loading.gd')
+Copy-Item -LiteralPath (Join-Path $root 'tests\test_startup.gd') -Destination (Join-Path $qa 'startup.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\fixtures\coast_v2.json') -Destination (Join-Path $qa 'coast_v2.json')
 $fixture = (Join-Path $qa 'coast_v2.json').Replace('\','/')
 $regression = [IO.File]::ReadAllText((Join-Path $root 'tests\test_release.gd'), [Text.Encoding]::UTF8)
@@ -54,7 +55,7 @@ function Invoke-Preview([string[]]$PreviewArguments, [string]$Name, [switch]$Har
     $process.WaitForExit()
     # Strip Windows PowerShell's file/provider properties before JSON reporting.
     $lines = @(Get-Content -LiteralPath $out,$err | ForEach-Object { $_.ToString() })
-    $diagnostics = @($lines | Where-Object { $_ -match '^(SCRIPT ERROR:|ERROR:)' -and $_ -notmatch '^ERROR: Failed to read the root certificate store\.$' })
+    $diagnostics = @($lines | Where-Object { ($_ -match '^(SCRIPT ERROR:|ERROR:)' -and $_ -notmatch '^ERROR: Failed to read the root certificate store\.$') -or $_ -match '^WARNING:.*(leaked|orphan)' })
     if ($process.ExitCode -ne 0 -or $diagnostics.Count) { throw "$Name failed: $($diagnostics -join '; ')" }
     if ($Harness -and -not ($lines -match 'TESTS: \d+ checks, 0 failures')) { throw "$Name produced no successful test summary." }
     $records.Add([ordered]@{name=$Name; binary=$(if ($Harness) {'editor harness + shipping PCK'} else {'shipping release EXE'}); exit_code=$process.ExitCode; summaries=@($lines | Where-Object { $_ -match 'TESTS:|CAPTURE_RESULT|OpenGL API' })})
@@ -71,6 +72,16 @@ try {
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'preferences.gd') + '"'))) 'preferences' -Harness
     $loadingOut = (Join-Path $qa 'loading-headless').Replace('\','/')
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'loading.gd') + '"'),'--',('--loading-out="' + $loadingOut + '"'))) 'loading' -Harness
+    $startupOut = (Join-Path $qa 'startup-headless').Replace('\','/')
+    $startupSave = (Join-Path $qa 'startup-headless/journey.json').Replace('\','/')
+    Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'startup.gd') + '"'),'--',('--startup-out="' + $startupOut + '"'),('--save-path="' + $startupSave + '"'))) 'startup' -Harness
+    $startupReview = (Join-Path $qa 'startup-graphics').Replace('\','/')
+    $startupReviewSave = (Join-Path $qa 'startup-graphics/journey.json').Replace('\','/')
+    Invoke-Preview ($packArgs + @('--script',('"' + (Join-Path $qa 'startup.gd') + '"'),'--',('--startup-out="' + $startupReview + '"'),('--save-path="' + $startupReviewSave + '"'))) 'graphics-startup' -Harness
+    $closeOut = (Join-Path $qa 'startup-close').Replace('\','/')
+    $closeSave = (Join-Path $qa 'startup-close/journey.json').Replace('\','/')
+    Invoke-Preview ($packArgs + @('--script',('"' + (Join-Path $qa 'startup.gd') + '"'),'--','--startup-close',('--startup-out="' + $closeOut + '"'),('--save-path="' + $closeSave + '"'))) 'startup-close' -Harness
+    if (Test-Path -LiteralPath $closeSave) { throw 'Closing resource-loading entry wrote a placeholder journey.' }
     foreach ($target in @(100000,1000000,10000000,100000000)) {
         $capture = Join-Path $qa ("map-$target.png")
         Invoke-Preview @('--','--qa',"--target=$target",'--showcase',('--capture="' + $capture + '"')) "graphics-$target"

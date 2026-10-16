@@ -2,6 +2,7 @@ extends "res://scripts/main.gd"
 ## Fixed seed 10213. Ordinary gameplay, no staged resources and no player-save access.
 func _ready() -> void:
 	save_enabled = false
+	skip_scale_picker = true
 	await super._ready()
 	selection_pending = false
 	hud.hide_modal()
