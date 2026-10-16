@@ -5,6 +5,8 @@ uniform float wind_time = 0.0;
 uniform vec3 detail_origin = vec3(0.0);
 uniform float detail_distance = 0.0;
 uniform float overview = 0.0;
+uniform float near_view = 0.0;
+uniform vec3 camera_origin = vec3(0.0);
 varying vec3 world_point;
 varying float detail_fade;
 void vertex() {
@@ -17,4 +19,13 @@ void vertex() {
 		VERTEX.x += sin(world_point.x * 0.7 + world_point.z * 0.9 + wind_time * 0.75) * smoothstep(0.15, 2.8, VERTEX.y) * 0.035 * wind;
 	}
 }
-void fragment() { if (detail_fade < .01) { discard; } ALBEDO = texture(palette, UV).rgb * COLOR.rgb; ROUGHNESS = 0.9; }
+void fragment() {
+	if (detail_fade < .01) { discard; }
+	if (near_view > .5) {
+		float clear = smoothstep(.45, .95, length(world_point - camera_origin));
+		float pattern = fract(dot(floor(FRAGCOORD.xy), vec2(.754877, .569840)));
+		if (clear < pattern) { discard; }
+	}
+	ALBEDO = texture(palette, UV).rgb * COLOR.rgb;
+	ROUGHNESS = 0.9;
+}

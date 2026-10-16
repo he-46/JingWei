@@ -24,6 +24,15 @@ var suppressed_flights := 0
 var serial := 0
 var detail_origin := Vector3.ZERO
 var overview := false
+var close_view := false
+var viewer_position := Vector3.ZERO
+
+func set_first_person_view(enabled: bool, position: Vector3) -> void:
+	close_view = enabled
+	viewer_position = position
+
+func eye_clearance(point: Vector3) -> float:
+	return smoothstep(.35, .85, point.distance_to(viewer_position)) if close_view else 1.0
 
 func set_detail(origin: Vector3, map_view: bool) -> void:
 	detail_origin = origin
@@ -196,6 +205,8 @@ func _update_burst(slot: Dictionary) -> void:
 			offset = (slot.target - slot.point) * t + offset * (1 - t)
 		if slot.kind == "throw":
 			size *= .5
+		# Gather chips fade before reaching the eye, without changing the event.
+		size *= eye_clearance(slot.point + offset)
 		var transform := Transform3D(Basis.from_euler(Vector3(a, t * 3, a)).scaled(proportions * maxf(size, .001)), offset)
 		slot.chips.set_instance_transform(chip, transform)
 

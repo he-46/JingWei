@@ -48,6 +48,7 @@ var loading_thread: Thread
 var warmup_report: Dictionary = {}
 var binding_view_key := false
 var application_focused := true
+var aim_reason := ""
 
 func _ready() -> void:
 	_setup_input()
@@ -241,8 +242,9 @@ func _input(event: InputEvent) -> void:
 			change_setting("view_key", key)
 		return
 	if _first_person_active() and not loading and not hud.modal_open and not hud.drawer_open and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and event is InputEventMouseMotion:
-		world.look_yaw = wrapf(world.look_yaw - event.relative.x * .0025, -PI, PI)
-		world.look_pitch = clampf(world.look_pitch - event.relative.y * .0025, deg_to_rad(-85), deg_to_rad(80))
+		var sensitivity: float = .0025 * float(preferences.look_sensitivity)
+		world.look_yaw = wrapf(world.look_yaw - event.relative.x * sensitivity, -PI, PI)
+		world.look_pitch = clampf(world.look_pitch - event.relative.y * sensitivity, deg_to_rad(-85), deg_to_rad(80))
 		world.update_camera(state, 0, true)
 
 func _first_person_active() -> bool:
@@ -256,6 +258,7 @@ func _sync_pointer() -> void:
 	if Input.mouse_mode != mode:
 		Input.mouse_mode = mode
 	hud.crosshair.visible = capture
+	hud.interaction_hint.visible = capture and hud.interaction_point.is_finite()
 	if not hud.modal_open or hud.modal_title.text != "设置":
 		binding_view_key = false
 
@@ -270,17 +273,75 @@ func toggle_view() -> void:
 	_sync_pointer()
 
 func first_person_target() -> Variant:
+	aim_reason = ""
 	var origin: Vector3 = world.camera.global_position
 	var direction: Vector3 = -world.camera.global_basis.z
 	var hit: Variant = FirstPersonAim.surface_hit(state, origin, direction)
 	if hit == null:
+		aim_reason = "瞄准海面或陆地" if direction.y >= 0 else "落点超出地图"
 		return null
 	var query := PhysicsRayQueryParameters3D.create(origin, hit)
 	query.exclude = [world.bird_body.get_rid()]
 	# Mountain collisions block a ray aimed through the mountain at a coast.
 	if not world.get_world_3d().direct_space_state.intersect_ray(query).is_empty():
+		aim_reason = "山体遮挡"
 		return null
 	return Vector2(hit.x, hit.z)
+
+func _first_person_ui(target: Vector2) -> void:
+	var usable: bool = target.is_finite() and state.can_throw(target, world.bird_body.position.y)
+	hud.crosshair.add_theme_color_override("font_color", Color("fff1bd") if usable and state.carried > 0 else (Color("d38b79") if target.is_finite() and not usable else Color("b9c7c0")))
+	hud.cell_label.visible = true
+	if not target.is_finite():
+		hud.cell_label.text = aim_reason
+	elif state.carried == 0:
+		hud.cell_label.text = "没有携石"
+	else:
+		var distance: float = state.player.distance_to(target)
+		var reach: float = state.throw_distance(world.bird_body.position.y)
+		var index: int = state.cell_at(target)
+		var depth: int = state.sea_depth[index]
+		hud.cell_label.text = "%s %s/%s 石" % [State.DEPTH_NAMES[depth], State.number(state.sea_fill[index]), State.number(state.sea_capacity[index])] if depth >= 0 else "陆地 · 可拾回"
+		hud.cell_label.text += " · 距离 %.1f / 射程 %.1f" % [distance, reach]
+		if usable:
+			hud.cell_label.text += " · Q 投石"
+		else:
+			hud.cell_label.text += " · 超距"
+	# Same priority and low-altitude rule as E; a screen hint never chooses a new
+	# resource or bypasses proximity. Out-of-view targets remain in the bottom HUD.
+	var point := Vector2.INF
+	var caption := ""
+	var height := .65
+	if world.bird_body.position.y <= 2.7:
+		var npc: int = state.nearby_mountain(state.player, 2.1, true)
+		var drop: int = state.closest_drop(state.player)
+		var pile: int = state.nearby_pile(state.player)
+		var stone: int = state.closest_stone(state.player)
+		if npc >= 0:
+			point = state.npc_position(npc)
+			caption = "E · 对话"
+			height = 1.35
+		elif state.carried < state.capacity():
+			if drop >= 0:
+				point = state.cell_center(drop)
+				caption = "E · 拾回石子"
+			elif pile >= 0:
+				point = state.pile_position(pile)
+				caption = "E · 搬运石料"
+			elif stone >= 0:
+				point = state.stone_positions[stone]
+				caption = "E · 拾石"
+	var screen := Vector2.INF
+	if point.is_finite():
+		var position := Vector3(point.x, height, point.y)
+		if not world.camera.is_position_behind(position):
+			var projected: Vector2 = world.camera.unproject_position(position)
+			var rect: Rect2 = get_viewport().get_visible_rect().grow(-100)
+			var query := PhysicsRayQueryParameters3D.create(world.camera.global_position, position)
+			query.exclude = [world.bird_body.get_rid()]
+			if rect.has_point(projected) and world.get_world_3d().direct_space_state.intersect_ray(query).is_empty():
+				screen = projected
+	hud.set_interaction_hint(screen, caption)
 
 func _physics_process(delta: float) -> void:
 	if loading or hud == null or hud.modal_open or selection_pending or (_first_person_active() and (hud.drawer_open or not application_focused)):
@@ -335,8 +396,10 @@ func _process(delta: float) -> void:
 		if preferences_clock <= 0:
 			_save_preferences()
 	if soundscape != null and hud != null:
-		soundscape.set_context(state.player.x, hud.modal_open, selection_pending)
-		if feedback != null and not hud.modal_open and not selection_pending:
+		var paused: bool = hud.modal_open or (_first_person_active() and hud.drawer_open)
+		soundscape.set_context(state.player.x, paused, selection_pending)
+		if feedback != null and not paused and not selection_pending:
+			feedback.set_first_person_view(_first_person_active(), world.camera.global_position)
 			feedback.set_detail(world.bird_body.position, world.overview)
 			feedback.advance(delta)
 	if capture_path.is_empty():
@@ -471,7 +534,7 @@ func throw_forward() -> void:
 	if _first_person_active():
 		var target: Variant = first_person_target()
 		if target == null:
-			hud.notify("请瞄准无遮挡的陆地或海面。")
+			hud.notify(aim_reason)
 		else:
 			deposit_at(target)
 	else:
@@ -554,9 +617,10 @@ func _refresh() -> void:
 	elif state.closest_stone(state.player) >= 0:
 		prompt = "散石 · 每次 %s 石" % State.number(state.gather_power())
 	hud.update_state(state, prompt, aimed_cell, target, world.bird_body.position.y)
-	if _first_person_active() and aimed_cell < 0:
-		hud.cell_label.visible = true
-		hud.cell_label.text = "准星未指向可投落点"
+	if _first_person_active():
+		_first_person_ui(target)
+	else:
+		hud.set_interaction_hint(Vector2.INF, "")
 	if world.bird_body.position.y > 2.7:
 		hud.interact_button.disabled = true
 
@@ -582,6 +646,9 @@ func _apply_preferences() -> void:
 	if world != null:
 		var entering: bool = bool(preferences.first_person) and not world.first_person
 		world.first_person = bool(preferences.first_person)
+		world.first_person_fov = float(preferences.first_person_fov)
+		if feedback != null:
+			feedback.set_first_person_view(world.first_person and not world.overview, world.bird_body.position + Vector3.UP * .18)
 		if entering:
 			hud.drawer_open = false
 			hud.drawer.hide()
@@ -601,7 +668,7 @@ func change_setting(key: String, value: Variant) -> void:
 	preferences[key] = value
 	preferences = Preferences.sanitize(preferences)
 	muted = bool(preferences.muted)
-	if key in ["quality", "fullscreen", "first_person", "view_key"]:
+	if key in ["quality", "fullscreen", "first_person", "view_key", "first_person_fov", "look_sensitivity"]:
 		_apply_preferences()
 	else:
 		soundscape.set_volume(float(preferences.volume))
@@ -609,7 +676,7 @@ func change_setting(key: String, value: Variant) -> void:
 	hud.refresh_settings(preferences)
 	preferences_dirty = preferences_enabled
 	preferences_clock = .4
-	if key != "volume":
+	if key not in ["volume", "first_person_fov", "look_sensitivity"]:
 		_save_preferences()
 	if key == "quality" and world != null and DisplayServer.get_name() != "headless":
 		loading = true

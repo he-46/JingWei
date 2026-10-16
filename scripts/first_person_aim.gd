@@ -4,6 +4,9 @@ const State = preload("res://scripts/state.gd")
 const Coast = preload("res://scripts/visuals/coast_geometry.gd")
 
 static func surface_hit(state: JWState, origin: Vector3, direction: Vector3) -> Variant:
+	# All aimable ground is at or below .49. Looking up from flight needs no walk.
+	if origin.y > .49 and direction.y >= 0:
+		return null
 	var best: Variant = null
 	for height in [Coast.WATER_HEIGHT, State.LAND_HEIGHT]:
 		var hit: Variant = Plane(Vector3.UP, height).intersects_ray(origin, direction)
@@ -25,7 +28,7 @@ static func surface_hit(state: JWState, origin: Vector3, direction: Vector3) -> 
 			break
 		var triangles: Array = []
 		if col >= state.land_cols:
-			for triangle in Coast.cell_triangles(state, col, row):
+			for triangle in Coast.cell_triangles(state, col, row, false):
 				triangles.append(triangle.points)
 		elif col == state.land_cols - 1:
 			# Match the original beach mesh, including its two-unit Z segments.

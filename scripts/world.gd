@@ -70,6 +70,7 @@ var camera_offset := Vector3(16, 29, 27)
 var first_person := false
 var look_yaw := -PI / 2
 var look_pitch := -.38
+var first_person_fov := 75.0
 var tree_canopies: Array[Vector4] = []
 var locator_clock := 0.0
 var player_obscured := false
@@ -568,7 +569,7 @@ func _sync_npcs(state: JWState) -> void:
 	var title: Label3D = view["label"]
 	title.position = Vector3(point.x, 3.0, point.y)
 	title.text = "穿山甲"
-	title.visible = not overview
+	title.visible = not overview and not first_person
 	view["root"].visible = not overview
 
 func cell_height(state: JWState, index: int) -> float:
@@ -616,7 +617,7 @@ func update_camera(state: JWState, delta: float, instant: bool = false) -> void:
 	if first_person and not overview:
 		camera.projection = Camera3D.PROJECTION_PERSPECTIVE
 		camera.near = .08
-		camera.fov = 75
+		camera.fov = first_person_fov
 		camera.position = bird_body.position + Vector3.UP * .18
 		camera.rotation = Vector3(look_pitch, look_yaw, 0)
 		overview_marker.hide()
@@ -676,9 +677,14 @@ func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aime
 	var detail_origin := bird_body.position
 	foliage_material.set_shader_parameter("detail_origin", detail_origin)
 	foliage_material.set_shader_parameter("overview", float(overview))
+	var close_view := first_person and not overview
+	foliage_material.set_shader_parameter("near_view", float(close_view))
+	foliage_material.set_shader_parameter("camera_origin", bird_body.position + Vector3.UP * .18)
 	for material in foliage_materials:
 		material.set_shader_parameter("wind_time", time)
 		material.set_shader_parameter("detail_origin", detail_origin)
+		material.set_shader_parameter("near_view", float(close_view))
+		material.set_shader_parameter("camera_origin", bird_body.position + Vector3.UP * .18)
 	for layer in fog_layers:
 		layer.material_override.set_shader_parameter("fog_time", time)
 	grass_mesh.visible_instance_count = 0 if overview or reduced_detail else -1
@@ -709,15 +715,15 @@ func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aime
 	range_ring.position = Vector3(state.player.x, 0.58, state.player.y)
 	var reach := state.throw_distance(bird_body.position.y)
 	range_ring.scale = Vector3(reach, 1, reach)
-	range_ring.visible = true
-	cell_marker.visible = aimed_cell >= 0
+	range_ring.visible = not close_view
+	cell_marker.visible = aimed_cell >= 0 and not close_view
 	if aimed_cell >= 0:
 		var point := state.cell_center(aimed_cell)
 		cell_marker.position = Vector3(point.x, maxf(0.24, cell_height(state, aimed_cell) + 0.03), point.y)
 		# Grey-red cells are visible but beyond the physical throwing range.
 		cell_marker.material_override.albedo_color = Color("f3d491") if state.can_throw(aim_point, bird_body.position.y) else Color("d38b79")
 	var nearby := state.closest_stone(state.player)
-	pickup_marker.visible = nearby >= 0 and state.carried < state.capacity() and not overview
+	pickup_marker.visible = nearby >= 0 and state.carried < state.capacity() and not overview and not close_view
 	if nearby >= 0:
 		var point := state.stone_positions[nearby]
 		pickup_marker.position = Vector3(point.x, 0.47, point.y)

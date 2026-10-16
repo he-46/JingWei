@@ -53,7 +53,7 @@ static func corner_normal(state: JWState, col: int, row: int) -> Vector3:
 	return Vector3(corner_height(state, col - 1, row) - corner_height(state, col + 1, row),
 		2 * State.CELL_SIZE, corner_height(state, col, row - 1) - corner_height(state, col, row + 1)).normalized()
 
-static func cell_triangles(state: JWState, col: int, row: int) -> Array:
+static func cell_triangles(state: JWState, col: int, row: int, with_normals: bool = true) -> Array:
 	var index := row * state.grid_size + col
 	var point := state.cell_center(index)
 	var center := Vector3(point.x, cell_height(state, index), point.y)
@@ -63,12 +63,13 @@ static func cell_triangles(state: JWState, col: int, row: int) -> Array:
 		var x: int = col + offset.x
 		var z: int = row + offset.y
 		corners.append(Vector3(state.map_origin.x + x * State.CELL_SIZE, corner_height(state, x, z), state.map_origin.y + z * State.CELL_SIZE))
-		normals.append(corner_normal(state, x, z))
-	var normal := (normals[0] + normals[1] + normals[2] + normals[3]).normalized()
+		if with_normals:
+			normals.append(corner_normal(state, x, z))
+	var normal := (normals[0] + normals[1] + normals[2] + normals[3]).normalized() if with_normals else Vector3.UP
 	var result: Array = []
 	for edge in range(4):
 		result.append({"points": [center, corners[(edge + 1) % 4], corners[edge]],
-			"normals": [normal, normals[(edge + 1) % 4], normals[edge]]})
+			"normals": [normal, normals[(edge + 1) % 4], normals[edge]] if with_normals else []})
 	return result
 
 static func water_segment(points: Array) -> PackedVector3Array:

@@ -1,6 +1,6 @@
 extends RefCounted
 ## Device preferences are deliberately independent of the resource/save ledger.
-const DEFAULTS := {"version": 1, "quality": "standard", "fullscreen": false, "volume": 1.0, "muted": false, "first_person": false, "view_key": KEY_V}
+const DEFAULTS := {"version": 1, "quality": "standard", "fullscreen": false, "volume": 1.0, "muted": false, "first_person": false, "view_key": KEY_V, "look_sensitivity": 1.0, "first_person_fov": 75.0}
 const LIMIT := 8192
 
 static func sanitize(data: Dictionary) -> Dictionary:
@@ -18,6 +18,10 @@ static func sanitize(data: Dictionary) -> Dictionary:
 	var view_key: Variant = data.get("view_key")
 	if (view_key is int or view_key is float) and is_finite(float(view_key)) and float(view_key) == int(view_key) and valid_view_key(int(view_key)):
 		result.view_key = int(view_key)
+	for key in ["look_sensitivity", "first_person_fov"]:
+		var value: Variant = data.get(key)
+		if (value is int or value is float) and is_finite(float(value)):
+			result[key] = clampf(float(value), .25, 3.0) if key == "look_sensitivity" else clampf(float(value), 60.0, 100.0)
 	return result
 
 static func valid_view_key(key: int) -> bool:

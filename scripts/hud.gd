@@ -77,6 +77,12 @@ var settings_values: Dictionary = {}
 var settings_view: Button
 var settings_view_key: Button
 var crosshair: Label
+var interaction_hint: Label
+var interaction_point := Vector2.INF
+var settings_sensitivity: HSlider
+var settings_fov: HSlider
+var settings_sensitivity_label: Label
+var settings_fov_label: Label
 
 func _ready() -> void:
 	root = Control.new()
@@ -118,6 +124,11 @@ func _ready() -> void:
 	crosshair.add_theme_color_override("font_outline_color", INK)
 	crosshair.add_theme_constant_override("outline_size", 3)
 	crosshair.hide()
+	interaction_hint = text(root, "", 16, Color("fff1bd"))
+	interaction_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	interaction_hint.add_theme_color_override("font_outline_color", INK)
+	interaction_hint.add_theme_constant_override("outline_size", 3)
+	interaction_hint.hide()
 	_build_modal()
 
 static func number(value: int) -> String:
@@ -399,6 +410,18 @@ func show_settings(values: Dictionary) -> void:
 	settings_view_key = button(modal_buttons, "", func() -> void: view_key_requested.emit(), 40)
 	settings_view.focus_mode = Control.FOCUS_ALL
 	settings_view_key.focus_mode = Control.FOCUS_ALL
+	var sensitivity_row := HBoxContainer.new()
+	modal_buttons.add_child(sensitivity_row)
+	settings_sensitivity_label = text(sensitivity_row, "", 15)
+	settings_sensitivity_label.custom_minimum_size.x = 160
+	settings_sensitivity = setting_slider(sensitivity_row, .25, 3, .05)
+	settings_sensitivity.value_changed.connect(func(value: float) -> void: setting_changed.emit("look_sensitivity", value))
+	var fov_row := HBoxContainer.new()
+	modal_buttons.add_child(fov_row)
+	settings_fov_label = text(fov_row, "", 15)
+	settings_fov_label.custom_minimum_size.x = 160
+	settings_fov = setting_slider(fov_row, 60, 100, 1)
+	settings_fov.value_changed.connect(func(value: float) -> void: setting_changed.emit("first_person_fov", value))
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 14)
 	modal_buttons.add_child(row)
@@ -418,15 +441,37 @@ func show_settings(values: Dictionary) -> void:
 	refresh_settings(values)
 	settings_quality.grab_focus()
 
+func setting_slider(parent: Control, minimum: float, maximum: float, step: float) -> HSlider:
+	var slider := HSlider.new()
+	slider.min_value = minimum
+	slider.max_value = maximum
+	slider.step = step
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slider.custom_minimum_size.y = 40
+	parent.add_child(slider)
+	return slider
+
 func refresh_settings(values: Dictionary) -> void:
 	settings_values = values.duplicate()
 	settings_quality.text = "画质　" + ("流畅" if values.quality == "smooth" else "标准")
 	settings_display.text = "显示　" + ("全屏" if values.fullscreen else "窗口")
 	settings_view.text = "视角　" + ("第一人称" if values.first_person else "随行")
 	settings_view_key.text = "切换视角　" + OS.get_keycode_string(int(values.view_key)) + "　（点击修改）"
+	settings_sensitivity_label.text = "鼠标灵敏度　%.2f×" % float(values.look_sensitivity)
+	settings_sensitivity.set_value_no_signal(float(values.look_sensitivity))
+	settings_fov_label.text = "第一人称视野　%d°" % roundi(float(values.first_person_fov))
+	settings_fov.set_value_no_signal(float(values.first_person_fov))
 	settings_volume_label.text = "音量　%d%%" % roundi(float(values.volume) * 100)
 	settings_volume.set_value_no_signal(float(values.volume) * 100)
 	settings_mute.text = "声音　" + ("已静音 · M" if values.muted else "开启 · M")
+
+func set_interaction_hint(point: Vector2, caption: String) -> void:
+	interaction_point = point
+	interaction_hint.text = caption
+	if point.is_finite():
+		interaction_hint.size = Vector2(180, 30)
+		interaction_hint.position = point - Vector2(90, 35)
+	interaction_hint.visible = crosshair.visible and point.is_finite()
 
 func notify(value: String) -> void:
 	if notice_panel.visible and notice.text == value:

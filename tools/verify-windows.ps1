@@ -28,6 +28,7 @@ foreach ($file in $info.files) {
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_windows_pack.gd') -Destination (Join-Path $qa 'pack.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_preferences.gd') -Destination (Join-Path $qa 'preferences.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_first_person.gd') -Destination (Join-Path $qa 'first-person.gd')
+Copy-Item -LiteralPath (Join-Path $root 'tests\test_first_person_polish.gd') -Destination (Join-Path $qa 'first-person-polish.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_loading.gd') -Destination (Join-Path $qa 'loading.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_startup.gd') -Destination (Join-Path $qa 'startup.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\fixtures\coast_v2.json') -Destination (Join-Path $qa 'coast_v2.json')
@@ -71,6 +72,8 @@ try {
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'pack.gd') + '"'))) 'pack' -Harness
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'first-person.gd') + '"'))) 'first-person-headless' -Harness
     Invoke-Preview ($packArgs + @('--script',('"' + (Join-Path $qa 'first-person.gd') + '"'))) 'first-person-graphics' -Harness
+    Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'first-person-polish.gd') + '"'))) 'first-person-polish-headless' -Harness
+    Invoke-Preview ($packArgs + @('--script',('"' + (Join-Path $qa 'first-person-polish.gd') + '"'))) 'first-person-polish-graphics' -Harness
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'regression.gd') + '"'))) 'regression' -Harness
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'preferences.gd') + '"'))) 'preferences' -Harness
     $loadingOut = (Join-Path $qa 'loading-headless').Replace('\','/')
@@ -109,7 +112,7 @@ try {
     Invoke-Preview @('--','--capture-continued',('--capture="' + $legacyCapture + '"')) 'release-legacy-continue'
     $movie = Join-Path $qa 'release-smooth.png'
     Invoke-Preview @('--','--capture-continued',('--capture="' + $movie + '"')) 'release-smooth-capture'
-    [IO.File]::WriteAllText((Join-Path $saveFolder 'preferences.json'), '{"version":1,"quality":"smooth","fullscreen":false,"volume":0.37,"muted":true,"first_person":true,"view_key":66}', (New-Object Text.UTF8Encoding($false)))
+    [IO.File]::WriteAllText((Join-Path $saveFolder 'preferences.json'), '{"version":1,"quality":"smooth","fullscreen":false,"volume":0.37,"muted":true,"first_person":true,"view_key":66,"look_sensitivity":1.5,"first_person_fov":95}', (New-Object Text.UTF8Encoding($false)))
     $firstPersonCapture = Join-Path $qa 'release-first-person.png'
     Invoke-Preview @('--','--capture-continued',('--capture="' + $firstPersonCapture + '"')) 'release-first-person'
     foreach ($capture in @($selectorCapture, $legacyCapture, $movie, $firstPersonCapture)) {

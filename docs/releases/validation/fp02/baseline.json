@@ -1,0 +1,734 @@
+﻿{
+    "source_commit":  "c667dd96d8f99573b36322b56278393e0baf3297",
+    "source_dirty":  true,
+    "pack_path":  "D:\\AzVGames\\Jingwei\\builds\\Jingwei-FP-01-Windows-x64\\Jingwei.pck",
+    "pack_sha256":  "BD8C2A7D980525A71B83AEEF6B9ACBB3FFBA57BCFEFC1492A653D3CC1FD85C71",
+    "binary":  "D:\\AzVGames\\Jingwei\\Godot\\Godot_v4.7.2-stable_win64.exe",
+    "process_id":  44816,
+    "memory_samples":  [
+                           {
+                               "unix_seconds":  1792135952.946,
+                               "pid":  44816,
+                               "working_set_mib":  87.1640625,
+                               "private_mib":  106.65234375
+                           },
+                           {
+                               "unix_seconds":  1792135953.965,
+                               "pid":  44816,
+                               "working_set_mib":  213.01953125,
+                               "private_mib":  214.63671875
+                           },
+                           {
+                               "unix_seconds":  1792135954.976,
+                               "pid":  44816,
+                               "working_set_mib":  317.86328125,
+                               "private_mib":  444.16015625
+                           },
+                           {
+                               "unix_seconds":  1792135955.998,
+                               "pid":  44816,
+                               "working_set_mib":  316.28125,
+                               "private_mib":  465.76953125
+                           },
+                           {
+                               "unix_seconds":  1792135957.026,
+                               "pid":  44816,
+                               "working_set_mib":  327.34375,
+                               "private_mib":  477.5
+                           },
+                           {
+                               "unix_seconds":  1792135958.037,
+                               "pid":  44816,
+                               "working_set_mib":  349.4375,
+                               "private_mib":  515.1484375
+                           },
+                           {
+                               "unix_seconds":  1792135959.052,
+                               "pid":  44816,
+                               "working_set_mib":  347.05859375,
+                               "private_mib":  512.72265625
+                           },
+                           {
+                               "unix_seconds":  1792135960.063,
+                               "pid":  44816,
+                               "working_set_mib":  347.35546875,
+                               "private_mib":  512.2890625
+                           },
+                           {
+                               "unix_seconds":  1792135961.077,
+                               "pid":  44816,
+                               "working_set_mib":  375.11328125,
+                               "private_mib":  548.46484375
+                           },
+                           {
+                               "unix_seconds":  1792135962.092,
+                               "pid":  44816,
+                               "working_set_mib":  373.27734375,
+                               "private_mib":  546.84375
+                           },
+                           {
+                               "unix_seconds":  1792135963.102,
+                               "pid":  44816,
+                               "working_set_mib":  368.65234375,
+                               "private_mib":  542.359375
+                           },
+                           {
+                               "unix_seconds":  1792135964.114,
+                               "pid":  44816,
+                               "working_set_mib":  368.67578125,
+                               "private_mib":  540.296875
+                           },
+                           {
+                               "unix_seconds":  1792135965.126,
+                               "pid":  44816,
+                               "working_set_mib":  368.68359375,
+                               "private_mib":  539.296875
+                           },
+                           {
+                               "unix_seconds":  1792135966.143,
+                               "pid":  44816,
+                               "working_set_mib":  368.66015625,
+                               "private_mib":  527.38671875
+                           },
+                           {
+                               "unix_seconds":  1792135967.16,
+                               "pid":  44816,
+                               "working_set_mib":  368.671875,
+                               "private_mib":  527.38671875
+                           },
+                           {
+                               "unix_seconds":  1792135968.175,
+                               "pid":  44816,
+                               "working_set_mib":  368.6875,
+                               "private_mib":  527.38671875
+                           },
+                           {
+                               "unix_seconds":  1792135969.2,
+                               "pid":  44816,
+                               "working_set_mib":  368.69921875,
+                               "private_mib":  527.38671875
+                           },
+                           {
+                               "unix_seconds":  1792135970.214,
+                               "pid":  44816,
+                               "working_set_mib":  368.7109375,
+                               "private_mib":  527.38671875
+                           },
+                           {
+                               "unix_seconds":  1792135971.228,
+                               "pid":  44816,
+                               "working_set_mib":  368.859375,
+                               "private_mib":  528.0234375
+                           },
+                           {
+                               "unix_seconds":  1792135972.244,
+                               "pid":  44816,
+                               "working_set_mib":  374.12890625,
+                               "private_mib":  533.0859375
+                           },
+                           {
+                               "unix_seconds":  1792135973.257,
+                               "pid":  44816,
+                               "working_set_mib":  371.6171875,
+                               "private_mib":  528.72265625
+                           },
+                           {
+                               "unix_seconds":  1792135974.264,
+                               "pid":  44816,
+                               "working_set_mib":  371.44921875,
+                               "private_mib":  488.328125
+                           },
+                           {
+                               "unix_seconds":  1792135975.276,
+                               "pid":  44816,
+                               "working_set_mib":  371.4609375,
+                               "private_mib":  488.328125
+                           },
+                           {
+                               "unix_seconds":  1792135976.287,
+                               "pid":  44816,
+                               "working_set_mib":  371.46875,
+                               "private_mib":  488.328125
+                           },
+                           {
+                               "unix_seconds":  1792135977.296,
+                               "pid":  44816,
+                               "working_set_mib":  371.83984375,
+                               "private_mib":  488.5859375
+                           },
+                           {
+                               "unix_seconds":  1792135978.312,
+                               "pid":  44816,
+                               "working_set_mib":  371.8515625,
+                               "private_mib":  489.52734375
+                           },
+                           {
+                               "unix_seconds":  1792135979.321,
+                               "pid":  44816,
+                               "working_set_mib":  371.86328125,
+                               "private_mib":  489.52734375
+                           },
+                           {
+                               "unix_seconds":  1792135980.337,
+                               "pid":  44816,
+                               "working_set_mib":  375.5078125,
+                               "private_mib":  493.63671875
+                           },
+                           {
+                               "unix_seconds":  1792135981.357,
+                               "pid":  44816,
+                               "working_set_mib":  383.671875,
+                               "private_mib":  507.796875
+                           },
+                           {
+                               "unix_seconds":  1792135982.369,
+                               "pid":  44816,
+                               "working_set_mib":  382.3046875,
+                               "private_mib":  521.11328125
+                           },
+                           {
+                               "unix_seconds":  1792135983.381,
+                               "pid":  44816,
+                               "working_set_mib":  382.28125,
+                               "private_mib":  521.0390625
+                           },
+                           {
+                               "unix_seconds":  1792135984.397,
+                               "pid":  44816,
+                               "working_set_mib":  382.29296875,
+                               "private_mib":  521.0390625
+                           },
+                           {
+                               "unix_seconds":  1792135985.414,
+                               "pid":  44816,
+                               "working_set_mib":  382.3046875,
+                               "private_mib":  512.33203125
+                           },
+                           {
+                               "unix_seconds":  1792135986.428,
+                               "pid":  44816,
+                               "working_set_mib":  382.31640625,
+                               "private_mib":  512.33203125
+                           },
+                           {
+                               "unix_seconds":  1792135987.44,
+                               "pid":  44816,
+                               "working_set_mib":  382.328125,
+                               "private_mib":  512.33203125
+                           },
+                           {
+                               "unix_seconds":  1792135988.453,
+                               "pid":  44816,
+                               "working_set_mib":  382.33984375,
+                               "private_mib":  512.33203125
+                           },
+                           {
+                               "unix_seconds":  1792135989.468,
+                               "pid":  44816,
+                               "working_set_mib":  382.3515625,
+                               "private_mib":  512.33203125
+                           },
+                           {
+                               "unix_seconds":  1792135990.482,
+                               "pid":  44816,
+                               "working_set_mib":  379.49609375,
+                               "private_mib":  510.34765625
+                           },
+                           {
+                               "unix_seconds":  1792135991.497,
+                               "pid":  44816,
+                               "working_set_mib":  379.5078125,
+                               "private_mib":  510.34765625
+                           },
+                           {
+                               "unix_seconds":  1792135992.508,
+                               "pid":  44816,
+                               "working_set_mib":  380.62890625,
+                               "private_mib":  511.41796875
+                           },
+                           {
+                               "unix_seconds":  1792135993.521,
+                               "pid":  44816,
+                               "working_set_mib":  380.640625,
+                               "private_mib":  498.37890625
+                           },
+                           {
+                               "unix_seconds":  1792135994.534,
+                               "pid":  44816,
+                               "working_set_mib":  380.65234375,
+                               "private_mib":  498.37890625
+                           },
+                           {
+                               "unix_seconds":  1792135995.547,
+                               "pid":  44816,
+                               "working_set_mib":  380.66015625,
+                               "private_mib":  498.37890625
+                           },
+                           {
+                               "unix_seconds":  1792135996.56,
+                               "pid":  44816,
+                               "working_set_mib":  380.671875,
+                               "private_mib":  498.37890625
+                           },
+                           {
+                               "unix_seconds":  1792135997.577,
+                               "pid":  44816,
+                               "working_set_mib":  380.68359375,
+                               "private_mib":  498.37890625
+                           },
+                           {
+                               "unix_seconds":  1792135998.592,
+                               "pid":  44816,
+                               "working_set_mib":  380.6953125,
+                               "private_mib":  498.37890625
+                           },
+                           {
+                               "unix_seconds":  1792135999.609,
+                               "pid":  44816,
+                               "working_set_mib":  388.21875,
+                               "private_mib":  520.96484375
+                           },
+                           {
+                               "unix_seconds":  1792136000.619,
+                               "pid":  44816,
+                               "working_set_mib":  388.234375,
+                               "private_mib":  520.96484375
+                           },
+                           {
+                               "unix_seconds":  1792136001.632,
+                               "pid":  44816,
+                               "working_set_mib":  390.24609375,
+                               "private_mib":  522.96875
+                           },
+                           {
+                               "unix_seconds":  1792136002.642,
+                               "pid":  44816,
+                               "working_set_mib":  390.2578125,
+                               "private_mib":  521.04296875
+                           },
+                           {
+                               "unix_seconds":  1792136003.653,
+                               "pid":  44816,
+                               "working_set_mib":  390.27734375,
+                               "private_mib":  521.04296875
+                           },
+                           {
+                               "unix_seconds":  1792136004.666,
+                               "pid":  44816,
+                               "working_set_mib":  390.2890625,
+                               "private_mib":  521.04296875
+                           },
+                           {
+                               "unix_seconds":  1792136005.679,
+                               "pid":  44816,
+                               "working_set_mib":  390.296875,
+                               "private_mib":  521.04296875
+                           },
+                           {
+                               "unix_seconds":  1792136006.696,
+                               "pid":  44816,
+                               "working_set_mib":  390.33984375,
+                               "private_mib":  521.04296875
+                           },
+                           {
+                               "unix_seconds":  1792136007.708,
+                               "pid":  44816,
+                               "working_set_mib":  389.62109375,
+                               "private_mib":  521.04296875
+                           },
+                           {
+                               "unix_seconds":  1792136008.723,
+                               "pid":  44816,
+                               "working_set_mib":  388.62890625,
+                               "private_mib":  520.90625
+                           },
+                           {
+                               "unix_seconds":  1792136009.734,
+                               "pid":  44816,
+                               "working_set_mib":  388.62890625,
+                               "private_mib":  520.90625
+                           },
+                           {
+                               "unix_seconds":  1792136010.744,
+                               "pid":  44816,
+                               "working_set_mib":  388.62890625,
+                               "private_mib":  520.90625
+                           },
+                           {
+                               "unix_seconds":  1792136011.758,
+                               "pid":  44816,
+                               "working_set_mib":  388.6328125,
+                               "private_mib":  506.55859375
+                           },
+                           {
+                               "unix_seconds":  1792136012.769,
+                               "pid":  44816,
+                               "working_set_mib":  388.56640625,
+                               "private_mib":  506.41796875
+                           },
+                           {
+                               "unix_seconds":  1792136013.785,
+                               "pid":  44816,
+                               "working_set_mib":  388.56640625,
+                               "private_mib":  506.41796875
+                           },
+                           {
+                               "unix_seconds":  1792136014.796,
+                               "pid":  44816,
+                               "working_set_mib":  388.56640625,
+                               "private_mib":  506.41796875
+                           },
+                           {
+                               "unix_seconds":  1792136015.812,
+                               "pid":  44816,
+                               "working_set_mib":  388.56640625,
+                               "private_mib":  506.41796875
+                           },
+                           {
+                               "unix_seconds":  1792136016.824,
+                               "pid":  44816,
+                               "working_set_mib":  388.56640625,
+                               "private_mib":  506.41796875
+                           },
+                           {
+                               "unix_seconds":  1792136017.843,
+                               "pid":  44816,
+                               "working_set_mib":  411.1953125,
+                               "private_mib":  544.58984375
+                           },
+                           {
+                               "unix_seconds":  1792136018.86,
+                               "pid":  44816,
+                               "working_set_mib":  411.203125,
+                               "private_mib":  544.58984375
+                           },
+                           {
+                               "unix_seconds":  1792136019.873,
+                               "pid":  44816,
+                               "working_set_mib":  411.13671875,
+                               "private_mib":  544.58984375
+                           },
+                           {
+                               "unix_seconds":  1792136020.885,
+                               "pid":  44816,
+                               "working_set_mib":  408.6640625,
+                               "private_mib":  544.58984375
+                           },
+                           {
+                               "unix_seconds":  1792136021.899,
+                               "pid":  44816,
+                               "working_set_mib":  408.6640625,
+                               "private_mib":  539.28515625
+                           },
+                           {
+                               "unix_seconds":  1792136022.914,
+                               "pid":  44816,
+                               "working_set_mib":  408.69140625,
+                               "private_mib":  539.28515625
+                           },
+                           {
+                               "unix_seconds":  1792136023.925,
+                               "pid":  44816,
+                               "working_set_mib":  408.69140625,
+                               "private_mib":  539.28515625
+                           },
+                           {
+                               "unix_seconds":  1792136024.944,
+                               "pid":  44816,
+                               "working_set_mib":  408.69140625,
+                               "private_mib":  539.28515625
+                           },
+                           {
+                               "unix_seconds":  1792136025.962,
+                               "pid":  44816,
+                               "working_set_mib":  408.25,
+                               "private_mib":  539.28515625
+                           },
+                           {
+                               "unix_seconds":  1792136026.974,
+                               "pid":  44816,
+                               "working_set_mib":  409.109375,
+                               "private_mib":  540.19921875
+                           },
+                           {
+                               "unix_seconds":  1792136027.99,
+                               "pid":  44816,
+                               "working_set_mib":  409.109375,
+                               "private_mib":  540.19921875
+                           },
+                           {
+                               "unix_seconds":  1792136029.001,
+                               "pid":  44816,
+                               "working_set_mib":  409.11328125,
+                               "private_mib":  540.19921875
+                           },
+                           {
+                               "unix_seconds":  1792136030.014,
+                               "pid":  44816,
+                               "working_set_mib":  409.1171875,
+                               "private_mib":  532.296875
+                           },
+                           {
+                               "unix_seconds":  1792136031.028,
+                               "pid":  44816,
+                               "working_set_mib":  409.1328125,
+                               "private_mib":  532.296875
+                           },
+                           {
+                               "unix_seconds":  1792136032.047,
+                               "pid":  44816,
+                               "working_set_mib":  409.11328125,
+                               "private_mib":  532.296875
+                           },
+                           {
+                               "unix_seconds":  1792136033.059,
+                               "pid":  44816,
+                               "working_set_mib":  409.1171875,
+                               "private_mib":  532.296875
+                           },
+                           {
+                               "unix_seconds":  1792136034.069,
+                               "pid":  44816,
+                               "working_set_mib":  409.1171875,
+                               "private_mib":  532.296875
+                           },
+                           {
+                               "unix_seconds":  1792136035.083,
+                               "pid":  44816,
+                               "working_set_mib":  409.1171875,
+                               "private_mib":  532.296875
+                           }
+                       ],
+    "report":  {
+                   "baseline":  true,
+                   "cases":  [
+                                 {
+                                     "draw_calls":  {
+                                                        "count":  1439,
+                                                        "max":  194.0,
+                                                        "median":  121.0,
+                                                        "p95":  193.0,
+                                                        "p99":  194.0
+                                                    },
+                                     "duration_seconds":  8.000063,
+                                     "frame_ms":  {
+                                                      "count":  1439,
+                                                      "max":  21.813,
+                                                      "median":  5.555,
+                                                      "p95":  5.739,
+                                                      "p99":  5.934
+                                                  },
+                                     "quality":  "standard",
+                                     "refresh_cpu_ms":  {
+                                                            "count":  52,
+                                                            "max":  1.439,
+                                                            "median":  0.924,
+                                                            "p95":  1.377,
+                                                            "p99":  1.439
+                                                        },
+                                     "static_peak_mib":  101.744270324707,
+                                     "target":  100000
+                                 },
+                                 {
+                                     "draw_calls":  {
+                                                        "count":  1400,
+                                                        "max":  66.0,
+                                                        "median":  57.0,
+                                                        "p95":  65.0,
+                                                        "p99":  66.0
+                                                    },
+                                     "duration_seconds":  8.000145,
+                                     "frame_ms":  {
+                                                      "count":  1400,
+                                                      "max":  52.494,
+                                                      "median":  5.558,
+                                                      "p95":  5.727,
+                                                      "p99":  5.838
+                                                  },
+                                     "quality":  "smooth",
+                                     "refresh_cpu_ms":  {
+                                                            "count":  51,
+                                                            "max":  1.355,
+                                                            "median":  0.855,
+                                                            "p95":  1.298,
+                                                            "p99":  1.355
+                                                        },
+                                     "static_peak_mib":  102.093456268311,
+                                     "target":  100000
+                                 },
+                                 {
+                                     "draw_calls":  {
+                                                        "count":  1437,
+                                                        "max":  345.0,
+                                                        "median":  218.0,
+                                                        "p95":  337.0,
+                                                        "p99":  341.0
+                                                    },
+                                     "duration_seconds":  8.005339,
+                                     "frame_ms":  {
+                                                      "count":  1437,
+                                                      "max":  21.7,
+                                                      "median":  5.559,
+                                                      "p95":  5.723,
+                                                      "p99":  5.8
+                                                  },
+                                     "quality":  "standard",
+                                     "refresh_cpu_ms":  {
+                                                            "count":  52,
+                                                            "max":  2.151,
+                                                            "median":  0.974,
+                                                            "p95":  1.953,
+                                                            "p99":  2.151
+                                                        },
+                                     "static_peak_mib":  104.110982894897,
+                                     "target":  1000000
+                                 },
+                                 {
+                                     "draw_calls":  {
+                                                        "count":  1440,
+                                                        "max":  107.0,
+                                                        "median":  89.0,
+                                                        "p95":  104.0,
+                                                        "p99":  106.0
+                                                    },
+                                     "duration_seconds":  8.005662,
+                                     "frame_ms":  {
+                                                      "count":  1440,
+                                                      "max":  14.026,
+                                                      "median":  5.559,
+                                                      "p95":  5.733,
+                                                      "p99":  5.802
+                                                  },
+                                     "quality":  "smooth",
+                                     "refresh_cpu_ms":  {
+                                                            "count":  52,
+                                                            "max":  2.029,
+                                                            "median":  0.969,
+                                                            "p95":  1.944,
+                                                            "p99":  2.029
+                                                        },
+                                     "static_peak_mib":  104.013250350952,
+                                     "target":  1000000
+                                 },
+                                 {
+                                     "draw_calls":  {
+                                                        "count":  1441,
+                                                        "max":  560.0,
+                                                        "median":  363.0,
+                                                        "p95":  532.0,
+                                                        "p99":  552.0
+                                                    },
+                                     "duration_seconds":  8.000044,
+                                     "frame_ms":  {
+                                                      "count":  1441,
+                                                      "max":  15.657,
+                                                      "median":  5.554,
+                                                      "p95":  5.724,
+                                                      "p99":  5.798
+                                                  },
+                                     "quality":  "standard",
+                                     "refresh_cpu_ms":  {
+                                                            "count":  52,
+                                                            "max":  3.592,
+                                                            "median":  1.216,
+                                                            "p95":  3.344,
+                                                            "p99":  3.592
+                                                        },
+                                     "static_peak_mib":  109.352572441101,
+                                     "target":  10000000
+                                 },
+                                 {
+                                     "draw_calls":  {
+                                                        "count":  1442,
+                                                        "max":  186.0,
+                                                        "median":  128.0,
+                                                        "p95":  181.0,
+                                                        "p99":  184.0
+                                                    },
+                                     "duration_seconds":  8.000119,
+                                     "frame_ms":  {
+                                                      "count":  1442,
+                                                      "max":  10.825,
+                                                      "median":  5.558,
+                                                      "p95":  5.736,
+                                                      "p99":  5.8
+                                                  },
+                                     "quality":  "smooth",
+                                     "refresh_cpu_ms":  {
+                                                            "count":  52,
+                                                            "max":  3.752,
+                                                            "median":  1.2,
+                                                            "p95":  3.383,
+                                                            "p99":  3.752
+                                                        },
+                                     "static_peak_mib":  109.359488487244,
+                                     "target":  10000000
+                                 },
+                                 {
+                                     "draw_calls":  {
+                                                        "count":  1440,
+                                                        "max":  955.0,
+                                                        "median":  537.0,
+                                                        "p95":  878.0,
+                                                        "p99":  936.0
+                                                    },
+                                     "duration_seconds":  8.000115,
+                                     "frame_ms":  {
+                                                      "count":  1440,
+                                                      "max":  10.991,
+                                                      "median":  5.555,
+                                                      "p95":  5.745,
+                                                      "p99":  6.458
+                                                  },
+                                     "quality":  "standard",
+                                     "refresh_cpu_ms":  {
+                                                            "count":  52,
+                                                            "max":  7.014,
+                                                            "median":  1.947,
+                                                            "p95":  6.335,
+                                                            "p99":  7.014
+                                                        },
+                                     "static_peak_mib":  124.457242965698,
+                                     "target":  100000000
+                                 },
+                                 {
+                                     "draw_calls":  {
+                                                        "count":  1440,
+                                                        "max":  440.0,
+                                                        "median":  218.0,
+                                                        "p95":  430.0,
+                                                        "p99":  437.0
+                                                    },
+                                     "duration_seconds":  8.000043,
+                                     "frame_ms":  {
+                                                      "count":  1440,
+                                                      "max":  9.63,
+                                                      "median":  5.556,
+                                                      "p95":  5.728,
+                                                      "p99":  6.193
+                                                  },
+                                     "quality":  "smooth",
+                                     "refresh_cpu_ms":  {
+                                                            "count":  52,
+                                                            "max":  7.679,
+                                                            "median":  1.929,
+                                                            "p95":  6.882,
+                                                            "p99":  7.679
+                                                        },
+                                     "static_peak_mib":  124.472322463989,
+                                     "target":  100000000
+                                 }
+                             ],
+                   "checks":  25,
+                   "engine":  "4.7.2-stable (official)",
+                   "failures":  0,
+                   "renderer":  "NVIDIA GeForce RTX 4060 Laptop GPU",
+                   "resolution":  [
+                                      1440,
+                                      900
+                                  ],
+                   "route_seconds_per_case":  8.0,
+                   "scope":  "scripted first-person camera route and visual effects; excludes loading from case statistics; no resource injection, human input or long soak",
+                   "total_wall_seconds_including_loading":  73.290251
+               }
+}
