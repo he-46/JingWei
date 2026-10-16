@@ -171,4 +171,12 @@ Test.cmd 现在包含 524 项检查：状态 303、默认玩法 70、音效 24�
 
 `tools/verify-release-copy.ps1` 从最终 Git 提交生成 ZIP，解压至 `artifacts/art/ART09 源码下载验证`，限制 PATH 并清除引擎覆盖环境变量。真正 Play.cmd 首次准备内附引擎并导入，随后 Test.cmd 的 1,615 项、Sample.cmd 检查及 Compatibility 窗口启动通过；不复制未提交文件、本机工具、缓存或已解压引擎。精确 ZIP 字节、SHA-256、提交 ID 和检查总数写入相邻 verification.json。所有真实测试存档、原始日志和帧仍在忽略的 artifacts。
 
-最终材料、版本边界、已知问题及正式发行缺口见 [ART-09 发布清单](art/release-checklist.md) 与 [交付记录](art/deliveries/ART-09.md)。独立 EXE/PCK、作者项目级授权、商店上线、无中文字体及低配/长时运行尚未验证或完成。
+最终材料、版本边界、已知问题及正式发行缺口见 [ART-09 发布清单](art/release-checklist.md) 与 [交付记录](art/deliveries/ART-09.md)。以下 BUILD-01 接续完成独立 EXE/PCK；作者项目级授权、商店上线、无中文字体及低配/长时运行仍待后续。
+
+## BUILD-01：Windows 独立试玩包（2026-10-16）
+
+源码全套 1,615 项继续通过。实际 ZIP 解压到包含中文和空格的新目录后，224 项打包资源检查通过，确认全部 36 个正式 GLB、19 个声音及图标可加载，制作/诊断目录不在包内。107 项存取档回归分别在无窗口与 Compatibility 窗口环境通过，直接挂载 ZIP 中的 PCK，不读取源码资源。
+
+release 模板不提供 --script，深度回归使用显式编辑器检查程序；真正导出的 Jingwei.exe 另做四档实机捕获、普通选择界面与正常 v2 续档启动。PATH 中没有编辑器或制作工具，玩家包只有 EXE、PCK、说明、构建记录和两份许可文件。所有存档均隔离，不读取真实玩家目录。
+
+验证入口为 tools/verify-windows.ps1；输出含 ZIP 的 SHA-256、来源提交、未提交标识、每项实际执行程序、日志与实机帧。设备仍为 i9-13900HX / RTX 4060 Laptop / NVIDIA 581.57 / Windows 10.0.22631，1440×900 Compatibility。详情及重建方式见 [BUILD-01](releases/BUILD-01.md)。
