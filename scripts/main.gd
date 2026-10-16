@@ -11,6 +11,8 @@ const Feedback = preload("res://scripts/visuals/action_feedback.gd")
 const Preferences = preload("res://scripts/preferences.gd")
 const RenderWarmup = preload("res://scripts/visuals/render_warmup.gd")
 const FirstPersonAim = preload("res://scripts/first_person_aim.gd")
+const FirstPersonBody = preload("res://scripts/visuals/first_person_body.gd")
+var first_person_body: Node3D
 @export var bird_visual_scene: PackedScene
 @export var pangolin_visual_scene: PackedScene
 @export var mountain_visual_scenes: Array[PackedScene] = World.Catalog.scenes(World.Catalog.MOUNTAINS)
@@ -254,6 +256,8 @@ func _sync_pointer() -> void:
 	if hud == null:
 		return
 	var capture: bool = _first_person_active() and not loading and not selection_pending and not hud.modal_open and not hud.drawer_open and application_focused
+	if is_instance_valid(first_person_body) and is_instance_valid(world):
+		first_person_body.update_view(_first_person_active() and not loading and not selection_pending, float(state.carried) / state.capacity(), world.bird_body.velocity.length() > .5 or world.bird_body.position.y > 2.7, world.first_person_fov, 0)
 	var mode := Input.MOUSE_MODE_CAPTURED if capture else Input.MOUSE_MODE_VISIBLE
 	if Input.mouse_mode != mode:
 		Input.mouse_mode = mode
@@ -397,6 +401,8 @@ func _process(delta: float) -> void:
 			_save_preferences()
 	if soundscape != null and hud != null:
 		var paused: bool = hud.modal_open or (_first_person_active() and hud.drawer_open)
+		if is_instance_valid(first_person_body):
+			first_person_body.update_view(_first_person_active() and not selection_pending, float(state.carried) / state.capacity(), world.bird_body.velocity.length() > .5 or world.bird_body.position.y > 2.7, world.first_person_fov, 0.0 if paused else delta)
 		soundscape.set_context(state.player.x, paused, selection_pending)
 		if feedback != null and not paused and not selection_pending:
 			feedback.set_first_person_view(_first_person_active(), world.camera.global_position)
@@ -500,6 +506,7 @@ func interact() -> void:
 		amount = state.pickup_stone(stone)
 	if amount > 0:
 		world.bird_model.play_gather(amount)
+		first_person_body.play("gather", amount)
 		soundscape.play("gather")
 		feedback.burst("gather", Vector3(source.x, .38, source.y), world.bird_body.position)
 	elif state.carried >= state.capacity():
@@ -567,6 +574,7 @@ func deposit_at(point: Vector2) -> int:
 		save_game(false)
 	if amount > 0:
 		world.bird_model.play_throw(amount)
+		first_person_body.play("throw", amount)
 		_throw_effect(point, sea, state.filled_count > before_cells, state.won and not was_won)
 	else:
 		hud.notify("海域已填满。")
@@ -880,10 +888,12 @@ func _throw_effect(target: Vector2, sea: bool, formed_land: bool, completed: boo
 	soundscape.play("throw")
 	var end := Vector3(target.x, maxf(.25, world.cell_height(state, state.cell_at(target)) + .04), target.y)
 	var first := _first_person_active()
-	var start: Vector3 = world.camera.position - world.camera.basis.z * .7 - Vector3.UP * .2 if first else world.bird_body.position
+	var start: Vector3 = first_person_body.launch_position() if first else world.bird_body.position
 	feedback.throw_stone(start, end, sea, formed_land, completed, soundscape.epoch, not first)
 
 func _setup_feedback() -> void:
+	first_person_body = FirstPersonBody.new()
+	world.camera.add_child(first_person_body)
 	feedback = Feedback.new()
 	world.add_child(feedback)
 	feedback.landed.connect(_impact_audio)

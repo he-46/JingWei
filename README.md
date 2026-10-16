@@ -4,7 +4,7 @@ Godot 4.7.2 / GDScript 的单机 3D 增量游戏原型。从大陆海岸出发�
 
 ## 开始试玩
 
-当前源码为 **FP-02 · 0.5.1**，加入第一人称视野与灵敏度设置、近景遮挡处理和目标提示，见 [交付记录](docs/releases/FP-02.md) 与 [任务包](docs/release-tasks.md)。Windows 独立试玩包解压后双击 **Jingwei.exe**，与 Jingwei.pck 放在同一目录即可，无需 Godot、首次导入或联网，与源码版共用旅程。保留 [第一人称切换与改键](docs/releases/FP-01.md)、[轻量启动与预热](docs/releases/QA-04.md)、[分阶段加载](docs/releases/QA-03.md) 和 [运行设置](docs/releases/QA-01.md)。独立 ZIP 是构建产物，不随 Git 源码归档附带。
+当前源码为 **FP-03 · 0.5.2**，加入第一人称翅膀、携石和采集投掷动作，见 [交付记录](docs/releases/FP-03.md) 与 [任务包](docs/release-tasks.md)。Windows 独立试玩包解压后双击 **Jingwei.exe**，与 Jingwei.pck 放在同一目录即可，无需 Godot、首次导入或联网，与源码版共用旅程。保留 [第一人称切换与改键](docs/releases/FP-01.md)、[轻量启动与预热](docs/releases/QA-04.md)、[分阶段加载](docs/releases/QA-03.md) 和 [运行设置](docs/releases/QA-01.md)。独立 ZIP 是构建产物，不随 Git 源码归档附带。
 
 从 GitHub 下载的仓库 ZIP 仍是 **源码 + 随附 Godot 4.7.2 引擎**，无需另行安装 Godot：
 
