@@ -6,6 +6,7 @@ const HUD = preload("res://scripts/hud.gd")
 const Store = preload("res://scripts/save_store.gd")
 const Soundscape = preload("res://scripts/soundscape.gd")
 const Feedback = preload("res://scripts/visuals/action_feedback.gd")
+const Preferences = preload("res://scripts/preferences.gd")
 @export var bird_visual_scene: PackedScene
 @export var pangolin_visual_scene: PackedScene
 @export var mountain_visual_scenes: Array[PackedScene] = World.Catalog.scenes(World.Catalog.MOUNTAINS)
@@ -30,6 +31,12 @@ var showcase: bool = false
 var win_shown: bool = false
 var soundscape: Node
 var feedback: Node3D
+var preferences_path := "user://preferences.json"
+var preferences_enabled := true
+var preferences: Dictionary = Preferences.DEFAULTS.duplicate()
+var preferences_dirty := false
+var preferences_clock := 0.0
+var preferences_error_shown := false
 
 func _ready() -> void:
 	_setup_input()
@@ -51,8 +58,17 @@ func _ready() -> void:
 			showcase = true
 		if arg == "--overview":
 			atlas_view = true
+	preferences_enabled = preferences_enabled and save_enabled and capture_path.is_empty()
+	# Explicit fixture save paths also isolate preferences before any read occurs.
+	if save_path != "user://coast_journey.json" and preferences_path == "user://preferences.json":
+		preferences_path = save_path.get_base_dir().path_join("preferences.json")
+	if preferences_enabled:
+		preferences = Preferences.load_preferences(preferences_path)
+		muted = muted or bool(preferences.muted)
+	preferences.muted = muted
 	soundscape = Soundscape.new()
 	add_child(soundscape)
+	soundscape.set_volume(float(preferences.volume))
 	soundscape.set_muted(muted)
 	var loaded: Dictionary = Store.load_game(save_path) if save_enabled else {"state": null, "status": "new"}
 	state = loaded["state"] if loaded["state"] != null else State.new(target)
@@ -75,6 +91,8 @@ func _ready() -> void:
 	hud.overview_requested.connect(toggle_overview)
 	hud.help_requested.connect(show_help)
 	hud.modal_action.connect(_modal_action)
+	hud.setting_changed.connect(change_setting)
+	_apply_preferences()
 	get_tree().auto_accept_quit = false
 	if atlas_view:
 		world.overview = true
@@ -154,6 +172,10 @@ func _physics_process(delta: float) -> void:
 		save_game(false)
 
 func _process(delta: float) -> void:
+	if preferences_dirty:
+		preferences_clock -= delta
+		if preferences_clock <= 0:
+			_save_preferences()
 	if soundscape != null and hud != null:
 		soundscape.set_context(state.player.x, hud.modal_open, selection_pending)
 		if feedback != null and not hud.modal_open and not selection_pending:
@@ -173,6 +195,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if selection_pending:
 			return
 		if hud.modal_open:
+			_save_preferences()
 			hud.hide_modal()
 			choosing_again = false
 		else:
@@ -180,6 +203,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("jw_mute"):
 		muted = not muted
 		soundscape.set_muted(muted)
+		preferences.muted = muted
+		preferences_dirty = preferences_enabled
+		_save_preferences()
+		if hud.modal_title.text == "设置" and hud.modal_open:
+			hud.refresh_settings(preferences)
 		hud.notify("声音已关闭" if muted else "声音已开启")
 	elif not hud.modal_open and event.is_action_pressed("jw_upgrades"):
 		hud.toggle_drawer()
@@ -363,7 +391,48 @@ func _drain_messages() -> void:
 func show_menu() -> void:
 	if hud.modal_open or selection_pending:
 		return
-	hud.show_modal("暂停", "已填 %s / %s 石\n%s" % [State.number(state.total_delivered), State.number(state.target_stones), hud.save_label.text], [{"text": "继续", "action": "resume"}, {"text": "保存", "action": "save"}, {"text": "操作说明", "action": "help"}, {"text": "重新开始…", "action": "reset_confirm"}])
+	hud.show_modal("暂停", "已填 %s / %s 石\n%s" % [State.number(state.total_delivered), State.number(state.target_stones), hud.save_label.text], [{"text": "继续", "action": "resume"}, {"text": "保存", "action": "save"}, {"text": "设置", "action": "settings"}, {"text": "操作说明", "action": "help"}, {"text": "重新开始…", "action": "reset_confirm"}])
+
+func _apply_preferences() -> void:
+	var smooth: bool = preferences.quality == "smooth"
+	world.reduced_detail = smooth
+	world.animate(state, 0, false, false, aimed_cell)
+	get_viewport().scaling_3d_scale = .75 if smooth else 1.0
+	get_viewport().msaa_3d = Viewport.MSAA_DISABLED if smooth else Viewport.MSAA_2X
+	if preferences_enabled and DisplayServer.get_name() != "headless":
+		var mode := Window.MODE_FULLSCREEN if preferences.fullscreen else Window.MODE_WINDOWED
+		if get_window().mode != mode:
+			get_window().mode = mode
+
+func change_setting(key: String, value: Variant) -> void:
+	if not hud.modal_open or hud.modal_title.text != "设置" or not Preferences.DEFAULTS.has(key) or key == "version":
+		return
+	preferences[key] = value
+	preferences = Preferences.sanitize(preferences)
+	muted = bool(preferences.muted)
+	if key in ["quality", "fullscreen"]:
+		_apply_preferences()
+	else:
+		soundscape.set_volume(float(preferences.volume))
+		soundscape.set_muted(muted)
+	hud.refresh_settings(preferences)
+	preferences_dirty = preferences_enabled
+	preferences_clock = .4
+	if key != "volume":
+		_save_preferences()
+
+func _save_preferences() -> void:
+	if not preferences_enabled or not preferences_dirty:
+		return
+	var error := Preferences.save_preferences(preferences_path, preferences)
+	if error == OK:
+		preferences_dirty = false
+		preferences_error_shown = false
+	else:
+		preferences_clock = 10
+		if not preferences_error_shown and hud != null:
+			hud.notify("设置暂未保存，请检查目录权限。")
+			preferences_error_shown = true
 
 func show_help() -> void:
 	if hud.modal_open or selection_pending:
@@ -377,8 +446,15 @@ func _modal_action(action: String) -> void:
 	match action:
 		"resume":
 			if not selection_pending:
+				_save_preferences()
 				hud.hide_modal()
 				choosing_again = false
+		"settings":
+			hud.show_settings(preferences)
+		"settings_back":
+			_save_preferences()
+			hud.hide_modal()
+			show_menu()
 		"help":
 			hud.hide_modal()
 			show_help()
@@ -409,6 +485,7 @@ func choose_world(target: int) -> bool:
 	add_child(world)
 	world.setup(state)
 	_setup_feedback()
+	_apply_preferences()
 	selection_pending = false
 	choosing_again = false
 	save_blocked = false
@@ -452,6 +529,7 @@ func save_game(manual: bool = false) -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_save_preferences()
 		if state != null and hud != null:
 			save_game(false)
 		get_tree().quit()

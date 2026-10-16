@@ -4,7 +4,7 @@ Godot 4.7.2 / GDScript 的单机 3D 增量游戏原型。从大陆海岸出发�
 
 ## 开始试玩
 
-已完成 **Windows 64 位独立试玩包 BUILD-01**：解压独立包后双击 **Jingwei.exe**，与 Jingwei.pck 放在同一目录即可。无需 Godot、首次导入或联网，与源码版共用旅程。制作与验证方法见 [独立试玩包说明](docs/releases/BUILD-01.md)。独立 ZIP 是构建产物，不随 Git 源码归档附带。
+当前 **Windows 64 位独立试玩包 QA-01 · 0.2.0**：解压独立包后双击 **Jingwei.exe**，与 Jingwei.pck 放在同一目录即可。无需 Godot、首次导入或联网，与源码版共用旅程。制作与验证方法见 [最新试玩包说明](docs/releases/QA-01.md)。独立 ZIP 是构建产物，不随 Git 源码归档附带。
 
 从 GitHub 下载的仓库 ZIP 仍是 **源码 + 随附 Godot 4.7.2 引擎**，无需另行安装 Godot：
 
@@ -26,6 +26,8 @@ Godot 文件夹内约 84 MiB 的 ZIP 是随项目提供的引擎，启动时无�
 开发时可用 `Play.cmd -Check -NonInteractive` 检查自动解压、导入和主场景启动（不打开游戏窗口、不读取正式存档）。随附引擎 ZIP 提交到 Git；解压后的 EXE、.godot 缓存及日志均被忽略。
 
 首次进入选择填海总量；有有效海岸版存档时自动续玩。暂停菜单可以重新选择规模，原旅程先备份。
+
+**Esc → 设置** 可选择标准 / 流畅画质、窗口 / 全屏、音量与静音。流畅档减少装饰草丛、关闭实时阴影与抗锯齿，并降低 3D 画面精细度；界面文字保持清晰。偏好独立保存在旅程目录的 preferences.json，重开地图也会保留。样板与自动测试不改玩家设置。
 
 ## 四种心愿
 
@@ -133,4 +135,4 @@ ART-07 已完成可玩样板技术验收。新增 Sample.cmd；实际飞行采�
 
 ART-08 扩展全地图资产、按地区组合及分区绘制，为全图使用简化山体。见 [资产与兼容映射](docs/art/expansion-assets.md)、[四档地图性能报告](docs/art/performance-report.md)。
 
-ART-09 完成美术源码试玩候选版验收：36 个正式模型、字体与动画核查，四档真实存取档回归，完整 1,615 项检查以及 Git ZIP 的 Play.cmd/Test.cmd 启动验证。见 [发布清单与剩余事项](docs/art/release-checklist.md)、[美术更新说明与回滚](docs/art/art-update-notes.md)、[来源和许可](docs/art/asset-sources-and-licenses.md)、[14.5 秒实机短片](docs/art/validation/art09/resource-cycle.mp4)。ART-00～09 美术任务已完成；独立 EXE、项目级授权与商店发行仍单独待办。
+ART-09 完成美术源码试玩候选版验收：36 个正式模型、字体与动画核查，四档真实存取档回归，完整 1,615 项检查以及 Git ZIP 的 Play.cmd/Test.cmd 启动验证。见 [发布清单与剩余事项](docs/art/release-checklist.md)、[美术更新说明与回滚](docs/art/art-update-notes.md)、[来源和许可](docs/art/asset-sources-and-licenses.md)、[14.5 秒实机短片](docs/art/validation/art09/resource-cycle.mp4)。ART-00～09 美术任务已完成；BUILD-01 完成独立 EXE，QA-01 增加运行设置，检查扩展为 1,665 项。后续见 [发行准备任务包](docs/release-tasks.md)。

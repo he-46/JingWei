@@ -27,6 +27,7 @@ exports/
 *.before-reset-*
 journey.json
 coast_journey.json
+preferences.json
 
 # Local editor, operating system and credential files.
 .vscode/

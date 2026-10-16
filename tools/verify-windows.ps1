@@ -17,7 +17,7 @@ $expectedFiles = @('Jingwei.exe','Jingwei.pck','开始游戏.txt','build-info.js
 $actualFiles = @(Get-ChildItem -LiteralPath $package -Recurse -File | ForEach-Object { $_.FullName.Substring($package.Length + 1).Replace('\','/') })
 if (@(Compare-Object $expectedFiles $actualFiles).Count) { throw 'ZIP must contain only the executable, PCK, player guide, build record and two license files.' }
 $version = (Get-Item -LiteralPath (Join-Path $package 'Jingwei.exe')).VersionInfo
-if ($version.FileVersion -ne '0.1.0.0' -or $version.ProductName -ne '精卫填海 · 衔石成洲') { throw 'Missing executable version or product metadata.' }
+if ($version.FileVersion -ne $info.product_version -or $version.ProductName -ne '精卫填海 · 衔石成洲') { throw 'Missing executable version or product metadata.' }
 foreach ($file in $info.files) {
     $path = Join-Path $package $file.path
     if ((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -ne $file.sha256) { throw "ZIP content hash mismatch: $($file.path)" }
@@ -26,6 +26,7 @@ foreach ($file in $info.files) {
 # the editor harness for deep regression; boot the actual release EXE separately.
 # No test scripts, fixtures or editor are included in the playable ZIP/PCK.
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_windows_pack.gd') -Destination (Join-Path $qa 'pack.gd')
+Copy-Item -LiteralPath (Join-Path $root 'tests\test_preferences.gd') -Destination (Join-Path $qa 'preferences.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\fixtures\coast_v2.json') -Destination (Join-Path $qa 'coast_v2.json')
 $fixture = (Join-Path $qa 'coast_v2.json').Replace('\','/')
 $regression = [IO.File]::ReadAllText((Join-Path $root 'tests\test_release.gd'), [Text.Encoding]::UTF8)
@@ -66,6 +67,7 @@ try {
     $packArgs = @('--main-pack',('"' + (Join-Path $package 'Jingwei.pck') + '"'))
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'pack.gd') + '"'))) 'pack' -Harness
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'regression.gd') + '"'))) 'regression' -Harness
+    Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'preferences.gd') + '"'))) 'preferences' -Harness
     foreach ($target in @(100000,1000000,10000000,100000000)) {
         $capture = Join-Path $qa ("map-$target.png")
         Invoke-Preview @('--','--qa',"--target=$target",'--showcase',('--capture="' + $capture + '"')) "graphics-$target"
@@ -74,6 +76,8 @@ try {
     # Real graphical save/load regression uses isolated user:// files, not --qa.
     $review = (Join-Path $qa 'review').Replace('\','/')
     Invoke-Preview ($packArgs + @('--script',('"' + (Join-Path $qa 'regression.gd') + '"'),'--',('--review-out="' + $review + '"'))) 'graphics-regression' -Harness
+    $settingsReview = (Join-Path $qa 'settings-review').Replace('\','/')
+    Invoke-Preview ($packArgs + @('--script',('"' + (Join-Path $qa 'preferences.gd') + '"'),'--',('--review-out="' + $settingsReview + '"'))) 'graphics-preferences' -Harness
     # Ordinary release boot: new selector and actual v2 continuation, no --qa or
     # --capture (both suppress normal loading). APPDATA remains fully isolated.
     Invoke-Preview @('--quit-after','45') 'release-new-selector'
@@ -81,10 +85,14 @@ try {
     New-Item -ItemType Directory -Path $saveFolder -Force | Out-Null
     $savePath = Join-Path $saveFolder 'coast_journey.json'
     Copy-Item -LiteralPath (Join-Path $qa 'coast_v2.json') -Destination $savePath
+    [IO.File]::WriteAllText((Join-Path $saveFolder 'preferences.json'), '{"version":1,"quality":"smooth","fullscreen":false,"volume":0.37,"muted":true}', (New-Object Text.UTF8Encoding($false)))
     $legacyHash = (Get-FileHash -LiteralPath $savePath -Algorithm SHA256).Hash
     Invoke-Preview @('--quit-after','45') 'release-legacy-continue'
+    $movie = Join-Path $qa 'release-smooth.png'
+    Invoke-Preview @('--write-movie',('"' + $movie + '"'),'--quit-after','3') 'release-smooth-capture'
+    if (-not (Get-ChildItem -LiteralPath $qa -Filter 'release-smooth*.png')) { throw 'Actual release smooth-preset capture was not produced.' }
     if ((Get-FileHash -LiteralPath $savePath -Algorithm SHA256).Hash -ne $legacyHash) { throw 'Short ordinary legacy boot unexpectedly modified the original save.' }
-    [ordered]@{package='BUILD-01'; source_commit=$info.source_commit; source_dirty=$info.source_dirty; zip_bytes=(Get-Item -LiteralPath $ZipPath).Length; zip_sha256=(Get-FileHash -LiteralPath $ZipPath -Algorithm SHA256).Hash; no_editor_on_path=$true; deep_regression='editor harness explicitly mounts shipping PCK'; release_checks='four real captures, ordinary selector, v2 continuation'; save_isolated=$true; records=$records; destination=$Destination} | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $Destination 'verification.json') -Encoding UTF8
+    [ordered]@{package=$info.package; source_commit=$info.source_commit; source_dirty=$info.source_dirty; zip_bytes=(Get-Item -LiteralPath $ZipPath).Length; zip_sha256=(Get-FileHash -LiteralPath $ZipPath -Algorithm SHA256).Hash; no_editor_on_path=$true; deep_regression='editor harness explicitly mounts shipping PCK'; release_checks='four real captures, ordinary selector, v2 continuation with persisted smooth settings'; save_isolated=$true; records=$records; destination=$Destination} | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $Destination 'verification.json') -Encoding UTF8
     Write-Host "Standalone ZIP verification passed: $Destination"
 } finally {
     $env:PATH = $previousPath

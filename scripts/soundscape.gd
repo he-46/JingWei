@@ -26,8 +26,14 @@ var next_allowed: Dictionary = {}
 var last_variant: Dictionary = {}
 var rng := RandomNumberGenerator.new()
 var ambience_target := -60.0
+var volume_level := 1.0
+const BUS := "Jingwei"
 
 func _ready() -> void:
+	if AudioServer.get_bus_index(BUS) < 0:
+		AudioServer.add_bus()
+		AudioServer.set_bus_name(AudioServer.bus_count - 1, BUS)
+	set_volume(volume_level)
 	rng.randomize()
 	for cue in CUES:
 		var bank: Array[AudioStream] = []
@@ -38,9 +44,11 @@ func _ready() -> void:
 		streams[cue] = bank
 	for index in range(ACTION_VOICES + ACCENT_VOICES):
 		var voice := AudioStreamPlayer.new()
+		voice.bus = BUS
 		add_child(voice)
 		voices.append(voice)
 	ambience = AudioStreamPlayer.new()
+	ambience.bus = BUS
 	var surf: AudioStreamWAV = load("res://assets/audio/surf.wav").duplicate()
 	surf.loop_mode = AudioStreamWAV.LOOP_FORWARD
 	surf.loop_begin = 0
@@ -51,7 +59,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	clock += delta
-	if muted:
+	if muted or volume_level <= 0:
 		return
 	ambience.volume_db = move_toward(ambience.volume_db, ambience_target, delta * 12)
 	if ambience_target > -60 and not ambience.playing:
@@ -84,8 +92,18 @@ func set_muted(value: bool) -> void:
 	muted = value
 	reset() # Also invalidates delayed landing sounds from before the mute/restart.
 
+func set_volume(value: float) -> void:
+	var level := clampf(value, 0, 1)
+	if level <= 0 and volume_level > 0:
+		reset()
+	volume_level = level
+	var index := AudioServer.get_bus_index(BUS)
+	if index >= 0:
+		AudioServer.set_bus_volume_db(index, linear_to_db(maxf(level, .001)))
+		AudioServer.set_bus_mute(index, level <= 0)
+
 func play(cue: String, strength: float = 1.0) -> bool:
-	if muted or not CUES.has(cue) or clock < float(next_allowed.get(cue, -1.0)):
+	if muted or volume_level <= 0 or not CUES.has(cue) or clock < float(next_allowed.get(cue, -1.0)):
 		return false
 	var config: Dictionary = CUES[cue]
 	var priority := int(config.get("priority", 0))

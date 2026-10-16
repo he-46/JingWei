@@ -1,5 +1,5 @@
 精卫填海 · 衔石成洲
-Windows 64 位试玩版 BUILD-01
+Windows 64 位试玩版 QA-01 · 0.2.0
 
 把整个 ZIP 解压到普通文件夹，然后双击 Jingwei.exe。
 Jingwei.exe 和 Jingwei.pck 必须放在一起。无需安装 Godot，也无需联网。
@@ -14,11 +14,15 @@ Esc：暂停、保存和重选规模
 M：静音
 F1：操作说明
 
+Esc → 设置：选择标准 / 流畅画质、窗口 / 全屏、音量与静音。
+设置即时生效并单独保存，重新开始旅程也会保留。
+
 累计填海 128 石后，唯一的穿山甲会从小山开始自动开采。
 山挖完留下有限石料，搬空后不会再生；地上散石采一次消失，随后定时刷新。
 
 进度保存在 %APPDATA%\AzVGames\Jingwei\coast_journey.json。
 与 Play.cmd 源码试玩版共用进度。换版本前可备份整个存档文件夹。
+画质、显示与声音偏好保存在同目录的 preferences.json，与旅程分开。
 退出前可在 Esc 菜单保存；不要同时启动两个版本。
 
 本包是未签名的便携试玩版，已在 Windows x86_64 / OpenGL Compatibility 上验证。

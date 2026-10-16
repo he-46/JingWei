@@ -8,6 +8,7 @@ signal menu_requested
 signal overview_requested
 signal help_requested
 signal modal_action(action: String)
+signal setting_changed(key: String, value: Variant)
 
 const State = preload("res://scripts/state.gd")
 const Locator = preload("res://scripts/visuals/player_locator.gd")
@@ -63,6 +64,12 @@ var throw_button: Button
 var map_button: Button
 var seen_relics := 0
 var player_locator: Control
+var settings_quality: Button
+var settings_display: Button
+var settings_mute: Button
+var settings_volume: HSlider
+var settings_volume_label: Label
+var settings_values: Dictionary = {}
 
 func _ready() -> void:
 	root = Control.new()
@@ -78,6 +85,7 @@ func _ready() -> void:
 	theme.default_font_size = 15
 	theme.set_color("font_color", "Label", INK)
 	theme.set_color("font_color", "Button", INK)
+	theme.set_color("font_focus_color", "Button", INK)
 	theme.set_color("font_hover_color", "Button", INK)
 	theme.set_color("font_pressed_color", "Button", Color("ffffff"))
 	theme.set_color("font_disabled_color", "Button", MUTED)
@@ -343,6 +351,39 @@ func show_modal(title: String, body: String, choices: Array) -> void:
 func hide_modal() -> void:
 	modal_open = false
 	modal.visible = false
+
+func show_settings(values: Dictionary) -> void:
+	show_modal("设置", "流畅画质减少草丛与阴影，降低画面精细度。", [])
+	settings_quality = button(modal_buttons, "", func() -> void: setting_changed.emit("quality", "smooth" if settings_values.quality == "standard" else "standard"), 40)
+	settings_display = button(modal_buttons, "", func() -> void: setting_changed.emit("fullscreen", not settings_values.fullscreen), 40)
+	settings_quality.focus_mode = Control.FOCUS_ALL
+	settings_display.focus_mode = Control.FOCUS_ALL
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 14)
+	modal_buttons.add_child(row)
+	settings_volume_label = text(row, "", 15)
+	settings_volume_label.custom_minimum_size.x = 108
+	settings_volume = HSlider.new()
+	settings_volume.min_value = 0
+	settings_volume.max_value = 100
+	settings_volume.step = 1
+	settings_volume.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	settings_volume.custom_minimum_size.y = 40
+	row.add_child(settings_volume)
+	settings_volume.value_changed.connect(func(value: float) -> void: setting_changed.emit("volume", value / 100.0))
+	settings_mute = button(modal_buttons, "", func() -> void: setting_changed.emit("muted", not settings_values.muted), 40)
+	settings_mute.focus_mode = Control.FOCUS_ALL
+	button(modal_buttons, "返回", func() -> void: modal_action.emit("settings_back"), 40).focus_mode = Control.FOCUS_ALL
+	refresh_settings(values)
+	settings_quality.grab_focus()
+
+func refresh_settings(values: Dictionary) -> void:
+	settings_values = values.duplicate()
+	settings_quality.text = "画质　" + ("流畅" if values.quality == "smooth" else "标准")
+	settings_display.text = "显示　" + ("全屏" if values.fullscreen else "窗口")
+	settings_volume_label.text = "音量　%d%%" % roundi(float(values.volume) * 100)
+	settings_volume.set_value_no_signal(float(values.volume) * 100)
+	settings_mute.text = "声音　" + ("已静音 · M" if values.muted else "开启 · M")
 
 func notify(value: String) -> void:
 	if notice_panel.visible and notice.text == value:

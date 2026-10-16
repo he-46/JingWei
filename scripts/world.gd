@@ -62,6 +62,7 @@ var font: SystemFont
 var aim_point := Vector2.ZERO
 var time: float = 0
 var overview: bool = false
+var reduced_detail := false
 var zoom: float = 1.0
 var focus := Vector3.ZERO
 var normal_size: float = 29.0
@@ -613,7 +614,7 @@ func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aime
 		material.set_shader_parameter("detail_origin", detail_origin)
 	for layer in fog_layers:
 		layer.material_override.set_shader_parameter("fog_time", time)
-	grass_mesh.visible_instance_count = 0 if overview else -1
+	grass_mesh.visible_instance_count = 0 if overview or reduced_detail else -1
 	shrub_mesh.visible_instance_count = 0 if overview else -1
 	detail_clock -= delta
 	if detail_clock <= 0 or delta == 0:
@@ -621,7 +622,7 @@ func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aime
 		for pool in detail_batches:
 			pool.set_overview(overview)
 			pool.update_detail(camera, detail_origin)
-		sun.shadow_enabled = not overview
+		sun.shadow_enabled = not overview and not reduced_detail
 	if mining_dust:
 		_update_mining_dust(state)
 	update_camera(state, delta)
