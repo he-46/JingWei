@@ -6,6 +6,7 @@ $expected = 'F298490B8D44D934BE425A5A65A51BF15F422428B229A06A6E11D9FFEA248011'
 if ((Get-FileHash -LiteralPath $ArchivePath -Algorithm SHA256).Hash -ne $expected) {
     throw 'Expected the official Godot 4.7.2 standard export templates archive. SHA-256 mismatch.'
 }
+Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive = [IO.Compression.ZipFile]::OpenRead((Resolve-Path -LiteralPath $ArchivePath).Path)
 try {

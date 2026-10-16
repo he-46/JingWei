@@ -50,7 +50,8 @@ function Invoke-Preview([string[]]$PreviewArguments, [string]$Name, [switch]$Har
         if ([DateTime]::UtcNow -gt $deadline) { $process.Kill(); throw "$Name exceeded four minutes. See $qa" }
     }
     $process.WaitForExit()
-    $lines = @(Get-Content -LiteralPath $out,$err)
+    # Strip Windows PowerShell's file/provider properties before JSON reporting.
+    $lines = @(Get-Content -LiteralPath $out,$err | ForEach-Object { $_.ToString() })
     $diagnostics = @($lines | Where-Object { $_ -match '^(SCRIPT ERROR:|ERROR:)' -and $_ -notmatch '^ERROR: Failed to read the root certificate store\.$' })
     if ($process.ExitCode -ne 0 -or $diagnostics.Count) { throw "$Name failed: $($diagnostics -join '; ')" }
     if ($Harness -and -not ($lines -match 'TESTS: \d+ checks, 0 failures')) { throw "$Name produced no successful test summary." }

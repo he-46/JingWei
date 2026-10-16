@@ -56,6 +56,7 @@ try {
     [ordered]@{package='BUILD-01'; engine=$version; release_template_sha256=$templateHash; source_commit=$revision; source_dirty=$dirty; architecture='Windows x86_64'; renderer='Compatibility'; signed=$false; files=$hashes} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $Destination 'build-info.json') -Encoding UTF8
     # Logs and authoring tools are deliberately outside the downloadable ZIP.
     $zipFiles = @($files | ForEach-Object { Join-Path $Destination $_ }) + (Join-Path $Destination 'build-info.json')
+    Add-Type -AssemblyName System.IO.Compression
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $zip = [IO.Compression.ZipFile]::Open(($Destination + '.zip'), [IO.Compression.ZipArchiveMode]::Create)
     try {
