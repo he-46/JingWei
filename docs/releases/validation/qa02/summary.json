@@ -1,0 +1,533 @@
+{
+  "runtime_pack_sha256": "AF31D4D4996E5417C6FDF8684438B9B9CF663D38DAA48025B40865E03D2BF9B1",
+  "runtime_source_commit": "510628d662f6735086375208c883fd32641859e7",
+  "metadata": {
+    "audio": "voice scheduling active; only process Master bus muted",
+    "case_count": 8,
+    "case_seconds_requested": 90.0,
+    "cleanup_baseline_nodes": 2.0,
+    "cleanup_baseline_orphans": 0.0,
+    "cleanup_baseline_static_mib": 57.620686531066895,
+    "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+    "engine": "4.7.2-stable (official)",
+    "fixture": "teleport gather/throw; balanced full-sea resource injection; 43 simulated seconds mining preparation per case; effects never alter ledger",
+    "frame_cap": 60,
+    "frame_sampler": "independent per-frame Node, including frames during harness coroutine waits",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "harness": "editor executable mounts shipping PCK; not release EXE performance",
+    "os": "10.0.22631",
+    "process_id": 41420,
+    "renderer": "gl_compatibility",
+    "time_scale": 1.0,
+    "warmup_seconds": 10.261193,
+    "window": [
+      1440,
+      900
+    ]
+  },
+  "actual_timed_case_seconds": 721.018584,
+  "whole_session_seconds": 736.881023,
+  "host_wall_seconds": 739.0839960999999,
+  "checks": 1066,
+  "failures": 0,
+  "boots": 28,
+  "resets": 16,
+  "explicit_saves": 398,
+  "corrupt_primary_recoveries": 8,
+  "gather_actions": 374,
+  "deposits": 86,
+  "injected_stones": 333296996,
+  "fixture_advanced_simulated_seconds": 516.0,
+  "process_memory_samples": 726,
+  "working_set_sample_peak_mib": 438.14453125,
+  "process_cumulative_peak_mib": 445.18359375,
+  "empty_checkpoint_static_change_mib": 0.40111541748046875,
+  "empty_checkpoint_first_to_last_change_mib": 0.09684371948242188,
+  "same_scale_cleanup_change_mib": [
+    {
+      "target": 100000,
+      "smooth_minus_standard_mib": 0.007556915283203125
+    },
+    {
+      "target": 1000000,
+      "smooth_minus_standard_mib": 0.005268096923828125
+    },
+    {
+      "target": 10000000,
+      "smooth_minus_standard_mib": 0.005268096923828125
+    },
+    {
+      "target": 100000000,
+      "smooth_minus_standard_mib": 0.005199432373046875
+    }
+  ],
+  "measurement_buffer_note": "Scene-free memory still includes harness current frame/result buffers. Node/orphan/resource counts are separately recorded; the independent frame observer remains attached.",
+  "cleanup": [
+    {
+      "nodes": 2.0,
+      "orphans": 0.0,
+      "quality": "standard",
+      "resources": 93.0,
+      "static_mib": 57.92495822906494,
+      "target": 100000
+    },
+    {
+      "nodes": 2.0,
+      "orphans": 0.0,
+      "quality": "smooth",
+      "resources": 93.0,
+      "static_mib": 57.932515144348145,
+      "target": 100000
+    },
+    {
+      "nodes": 2.0,
+      "orphans": 0.0,
+      "quality": "standard",
+      "resources": 93.0,
+      "static_mib": 57.938557624816895,
+      "target": 1000000
+    },
+    {
+      "nodes": 2.0,
+      "orphans": 0.0,
+      "quality": "smooth",
+      "resources": 93.0,
+      "static_mib": 57.94382572174072,
+      "target": 1000000
+    },
+    {
+      "nodes": 2.0,
+      "orphans": 0.0,
+      "quality": "standard",
+      "resources": 93.0,
+      "static_mib": 57.95258045196533,
+      "target": 10000000
+    },
+    {
+      "nodes": 2.0,
+      "orphans": 0.0,
+      "quality": "smooth",
+      "resources": 93.0,
+      "static_mib": 57.95784854888916,
+      "target": 10000000
+    },
+    {
+      "nodes": 2.0,
+      "orphans": 0.0,
+      "quality": "standard",
+      "resources": 93.0,
+      "static_mib": 58.016602516174316,
+      "target": 100000000
+    },
+    {
+      "nodes": 2.0,
+      "orphans": 0.0,
+      "quality": "smooth",
+      "resources": 93.0,
+      "static_mib": 58.02180194854736,
+      "target": 100000000
+    }
+  ],
+  "cases": [
+    {
+      "actual_seconds": 90.033111,
+      "frames": {
+        "frames": 5353,
+        "max_ms": 426.544,
+        "over_33ms": 6,
+        "p50_ms": 16.664,
+        "p95_ms": 17.681,
+        "p99_ms": 21.155
+      },
+      "operations": [
+        {
+          "milliseconds": 6.745,
+          "name": "balanced full-sea preparation + 43s mining advance"
+        },
+        {
+          "milliseconds": 247.923,
+          "name": "save + free + normal reload"
+        },
+        {
+          "milliseconds": 257.065,
+          "name": "corrupt primary + backup recovery + reload"
+        },
+        {
+          "milliseconds": 242.267,
+          "name": "archive + two real scale resets"
+        }
+      ],
+      "pool_peak": [
+        12,
+        24,
+        3
+      ],
+      "quality": "standard",
+      "stages": [
+        "pause",
+        "resume",
+        "fixture",
+        "reload",
+        "overview",
+        "recover",
+        "reset"
+      ],
+      "state_valid": true,
+      "static_mib_before_cleanup": 104.61848163604736,
+      "target": 100000,
+      "unix_end": 1792117394.652,
+      "unix_start": 1792117304.619
+    },
+    {
+      "actual_seconds": 90.021029,
+      "frames": {
+        "frames": 5373,
+        "max_ms": 169.919,
+        "over_33ms": 9,
+        "p50_ms": 16.664,
+        "p95_ms": 17.775,
+        "p99_ms": 21.486
+      },
+      "operations": [
+        {
+          "milliseconds": 7.037,
+          "name": "balanced full-sea preparation + 43s mining advance"
+        },
+        {
+          "milliseconds": 248.352,
+          "name": "save + free + normal reload"
+        },
+        {
+          "milliseconds": 269.04,
+          "name": "corrupt primary + backup recovery + reload"
+        },
+        {
+          "milliseconds": 249.239,
+          "name": "archive + two real scale resets"
+        }
+      ],
+      "pool_peak": [
+        12,
+        24,
+        3
+      ],
+      "quality": "smooth",
+      "stages": [
+        "pause",
+        "resume",
+        "fixture",
+        "reload",
+        "overview",
+        "recover",
+        "reset"
+      ],
+      "state_valid": true,
+      "static_mib_before_cleanup": 104.62218952178955,
+      "target": 100000,
+      "unix_end": 1792117485.475,
+      "unix_start": 1792117395.453
+    },
+    {
+      "actual_seconds": 90.024396,
+      "frames": {
+        "frames": 5366,
+        "max_ms": 229.178,
+        "over_33ms": 10,
+        "p50_ms": 16.663,
+        "p95_ms": 17.804,
+        "p99_ms": 27.08
+      },
+      "operations": [
+        {
+          "milliseconds": 23.059,
+          "name": "balanced full-sea preparation + 43s mining advance"
+        },
+        {
+          "milliseconds": 285.811,
+          "name": "save + free + normal reload"
+        },
+        {
+          "milliseconds": 319.879,
+          "name": "corrupt primary + backup recovery + reload"
+        },
+        {
+          "milliseconds": 258.072,
+          "name": "archive + two real scale resets"
+        }
+      ],
+      "pool_peak": [
+        12,
+        24,
+        3
+      ],
+      "quality": "standard",
+      "stages": [
+        "pause",
+        "resume",
+        "fixture",
+        "reload",
+        "overview",
+        "recover",
+        "reset"
+      ],
+      "state_valid": true,
+      "static_mib_before_cleanup": 106.42970371246338,
+      "target": 1000000,
+      "unix_end": 1792117575.903,
+      "unix_start": 1792117485.878
+    },
+    {
+      "actual_seconds": 90.020312,
+      "frames": {
+        "frames": 5370,
+        "max_ms": 213.315,
+        "over_33ms": 10,
+        "p50_ms": 16.664,
+        "p95_ms": 17.869,
+        "p99_ms": 25.836
+      },
+      "operations": [
+        {
+          "milliseconds": 22.898,
+          "name": "balanced full-sea preparation + 43s mining advance"
+        },
+        {
+          "milliseconds": 295.103,
+          "name": "save + free + normal reload"
+        },
+        {
+          "milliseconds": 317.039,
+          "name": "corrupt primary + backup recovery + reload"
+        },
+        {
+          "milliseconds": 244.519,
+          "name": "archive + two real scale resets"
+        }
+      ],
+      "pool_peak": [
+        12,
+        24,
+        3
+      ],
+      "quality": "smooth",
+      "stages": [
+        "pause",
+        "resume",
+        "fixture",
+        "reload",
+        "overview",
+        "recover",
+        "reset"
+      ],
+      "state_valid": true,
+      "static_mib_before_cleanup": 106.43074893951416,
+      "target": 1000000,
+      "unix_end": 1792117666.329,
+      "unix_start": 1792117576.309
+    },
+    {
+      "actual_seconds": 90.084681,
+      "frames": {
+        "frames": 5179,
+        "max_ms": 561.36,
+        "over_33ms": 55,
+        "p50_ms": 16.662,
+        "p95_ms": 18.031,
+        "p99_ms": 68.756
+      },
+      "operations": [
+        {
+          "milliseconds": 105.62,
+          "name": "balanced full-sea preparation + 43s mining advance"
+        },
+        {
+          "milliseconds": 595.59,
+          "name": "save + free + normal reload"
+        },
+        {
+          "milliseconds": 699.823,
+          "name": "corrupt primary + backup recovery + reload"
+        },
+        {
+          "milliseconds": 453.151,
+          "name": "archive + two real scale resets"
+        }
+      ],
+      "pool_peak": [
+        12,
+        24,
+        3
+      ],
+      "quality": "standard",
+      "stages": [
+        "pause",
+        "resume",
+        "fixture",
+        "reload",
+        "overview",
+        "recover",
+        "reset"
+      ],
+      "state_valid": true,
+      "static_mib_before_cleanup": 111.68708992004395,
+      "target": 10000000,
+      "unix_end": 1792117756.982,
+      "unix_start": 1792117666.897
+    },
+    {
+      "actual_seconds": 90.087012,
+      "frames": {
+        "frames": 5181,
+        "max_ms": 554.661,
+        "over_33ms": 55,
+        "p50_ms": 16.662,
+        "p95_ms": 18.025,
+        "p99_ms": 67.51
+      },
+      "operations": [
+        {
+          "milliseconds": 99.64,
+          "name": "balanced full-sea preparation + 43s mining advance"
+        },
+        {
+          "milliseconds": 593.897,
+          "name": "save + free + normal reload"
+        },
+        {
+          "milliseconds": 709.649,
+          "name": "corrupt primary + backup recovery + reload"
+        },
+        {
+          "milliseconds": 457.43,
+          "name": "archive + two real scale resets"
+        }
+      ],
+      "pool_peak": [
+        12,
+        24,
+        3
+      ],
+      "quality": "smooth",
+      "stages": [
+        "pause",
+        "resume",
+        "fixture",
+        "reload",
+        "overview",
+        "recover",
+        "reset"
+      ],
+      "state_valid": true,
+      "static_mib_before_cleanup": 111.68719673156738,
+      "target": 10000000,
+      "unix_end": 1792117847.631,
+      "unix_start": 1792117757.545
+    },
+    {
+      "actual_seconds": 90.374394,
+      "frames": {
+        "frames": 4171,
+        "max_ms": 1751.681,
+        "over_33ms": 52,
+        "p50_ms": 16.663,
+        "p95_ms": 18.703,
+        "p99_ms": 371.661
+      },
+      "operations": [
+        {
+          "milliseconds": 424.709,
+          "name": "balanced full-sea preparation + 43s mining advance"
+        },
+        {
+          "milliseconds": 1837.445,
+          "name": "save + free + normal reload"
+        },
+        {
+          "milliseconds": 2172.912,
+          "name": "corrupt primary + backup recovery + reload"
+        },
+        {
+          "milliseconds": 1345.509,
+          "name": "archive + two real scale resets"
+        }
+      ],
+      "pool_peak": [
+        12,
+        24,
+        3
+      ],
+      "quality": "standard",
+      "stages": [
+        "pause",
+        "resume",
+        "fixture",
+        "reload",
+        "overview",
+        "recover",
+        "reset"
+      ],
+      "state_valid": true,
+      "static_mib_before_cleanup": 126.34044933319092,
+      "target": 100000000,
+      "unix_end": 1792117939.184,
+      "unix_start": 1792117848.81
+    },
+    {
+      "actual_seconds": 90.373649,
+      "frames": {
+        "frames": 4163,
+        "max_ms": 1747.823,
+        "over_33ms": 52,
+        "p50_ms": 16.663,
+        "p95_ms": 18.695,
+        "p99_ms": 374.672
+      },
+      "operations": [
+        {
+          "milliseconds": 440.503,
+          "name": "balanced full-sea preparation + 43s mining advance"
+        },
+        {
+          "milliseconds": 1803.655,
+          "name": "save + free + normal reload"
+        },
+        {
+          "milliseconds": 2191.41,
+          "name": "corrupt primary + backup recovery + reload"
+        },
+        {
+          "milliseconds": 1299.239,
+          "name": "archive + two real scale resets"
+        }
+      ],
+      "pool_peak": [
+        12,
+        24,
+        3
+      ],
+      "quality": "smooth",
+      "stages": [
+        "pause",
+        "resume",
+        "fixture",
+        "reload",
+        "overview",
+        "recover",
+        "reset"
+      ],
+      "state_valid": true,
+      "static_mib_before_cleanup": 126.33875560760498,
+      "target": 100000000,
+      "unix_end": 1792118030.756,
+      "unix_start": 1792117940.382
+    }
+  ],
+  "slowest_operation": {
+    "milliseconds": 2191.41,
+    "name": "corrupt primary + backup recovery + reload",
+    "target": 100000000,
+    "quality": "smooth"
+  },
+  "float_comparison": "integer resources exact; floating JSON roundoff <= max(1e-12, max(abs(a),abs(b))*1e-14)",
+  "limits": "12-minute capped desktop editor harness mounting shipping PCK; not release EXE performance, minimum spec, exclusive-machine benchmark or multi-hour soak"
+}

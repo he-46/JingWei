@@ -53,7 +53,7 @@ try {
     $dirty = [bool](git status --porcelain)
     $files = @('Jingwei.exe','Jingwei.pck','开始游戏.txt','licenses/Godot-LICENSE.txt','licenses/Godot-COPYRIGHT.txt')
     $hashes = @($files | ForEach-Object { $file = Join-Path $Destination $_; [ordered]@{path=$_; bytes=(Get-Item -LiteralPath $file).Length; sha256=(Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash} })
-    [ordered]@{package='QA-01'; product_version=(Get-Item -LiteralPath $exe).VersionInfo.FileVersion; engine=$version; release_template_sha256=$templateHash; source_commit=$revision; source_dirty=$dirty; architecture='Windows x86_64'; renderer='Compatibility'; signed=$false; files=$hashes} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $Destination 'build-info.json') -Encoding UTF8
+    [ordered]@{package='QA-02'; product_version=(Get-Item -LiteralPath $exe).VersionInfo.FileVersion; engine=$version; release_template_sha256=$templateHash; source_commit=$revision; source_dirty=$dirty; architecture='Windows x86_64'; renderer='Compatibility'; signed=$false; files=$hashes} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $Destination 'build-info.json') -Encoding UTF8
     # Logs and authoring tools are deliberately outside the downloadable ZIP.
     $zipFiles = @($files | ForEach-Object { Join-Path $Destination $_ }) + (Join-Path $Destination 'build-info.json')
     Add-Type -AssemblyName System.IO.Compression

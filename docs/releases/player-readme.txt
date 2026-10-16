@@ -1,5 +1,5 @@
 精卫填海 · 衔石成洲
-Windows 64 位试玩版 QA-01 · 0.2.0
+Windows 64 位试玩版 QA-02 · 0.2.0
 
 把整个 ZIP 解压到普通文件夹，然后双击 Jingwei.exe。
 Jingwei.exe 和 Jingwei.pck 必须放在一起。无需安装 Godot，也无需联网。
