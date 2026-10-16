@@ -70,8 +70,16 @@ var camera_offset := Vector3(16, 29, 27)
 var tree_canopies: Array[Vector4] = []
 var locator_clock := 0.0
 var player_obscured := false
+var staged_loading := false
+var loading_progress := Callable()
+var loading_deadline := 0
+var decor_mountains := PackedVector3Array()
+var decor_workers := PackedVector2Array()
 
-func setup(state: JWState) -> void:
+func setup(state: JWState, staged: bool = false, progress: Callable = Callable()) -> void:
+	staged_loading = staged
+	loading_progress = progress
+	loading_deadline = Time.get_ticks_usec() + 6000
 	font = SystemFont.new()
 	font.font_names = PackedStringArray(["Microsoft YaHei", "Noto Sans SC", "SimHei"])
 	normal_size = 29.0 * pow(state.map_side / 48.0, 0.22)
@@ -80,8 +88,8 @@ func setup(state: JWState) -> void:
 	_build_land(state)
 	_build_boundary_fog(state)
 	flight_ceiling = state.high_flight_height()
-	_build_decor(state)
-	_build_resources(state)
+	await _build_decor(state)
+	await _build_resources(state)
 	bird_body = CharacterBody3D.new()
 	bird_body.position = Vector3(state.player.x, State.BIRD_HOVER_HEIGHT, state.player.y)
 	bird_body.motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
@@ -105,8 +113,21 @@ func setup(state: JWState) -> void:
 	add_child(range_ring)
 	pickup_marker = ring(Color("fff1bd"), 0.64, 0.035)
 	add_child(pickup_marker)
-	sync(state)
+	await sync(state)
 	update_camera(state, 1.0, true)
+	staged_loading = false
+	loading_progress = Callable()
+	decor_mountains.clear()
+	decor_workers.clear()
+
+func _loading_step(label_text: String, fraction: float) -> void:
+	if not staged_loading:
+		return
+	if loading_progress.is_valid():
+		loading_progress.call(label_text, fraction)
+	if Time.get_ticks_usec() >= loading_deadline:
+		await get_tree().process_frame
+		loading_deadline = Time.get_ticks_usec() + 6000
 
 func _build_lighting(state: JWState) -> void:
 	var environment := WorldEnvironment.new()
@@ -184,6 +205,11 @@ func spatial(meshes: Array[Mesh], transforms: Array[Transform3D], ids: Array[int
 	return pool
 
 func _build_decor(state: JWState) -> void:
+	# Immutable placement circles avoid repeated Dictionary and radius lookups.
+	for index in range(state.mountains.size()):
+		var point := state.mountain_position(index)
+		decor_mountains.append(Vector3(point.x, point.y, state.mountain_radius(index)))
+		decor_workers.append(state.npc_position(index))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = state.world_seed + 980
 	foliage_material = preload("res://assets/materials/coast_foliage.tres").duplicate()
@@ -193,6 +219,8 @@ func _build_decor(state: JWState) -> void:
 		var p := _decor_point(state, rng, 0.2, -2.7, State.LAND_HEIGHT)
 		transforms.append(Transform3D(Basis.IDENTITY, p))
 		ids.append(Catalog.regional_variant(p, 2, index))
+		if index % 32 == 0:
+			await _loading_step("铺设草地", .10 + .14 * float(index) / mini(2500, state.grid_size * 40))
 	var grass_mat: ShaderMaterial = foliage_material.duplicate()
 	grass_mat.set_shader_parameter("detail_distance", 70.0)
 	foliage_materials.append(grass_mat)
@@ -221,6 +249,8 @@ func _build_decor(state: JWState) -> void:
 			tree_canopies.append(Vector4(p.x, p.y + size * crown.x, p.z, size * crown.y))
 		transforms.append(Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * size), p))
 		ids.append(variant)
+		if index % 8 == 0:
+			await _loading_step("种植林木", .26 + .06 * float(index) / mini(200, state.grid_size * 2))
 	tree_mesh = spatial(Catalog.meshes(Catalog.TREES), transforms, ids, foliage_material, true)
 	tree_mesh.keep_overview = true
 	for index in range(transforms.size()):
@@ -231,6 +261,8 @@ func _build_decor(state: JWState) -> void:
 		var p := _decor_point(state, rng, 1.2, -2.8, State.LAND_HEIGHT, 1.2)
 		transforms.append(Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * rng.randf_range(.7, 1.0)), p))
 		ids.append(Catalog.regional_variant(p, 2, index))
+		if index % 8 == 0:
+			await _loading_step("布置灌木", .34 + .04 * float(index) / mini(160, state.grid_size * 2))
 	var shrub_mat: ShaderMaterial = foliage_material.duplicate()
 	shrub_mat.set_shader_parameter("detail_distance", 85.0)
 	foliage_materials.append(shrub_mat)
@@ -247,23 +279,31 @@ func _build_decor(state: JWState) -> void:
 			p.y = -40
 		transforms.append(Transform3D(Basis.from_euler(Vector3(0, rng.randf() * TAU, 0)).scaled(Vector3.ONE * size), p))
 		ids.append(0)
+		if index % 8 == 0:
+			await _loading_step("布置海岸", .40)
 	shore_rocks = spatial(Catalog.meshes(["shore_rock"]), transforms, ids, preload("res://assets/materials/shore_rock.tres"))
 
 func _decor_point(state: JWState, rng: RandomNumberGenerator, mountain_margin: float, xmax: float, height: float, resource_margin: float = 0.0) -> Vector3:
 	# Keep future quarry sites clear too; mining never has to remove trees or grass.
 	for attempt in range(24):
 		var point := Vector2(rng.randf_range(state.map_origin.x + 1.5, xmax), rng.randf_range(state.map_origin.y + 1.5, -state.map_origin.y - 1.5))
-		if state.clear_of_mountains(point, mountain_margin) and (resource_margin <= 0 or _clear_of_resources(state, point, resource_margin)):
+		if _clear_of_decor_mountains(point, mountain_margin) and (resource_margin <= 0 or _clear_of_resources(state, point, resource_margin)):
 			return Vector3(point.x, height, point.y)
 	return Vector3(0, -40, 0)
+
+func _clear_of_decor_mountains(point: Vector2, margin: float) -> bool:
+	for circle in decor_mountains:
+		if point.distance_squared_to(Vector2(circle.x, circle.y)) < (circle.z + margin) * (circle.z + margin):
+			return false
+	return true
 
 func _clear_of_resources(state: JWState, point: Vector2, margin: float) -> bool:
 	for stone in state.stone_positions:
 		if point.distance_squared_to(stone) < margin * margin:
 			return false
 	var npc_margin := maxf(3.2, margin + 1.3)
-	for index in range(state.mountains.size()):
-		if point.distance_squared_to(state.npc_position(index)) < npc_margin * npc_margin:
+	for worker in decor_workers:
+		if point.distance_squared_to(worker) < npc_margin * npc_margin:
 			return false
 	return true
 
@@ -299,6 +339,7 @@ func _build_resources(state: JWState) -> void:
 			anchors.append(p)
 			ids.append(Catalog.regional_variant(p, 6, index) if pebble == 0 else (index + pebble) % 6)
 	stone_mesh = resource_pool(stones, anchors, ids, stone_material)
+	await _loading_step("摆放散石", .44)
 	# Only a zero-sized legacy adapter remains; all actual stock uses formal stones.
 	pile_mesh = batch(Models.rock_mesh(4), 0, false, Color.WHITE)
 	drop_mesh = batch(stones[1], 0, false, Color.WHITE, stone_material)
@@ -323,6 +364,7 @@ func _build_resources(state: JWState) -> void:
 	quarry_site_mesh = resource_pool(Catalog.meshes(["quarry_site"]), site_anchors, site_ids, preload("res://assets/materials/quarry_site.tres"))
 	quarry_site_mesh.keep_overview = true
 	work_chip_mesh = resource_pool(stones, chip_anchors, chip_ids, stone_material)
+	await _loading_step("布置碎石场", .50)
 	var dust_shape := SphereMesh.new()
 	dust_shape.radius = 0.12
 	dust_shape.height = 0.24
@@ -376,6 +418,7 @@ func _build_resources(state: JWState) -> void:
 		pool.keep_overview = true
 		mountain_batches.append(pool)
 		collision_profiles.append(MountainVisual.collision_envelopes(asset))
+		await _loading_step("塑造山体", .52 + .08 * float(variant + 1) / counts.size())
 	sample_collision_radii = collision_profiles[0]
 	for index in range(state.mountains.size()):
 		mountain_cache.append(-1)
@@ -397,6 +440,8 @@ func _build_resources(state: JWState) -> void:
 			group.append(collider)
 		mountain_collisions.append(group[0])
 		mountain_collision_groups.append(group)
+		if index % 8 == 0:
+			await _loading_step("建立山体边界", .60 + .06 * float(index) / state.mountains.size())
 
 func sync(state: JWState) -> void:
 	for index in state.stone_dirty:
@@ -409,6 +454,7 @@ func sync(state: JWState) -> void:
 			stone_mesh.set_instance_transform(index * 3 + pebble, Transform3D(Basis.from_euler(Vector3(0, index + pebble, 0)).scaled(Vector3.ONE * scale_value), location))
 			stone_mesh.set_instance_color(index * 3 + pebble, Color("ded4b9") if pebble % 2 else Color("a7b1a3"))
 	state.stone_dirty.clear()
+	await _loading_step("恢复石料", .68)
 	for index in range(state.mountains.size()):
 		var mountain: Dictionary = state.mountains[index]
 		var visual = MountainVisual.from_state(state, index)
@@ -439,6 +485,8 @@ func sync(state: JWState) -> void:
 			pile_cache[index] = stock
 			for part in range(ROCKS_PER_MOUNTAIN):
 				quarry_mesh.set_instance_transform(index * ROCKS_PER_MOUNTAIN + part, Catalog.quarry_transform(visual, part, index % 3))
+		if index % 8 == 0:
+			await _loading_step("恢复开采进度", .69 + .04 * float(index) / state.mountains.size())
 	if state.piles_dirty:
 		drop_mesh.instance_count = state.land_piles.size() * 3
 		var cursor := 0
@@ -456,8 +504,11 @@ func sync(state: JWState) -> void:
 		for x in range(maxi(state.land_cols, col - 2), mini(state.grid_size, col + 3)):
 			for z in range(maxi(0, row - 2), mini(state.grid_size, row + 3)):
 				dirty_chunks[Vector2i(x / CHUNK, z / CHUNK)] = true
+	var completed := 0
 	for key in dirty_chunks:
 		_update_chunk(state, key)
+		completed += 1
+		await _loading_step("恢复已填海域", .74 + .22 * float(completed) / dirty_chunks.size())
 	state.sea_dirty.clear()
 	_sync_npcs(state)
 	bird_model.set_load(float(state.carried) / state.capacity())

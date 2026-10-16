@@ -89,6 +89,7 @@ func run() -> void:
 	}
 	game = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	game.set_physics_process(false)
 	game.set_process(false)
 	game.set_process_unhandled_input(false)

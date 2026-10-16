@@ -22,9 +22,11 @@ func move_player(point: Vector2) -> void:
 func run() -> void:
 	game = load("res://scenes/art/pipeline_preview.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	game.set_physics_process(false)
 	await process_frame
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	var bird = game.world.bird_model
 	var animal = game.world.npc_views[0]["animal"]
 	expect(not game.save_enabled, "preview never opens or overwrites a player save")
@@ -116,6 +118,7 @@ func run() -> void:
 	expect(snapshot == game.state.snapshot(), "completion replays never grant stock or cultivation")
 	var old_bird = weakref(bird)
 	game.choose_world(1000000)
+	await game.wait_until_ready()
 	await process_frame
 	expect(old_bird.get_ref() == null and game.world.bird_model.current_action == &"", "new journey frees previous rig and interrupts old gestures")
 	expect(game.world.bird_model.model_scene != null and game.state.total_delivered == 0, "new journey retains import configuration without old resources")

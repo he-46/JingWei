@@ -88,6 +88,7 @@ func run() -> void:
 	root.add_child(preview)
 	game = ProfileGame.new()
 	viewport.add_child(game)
+	await game.wait_until_ready()
 	game.muted = true
 	game.soundscape.set_muted(true)
 	driver = Driver.new()
@@ -114,6 +115,7 @@ func run() -> void:
 			stress = false
 			var setup_start := Time.get_ticks_usec()
 			game.choose_world(profile.target)
+			await game.wait_until_ready()
 			await process_frame
 			var map_setup_ms := (Time.get_ticks_usec() - setup_start) / 1000.0
 			clock = 0

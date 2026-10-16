@@ -39,8 +39,10 @@ func run() -> void:
 	await process_frame
 	var game = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	game.set_physics_process(false)
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	for stage in range(3):
 		if stage > 0:
 			for index in range(1 if stage == 1 else 3):
@@ -55,6 +57,7 @@ func run() -> void:
 	game.world.zoom = 1
 	game.world.update_camera(game.state, 1, true)
 	game.choose_world(100000000)
+	await game.wait_until_ready()
 	game.world.zoom = 2
 	game.world.update_camera(game.state, 1, true)
 	await shot("game_large_far")

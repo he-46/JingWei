@@ -87,6 +87,7 @@ func run() -> void:
 		"note": "CPU frame intervals in this desktop session; not GPU time, a release build, long-duration stress or minimum-spec acceptance. Audio muted. Setup excluded; normal main simulation and bounded feedback active."}
 	game = load("res://scenes/art/vertical_slice.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	driver = Driver.new()
 	driver.harness = self
 	driver.process_physics_priority = -100
@@ -96,6 +97,7 @@ func run() -> void:
 		driver.set_physics_process(false)
 		release()
 		game.choose_world(100000000 if name == "large-overview" else 100000)
+		await game.wait_until_ready()
 		clock = 0
 		throw_clock = 0
 		active_case = name

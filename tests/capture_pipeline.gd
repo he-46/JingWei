@@ -12,8 +12,10 @@ func run() -> void:
 	DirAccess.make_dir_recursive_absolute(output)
 	var game = load("res://scenes/art/pipeline_preview.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	game.set_physics_process(false)
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	game.world.normal_size = 12
 	game.state.pickup_stone(0)
 	game._refresh()

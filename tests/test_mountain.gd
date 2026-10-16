@@ -94,8 +94,10 @@ func run() -> void:
 
 	var game = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	game.set_physics_process(false)
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	game.save_enabled = false
 	unlock(game.state)
 	var full_yield: int = game.state.mountains[0]["yield"]
@@ -176,6 +178,7 @@ func run() -> void:
 	var old_dust = weakref(game.world.mining_dust)
 	var old_world = weakref(game.world)
 	game.choose_world(1000000)
+	await game.wait_until_ready()
 	await process_frame
 	expect(old_world.get_ref() == null and old_dust.get_ref() == null and game.world.mining_dust.visible_instance_count == 0, "new map frees old stages and working effects")
 	var legacy: JWState = Store.load_game("res://tests/fixtures/coast_v2.json")["state"]

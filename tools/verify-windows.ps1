@@ -27,6 +27,7 @@ foreach ($file in $info.files) {
 # No test scripts, fixtures or editor are included in the playable ZIP/PCK.
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_windows_pack.gd') -Destination (Join-Path $qa 'pack.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_preferences.gd') -Destination (Join-Path $qa 'preferences.gd')
+Copy-Item -LiteralPath (Join-Path $root 'tests\test_loading.gd') -Destination (Join-Path $qa 'loading.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\fixtures\coast_v2.json') -Destination (Join-Path $qa 'coast_v2.json')
 $fixture = (Join-Path $qa 'coast_v2.json').Replace('\','/')
 $regression = [IO.File]::ReadAllText((Join-Path $root 'tests\test_release.gd'), [Text.Encoding]::UTF8)
@@ -68,6 +69,8 @@ try {
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'pack.gd') + '"'))) 'pack' -Harness
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'regression.gd') + '"'))) 'regression' -Harness
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'preferences.gd') + '"'))) 'preferences' -Harness
+    $loadingOut = (Join-Path $qa 'loading-headless').Replace('\','/')
+    Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'loading.gd') + '"'),'--',('--loading-out="' + $loadingOut + '"'))) 'loading' -Harness
     foreach ($target in @(100000,1000000,10000000,100000000)) {
         $capture = Join-Path $qa ("map-$target.png")
         Invoke-Preview @('--','--qa',"--target=$target",'--showcase',('--capture="' + $capture + '"')) "graphics-$target"
@@ -80,17 +83,21 @@ try {
     Invoke-Preview ($packArgs + @('--script',('"' + (Join-Path $qa 'preferences.gd') + '"'),'--',('--review-out="' + $settingsReview + '"'))) 'graphics-preferences' -Harness
     # Ordinary release boot: new selector and actual v2 continuation, no --qa or
     # --capture (both suppress normal loading). APPDATA remains fully isolated.
-    Invoke-Preview @('--quit-after','45') 'release-new-selector'
+    $selectorCapture = Join-Path $qa 'release-new-selector.png'
+    Invoke-Preview @('--','--capture-continued',('--capture="' + $selectorCapture + '"')) 'release-new-selector'
     $saveFolder = Join-Path $env:APPDATA 'AzVGames\Jingwei'
     New-Item -ItemType Directory -Path $saveFolder -Force | Out-Null
     $savePath = Join-Path $saveFolder 'coast_journey.json'
     Copy-Item -LiteralPath (Join-Path $qa 'coast_v2.json') -Destination $savePath
     [IO.File]::WriteAllText((Join-Path $saveFolder 'preferences.json'), '{"version":1,"quality":"smooth","fullscreen":false,"volume":0.37,"muted":true}', (New-Object Text.UTF8Encoding($false)))
     $legacyHash = (Get-FileHash -LiteralPath $savePath -Algorithm SHA256).Hash
-    Invoke-Preview @('--quit-after','45') 'release-legacy-continue'
+    $legacyCapture = Join-Path $qa 'release-legacy-continue.png'
+    Invoke-Preview @('--','--capture-continued',('--capture="' + $legacyCapture + '"')) 'release-legacy-continue'
     $movie = Join-Path $qa 'release-smooth.png'
-    Invoke-Preview @('--write-movie',('"' + $movie + '"'),'--quit-after','3') 'release-smooth-capture'
-    if (-not (Get-ChildItem -LiteralPath $qa -Filter 'release-smooth*.png')) { throw 'Actual release smooth-preset capture was not produced.' }
+    Invoke-Preview @('--','--capture-continued',('--capture="' + $movie + '"')) 'release-smooth-capture'
+    foreach ($capture in @($selectorCapture, $legacyCapture, $movie)) {
+        if (-not (Test-Path -LiteralPath $capture)) { throw 'Actual release continuation/selector capture was not produced after loading completed.' }
+    }
     if ((Get-FileHash -LiteralPath $savePath -Algorithm SHA256).Hash -ne $legacyHash) { throw 'Short ordinary legacy boot unexpectedly modified the original save.' }
     [ordered]@{package=$info.package; source_commit=$info.source_commit; source_dirty=$info.source_dirty; zip_bytes=(Get-Item -LiteralPath $ZipPath).Length; zip_sha256=(Get-FileHash -LiteralPath $ZipPath -Algorithm SHA256).Hash; no_editor_on_path=$true; deep_regression='editor harness explicitly mounts shipping PCK'; release_checks='four real captures, ordinary selector, v2 continuation with persisted smooth settings'; save_isolated=$true; records=$records; destination=$Destination} | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $Destination 'verification.json') -Encoding UTF8
     Write-Host "Standalone ZIP verification passed: $Destination"

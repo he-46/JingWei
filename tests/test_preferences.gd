@@ -28,10 +28,12 @@ func boot(enabled: bool = true) -> void:
 	game.preferences_path = folder.path_join("preferences.json")
 	game.save_enabled = enabled
 	root.add_child(game)
+	await game.wait_until_ready()
 	game.set_physics_process(false)
 	game.set_process(false)
 	if game.selection_pending:
 		game.choose_world(100000)
+		await game.wait_until_ready()
 
 func close() -> void:
 	game.queue_free()
@@ -82,7 +84,7 @@ func run() -> void:
 	write(path, "{damaged")
 	expect(Prefs.load_preferences(path).volume == .35, "damaged primary recovers known-good preference backup")
 	expect(Prefs.save_preferences(path, values) == OK and FileAccess.get_file_as_bytes(path + ".bak") == before, "repair never replaces good backup with corrupt bytes")
-	boot()
+	await boot()
 	var snapshot: Dictionary = game.state.snapshot()
 	var save_bytes := FileAccess.get_file_as_bytes(game.save_path)
 	game.show_menu()
@@ -136,9 +138,10 @@ func run() -> void:
 	game.world.animate(game.state, 0, false, false, -1)
 	expect(not game.world.sun.shadow_enabled and game.world.grass_mesh.visible_instance_count == 0, "leaving overview cannot restore expensive smooth details")
 	game.choose_world(1000000)
+	await game.wait_until_ready()
 	expect(game.world.reduced_detail and not game.world.sun.shadow_enabled, "new map retains current preset")
 	await close()
-	boot()
+	await boot()
 	expect(game.preferences.quality == "smooth" and game.muted and is_equal_approx(game.soundscape.volume_level, .37), "restart loads actual device preferences")
 	expect(game.state.target_stones == 1000000 and Store.load_game(game.save_path).state.snapshot() == game.state.snapshot(), "restart still loads unchanged journey schema")
 	game.show_menu()
@@ -154,6 +157,7 @@ func run() -> void:
 	game._modal_action("resume")
 	for target in [100000, 1000000, 10000000, 100000000]:
 		game.choose_world(target)
+		await game.wait_until_ready()
 		var ledger: Dictionary = game.state.snapshot()
 		game.show_menu()
 		game._modal_action("settings")
@@ -174,7 +178,7 @@ func run() -> void:
 		game._modal_action("resume")
 	await close()
 	var pref_bytes := FileAccess.get_file_as_bytes(folder.path_join("preferences.json"))
-	boot(false)
+	await boot(false)
 	expect(not game.preferences_enabled and game.preferences.quality == "standard" and not game.muted, "sample mode ignores persistent preferences")
 	game.show_menu()
 	game._modal_action("settings")

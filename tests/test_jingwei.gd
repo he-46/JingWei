@@ -103,8 +103,10 @@ func run() -> void:
 	expect(bird.current_action == &"" and bird.load_stage == 2, "replacement interrupts action and restores cargo state")
 	var game = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	game.set_physics_process(false)
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	var body: CharacterBody3D = game.world.bird_body
 	expect(is_equal_approx(body.get_child(0).shape.radius, game.state.BIRD_COLLISION_RADIUS), "formal mesh does not change collision radius")
 	var ledger: Dictionary = game.state.snapshot()
@@ -115,6 +117,7 @@ func run() -> void:
 	expect(game.state.snapshot() == ledger, "production gesture replays and elevation changes cannot settle resources")
 	var old = weakref(game.world.bird_model)
 	game.choose_world(1000000)
+	await game.wait_until_ready()
 	await process_frame
 	expect(old.get_ref() == null and game.world.bird_model.current_action == &"" and game.world.bird_model.load_stage == 0, "new map frees the old rig and cargo stage")
 	game.queue_free()

@@ -6,8 +6,10 @@ func _initialize() -> void:
 func capture_ui() -> void:
 	var game: Node3D = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	await process_frame
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	var mode := "initial"
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--ui="):

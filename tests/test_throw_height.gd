@@ -30,8 +30,10 @@ func run() -> void:
 
 	var game: Node3D = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	await process_frame
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	await process_frame
 	game.save_enabled = false
 	game.state.player = Vector2(-2.5, 3)
@@ -75,6 +77,7 @@ func run() -> void:
 	var restored := State.from_snapshot(game.state.snapshot())
 	expect(restored != null and is_equal_approx(restored.throw_distance(), 4.0), "save roundtrip keeps base progression without persisting temporary altitude")
 	game.choose_world(1000000)
+	await game.wait_until_ready()
 	expect(is_equal_approx(game.world.bird_body.position.y, State.BIRD_HOVER_HEIGHT), "new journey resets flight height")
 	game.queue_free()
 	await process_frame

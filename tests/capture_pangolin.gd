@@ -6,8 +6,10 @@ func _initialize() -> void:
 func capture_scene() -> void:
 	var game: Node3D = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	await process_frame
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	if "--locked-dialogue" in OS.get_cmdline_user_args():
 		game.show_npc_dialogue()
 		return

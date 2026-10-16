@@ -15,8 +15,10 @@ func expect(condition: bool, message: String) -> void:
 func run() -> void:
 	var game: Node3D = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	await process_frame
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	await process_frame
 	var hud: CanvasLayer = game.hud
 	expect(hud.drawer.visible and not hud.relic_page.visible and not hud.overview_panel.visible, "default HUD shows upgrades without map or artifact panels")

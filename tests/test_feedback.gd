@@ -97,8 +97,10 @@ func run() -> void:
 	fx.free()
 	var game: Node3D = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	await process_frame
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	game.set_physics_process(false)
 	game.set_process(false)
 	game.soundscape.set_muted(false)
@@ -158,6 +160,7 @@ func run() -> void:
 	game.deposit_at(Vector2(2, 3))
 	var old: WeakRef = weakref(game.feedback)
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	await process_frame
 	game.feedback.advance(2)
 	expect(old.get_ref() == null and game.feedback.events.is_empty(), "map replacement releases all prior models, flights and bursts")
@@ -182,11 +185,13 @@ func run() -> void:
 	expect(game.hud.drawer.size.y < 360 and not game.hud.modal_open, "artifact presentation retains compact drawer without forced interruption")
 	var saved: Dictionary = game.state.snapshot()
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	game.state = State.from_snapshot(saved)
 	game._refresh()
 	game._advance_world(.2)
 	expect(event(game.feedback, "discover") == 0, "restoring collected artifacts never replays discovery")
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	place(game, Vector2(2, 3))
 	game.state.carried = game.state.target_stones
 	game.state.total_generated += game.state.carried
@@ -203,6 +208,7 @@ func run() -> void:
 	await create_timer(.1).timeout
 	var preview: Node3D = load("res://scenes/art/feedback_preview.tscn").instantiate()
 	root.add_child(preview)
+	await preview.wait_until_ready()
 	await process_frame
 	expect(not preview.save_enabled and not preview.selection_pending and preview.state.target_stones == 100000, "F6 playable feedback sample never reads or writes player saves")
 	preview.queue_free()

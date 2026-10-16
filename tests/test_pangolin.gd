@@ -150,8 +150,10 @@ func run() -> void:
 	legacy_world.queue_free()
 	var game = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	game.set_physics_process(false)
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	unlock(game.state)
 	game._refresh()
 	var worker = game.world.npc_views[0]["animal"]
@@ -176,6 +178,7 @@ func run() -> void:
 	expect(worker.finished and worker.animation_player.current_animation == "finished" and game.world.npc_views.size() == 1, "same worker rests after the last mine finishes")
 	var old = weakref(worker)
 	game.choose_world(1000000)
+	await game.wait_until_ready()
 	await process_frame
 	expect(old.get_ref() == null and game.world.npc_views[0]["animal"].last_completed_target == -1, "new journey destroys old worker and completion state")
 	game.queue_free()

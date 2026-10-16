@@ -118,6 +118,7 @@ func run() -> void:
 		root.size = Vector2i(1440, 900)
 	game = load("res://scenes/art/vertical_slice.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	await idle(3)
 	expect(not game.save_enabled and not game.selection_pending and game.state.world_seed == 10213, "sample starts fixed seed without loading player saves")
 	expect(game.state.total_generated == 0 and game.state.total_delivered == 0 and game.state.artifacts.is_empty(), "sample starts a genuine unplayed resource ledger")

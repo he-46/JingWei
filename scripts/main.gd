@@ -1,5 +1,7 @@
 extends Node3D
 
+signal loading_finished
+
 const State = preload("res://scripts/state.gd")
 const World = preload("res://scripts/world.gd")
 const HUD = preload("res://scripts/hud.gd")
@@ -26,6 +28,7 @@ var save_clock: float = 0
 var pickup_clock: float = 0
 var aimed_cell: int = -1
 var capture_path: String = ""
+var capture_continued := false
 var capture_frames: int = 0
 var showcase: bool = false
 var win_shown: bool = false
@@ -37,6 +40,8 @@ var preferences: Dictionary = Preferences.DEFAULTS.duplicate()
 var preferences_dirty := false
 var preferences_clock := 0.0
 var preferences_error_shown := false
+var loading := false
+var loading_thread: Thread
 
 func _ready() -> void:
 	_setup_input()
@@ -48,8 +53,9 @@ func _ready() -> void:
 			muted = true
 		if arg.begins_with("--capture="):
 			capture_path = arg.trim_prefix("--capture=")
-			save_enabled = false
 			muted = true
+		if arg == "--capture-continued":
+			capture_continued = true
 		if arg.begins_with("--save-path="):
 			save_path = arg.trim_prefix("--save-path=")
 		if arg.begins_with("--target="):
@@ -58,7 +64,9 @@ func _ready() -> void:
 			showcase = true
 		if arg == "--overview":
 			atlas_view = true
-	preferences_enabled = preferences_enabled and save_enabled and capture_path.is_empty()
+	if not capture_path.is_empty() and not capture_continued:
+		save_enabled = false
+	preferences_enabled = preferences_enabled and save_enabled and (capture_path.is_empty() or capture_continued)
 	# Explicit fixture save paths also isolate preferences before any read occurs.
 	if save_path != "user://coast_journey.json" and preferences_path == "user://preferences.json":
 		preferences_path = save_path.get_base_dir().path_join("preferences.json")
@@ -70,17 +78,6 @@ func _ready() -> void:
 	add_child(soundscape)
 	soundscape.set_volume(float(preferences.volume))
 	soundscape.set_muted(muted)
-	var loaded: Dictionary = Store.load_game(save_path) if save_enabled else {"state": null, "status": "new"}
-	state = loaded["state"] if loaded["state"] != null else State.new(target)
-	save_blocked = loaded["status"] == "invalid"
-	selection_pending = loaded["state"] == null and not showcase
-	if showcase:
-		_prepare_showcase()
-	world = World.new()
-	_configure_visuals()
-	add_child(world)
-	world.setup(state)
-	_setup_feedback()
 	hud = HUD.new()
 	add_child(hud)
 	hud.interact_requested.connect(interact)
@@ -92,12 +89,29 @@ func _ready() -> void:
 	hud.help_requested.connect(show_help)
 	hud.modal_action.connect(_modal_action)
 	hud.setting_changed.connect(change_setting)
-	_apply_preferences()
 	get_tree().auto_accept_quit = false
+	loading = true
+	hud.show_loading("读取旅程", 0)
+	# Let the first waiting screen draw before reading or constructing a world.
+	await get_tree().process_frame
+	var loaded: Dictionary = await _background(func() -> Dictionary:
+		var result: Dictionary = Store.load_game(save_path) if save_enabled else {"state": null, "status": "new"}
+		result.selection = result.state == null and not showcase
+		if result.state == null:
+			result.state = State.new(target)
+		return result)
+	state = loaded.state
+	save_blocked = loaded.status == "invalid"
+	selection_pending = loaded.selection
+	if showcase:
+		_prepare_showcase()
+	await _build_world()
 	if atlas_view:
 		world.overview = true
 		world.update_camera(state, 1.0, true)
 		hud.set_overview(true)
+	loading = false
+	hud.hide_modal()
 	_refresh()
 	if selection_pending:
 		hud.show_world_picker(false)
@@ -110,6 +124,48 @@ func _ready() -> void:
 	elif loaded["status"] == "loaded":
 		hud.notify("已继续上次进度。")
 	win_shown = state.won
+	loading_finished.emit()
+
+func wait_until_ready() -> void:
+	while loading:
+		await loading_finished
+
+func _background(job: Callable) -> Variant:
+	loading_thread = Thread.new()
+	var error := loading_thread.start(job)
+	if error != OK:
+		loading_thread = null
+		# Unusual platforms without thread support still retain the safe loading UI.
+		return job.call()
+	while loading_thread.is_alive():
+		await get_tree().process_frame
+	var result: Variant = loading_thread.wait_to_finish()
+	loading_thread = null
+	return result
+
+func _exit_tree() -> void:
+	# Closing during a read/archive must finish its file operation before exit.
+	if loading_thread != null and loading_thread.is_started():
+		loading_thread.wait_to_finish()
+
+func _build_world() -> void:
+	if world != null:
+		remove_child(world)
+		world.queue_free()
+		feedback = null
+		# Release the previous scene before allocating the next set of batches.
+		await get_tree().process_frame
+	world = World.new()
+	# The opaque loading panel conceals construction while the renderer prepares
+	# materials incrementally. Hiding the entire 3D tree defers all first-use shader
+	# work to its reveal and causes a long cold-render stall on Compatibility.
+	_configure_visuals()
+	add_child(world)
+	hud.show_loading("铺设海岸", .06)
+	await get_tree().process_frame
+	await world.setup(state, true, hud.show_loading)
+	_setup_feedback()
+	_apply_preferences()
 
 func _setup_input() -> void:
 	var keys := {
@@ -128,7 +184,7 @@ func _setup_input() -> void:
 			InputMap.action_add_event(action, event)
 
 func _physics_process(delta: float) -> void:
-	if hud == null or hud.modal_open or selection_pending:
+	if loading or hud == null or hud.modal_open or selection_pending:
 		return
 	var direction := Input.get_vector("jw_left", "jw_right", "jw_up", "jw_down")
 	var right := Vector3(world.camera.global_basis.x.x, 0, world.camera.global_basis.x.z).normalized()
@@ -172,6 +228,8 @@ func _physics_process(delta: float) -> void:
 		save_game(false)
 
 func _process(delta: float) -> void:
+	if loading:
+		return
 	if preferences_dirty:
 		preferences_clock -= delta
 		if preferences_clock <= 0:
@@ -191,6 +249,8 @@ func _process(delta: float) -> void:
 		get_tree().quit(0 if result == OK else 1)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if loading:
+		return
 	if event.is_action_pressed("jw_menu"):
 		if selection_pending:
 			return
@@ -440,6 +500,8 @@ func show_help() -> void:
 	hud.show_modal("操作", "WASD / 方向键  移动\n空格  升高增程，松开降落\nE  低空采集 / 对话（可按住）\nQ / 鼠标左键  射程内投石\n\nU  收起升级栏　Tab  全图\n滚轮  缩放　M  静音　Esc  暂停\n\n满高度射程为基础的 2 倍，金圈显示当前范围。\n陆地石子可拾回；填入海中才获得修行。", [{"text": "返回", "action": "resume"}])
 
 func _modal_action(action: String) -> void:
+	if loading:
+		return
 	if action.begins_with("world_"):
 		choose_world(int(action.trim_prefix("world_")))
 		return
@@ -468,37 +530,52 @@ func _modal_action(action: String) -> void:
 			hud.show_world_picker(true)
 
 func choose_world(target: int) -> bool:
-	if State.profile_for(target) == null:
+	# Returns whether the request was accepted; wait_until_ready awaits completion.
+	if loading or State.profile_for(target) == null:
 		return false
-	if save_enabled and (selection_pending or choosing_again):
-		if not _archive_before_new():
-			hud.modal_text.text = "原存档暂时无法备份，请检查保存目录权限。当前旅程仍被保留。"
-			return false
+	loading = true
 	soundscape.reset()
-	var fresh := State.new(target)
-	state = fresh
-	if world != null:
-		remove_child(world)
-		world.queue_free()
-	world = World.new()
-	_configure_visuals()
-	add_child(world)
-	world.setup(state)
-	_setup_feedback()
-	_apply_preferences()
+	soundscape.set_context(state.player.x, true, selection_pending)
+	_replace_world(target)
+	return true
+
+func _replace_world(target: int) -> void:
+	hud.show_loading("保留上一段旅程", 0)
+	await get_tree().process_frame
+	var prepared: Dictionary = await _background(func() -> Dictionary:
+		if save_enabled and (selection_pending or choosing_again) and not _archive_before_new():
+			return {"ok": false}
+		return {"ok": true, "state": State.new(target)})
+	if not prepared.ok:
+		hud.show_world_picker(not selection_pending)
+		hud.modal_text.text = "原存档暂时无法备份，请检查保存目录权限。当前旅程仍被保留。"
+		loading = false
+		loading_finished.emit()
+		return
+	state = prepared.state
+	await _build_world()
 	selection_pending = false
 	choosing_again = false
 	save_blocked = false
 	win_shown = false
 	simulation_clock = 0
 	save_clock = 0
+	refresh_clock = 0
+	pickup_clock = 0
+	aimed_cell = -1
 	hud.seen_relics = 0
+	var error := OK
+	if save_enabled:
+		hud.show_loading("保存旅程", .98)
+		error = await _background(func() -> Error: return Store.save_game(save_path, state))
+	loading = false
 	hud.hide_modal()
 	hud.set_overview(false)
 	hud.notify("WASD 移动 · E 采集 · Q 投石")
 	_refresh()
-	save_game(false)
-	return true
+	if error != OK:
+		hud.notify("旅程暂未保存，请检查保存目录权限。")
+	loading_finished.emit()
 
 func _archive_before_new() -> bool:
 	# Persist the current in-memory journey before archiving when a restart was requested.
@@ -513,7 +590,7 @@ func _archive_before_new() -> bool:
 	return true
 
 func save_game(manual: bool = false) -> void:
-	if not save_enabled or selection_pending:
+	if loading or not save_enabled or selection_pending:
 		return
 	if save_blocked:
 		hud.save_label.text = "原存档无法读取 · 自动保存停用"

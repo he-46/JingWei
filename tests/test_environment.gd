@@ -164,6 +164,7 @@ func run() -> void:
 	await process_frame
 	var game = load("res://scenes/art/coast_preview.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	await process_frame
 	expect(not game.save_enabled and not game.selection_pending and game.state.target_stones == 100000, "F6 sample starts a playable fixed coast without accessing player saves")
 	game.show_menu()
@@ -174,6 +175,7 @@ func run() -> void:
 	var previous = weakref(game.world)
 	game._modal_action("resume")
 	game.choose_world(1000000)
+	await game.wait_until_ready()
 	await process_frame
 	expect(previous.get_ref() == null and game.world.time < .2, "new journey discards old environmental meshes and clocks")
 	game.queue_free()

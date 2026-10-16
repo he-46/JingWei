@@ -53,8 +53,10 @@ func run() -> void:
 	await process_frame
 	var game = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	game.set_physics_process(false)
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	frame_worker(game)
 	game.world.animate(game.state, 0.2, false, false, -1)
 	await shot("game_locked")
@@ -75,6 +77,7 @@ func run() -> void:
 	game.world.animate(game.state, 1.3, false, false, -1)
 	await shot("game_finished")
 	game.choose_world(100000000)
+	await game.wait_until_ready()
 	unlock(game)
 	frame_worker(game)
 	game.world.animate(game.state, 0.23, false, false, -1)

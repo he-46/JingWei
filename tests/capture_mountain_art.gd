@@ -56,9 +56,11 @@ func run() -> void:
 	await process_frame
 	var game = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	game.save_enabled = false
 	game.set_physics_process(false)
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	unlock(game)
 	for index in range(4):
 		if index > 0:
@@ -78,6 +80,7 @@ func run() -> void:
 	game.world.update_camera(game.state, 1, true)
 	await shot("game_normal")
 	game.choose_world(100000000)
+	await game.wait_until_ready()
 	frame_mountain(game)
 	await shot("game_large")
 	game.toggle_overview()

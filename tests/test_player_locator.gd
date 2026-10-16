@@ -64,12 +64,14 @@ func run() -> void:
 	game = load("res://scenes/art/vertical_slice.tscn").instantiate()
 	game.save_path = path
 	root.add_child(game)
+	await game.wait_until_ready()
 	game.set_physics_process(false)
 	game.set_process(false)
 	await process_frame
 	expect(game.state.target_stones == 100000 and not game.save_enabled, "sample ignores an existing valid million-stone player save")
 	game.save_game(true)
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	expect(FileAccess.get_file_as_string(path) == original, "sample save and restart leave protected journey byte-for-byte unchanged")
 	expect(game.world.tree_canopies.size() <= 200 and not game.world.tree_canopies.is_empty(), "CPU canopy data is bounded and available even without GPU transform readback")
 	await frame_at(Vector2(-2.5, 3))
@@ -148,6 +150,7 @@ func run() -> void:
 			var difference := Vector3(a.r, a.g, a.b).distance_to(Vector3(b.r, b.g, b.b))
 			expect(difference < .03 if item[1] else difference > .2, "rendered fog preserves reachable water and obscures unreachable water: " + str(item[1]))
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	expect(not game.hud.player_locator.visible and game.world.locator_clock == 0, "new map clears obsolete occlusion result and marker")
 	if not output.is_empty():
 		var file := FileAccess.open(output.path_join("views.json"), FileAccess.WRITE)

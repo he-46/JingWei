@@ -68,8 +68,10 @@ func run() -> void:
 	# Exercise real game entry points and the 0.48-second projectile callback.
 	var game: Node3D = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	await process_frame
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	game.set_physics_process(false)
 	game.soundscape.set_muted(false)
 	game.interact()
@@ -95,6 +97,7 @@ func run() -> void:
 	game.state.pickup_stone(3)
 	game.deposit_at(point)
 	game.choose_world(100000)
+	await game.wait_until_ready()
 	await create_timer(.6).timeout
 	expect(not game.soundscape.last_variant.has("water"), "new world cannot receive old journey's landing sounds")
 	game.soundscape.reset()

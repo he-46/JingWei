@@ -159,6 +159,7 @@ try {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_audio.gd', '--', '--qa') 'audio-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_ui.gd', '--', '--qa') 'ui-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_preferences.gd') 'preferences-tests.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_loading.gd') 'loading-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_visuals.gd', '--', '--qa') 'visual-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_jingwei.gd', '--', '--qa') 'jingwei-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_pangolin.gd', '--', '--qa') 'pangolin-tests.log'
@@ -175,7 +176,7 @@ try {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_game.gd', '--', '--qa', '--imported-visuals') 'imported-game-tests.log'
         } elseif ($Check) {
             $entry = if ($Mode -eq 'Sample') { 'res://scenes/art/vertical_slice.tscn' } else { 'res://scenes/main.tscn' }
-            Invoke-Engine @('--headless', '--path', $projectRoot, $entry, '--quit-after', '6', '--', '--qa') 'startup-check.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, $entry, '--quit-after', '60', '--', '--qa') 'startup-check.log'
             Write-Host 'Fresh-start check passed.'
         } elseif ($Mode -eq 'Sample') {
             Invoke-Engine @('--path', $projectRoot, 'res://scenes/art/vertical_slice.tscn') 'sample-launch.log'

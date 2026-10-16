@@ -88,8 +88,10 @@ func boot(path: String, target: int, quality: String) -> void:
 	preferences.quality = quality
 	expect(Prefs.save_preferences(game.preferences_path, preferences) == OK, "isolated preference fixture saved")
 	root.add_child(game)
+	await game.wait_until_ready()
 	if game.selection_pending:
 		expect(game.choose_world(target), "new scale selected through ordinary entry")
+		await game.wait_until_ready()
 	boots += 1
 	expect(game.save_enabled and game.preferences_enabled and game.save_path.begins_with(output), "both journey and settings remain isolated")
 	expect(game.state.target_stones == target and game.world.reduced_detail == (quality == "smooth"), "boot restores scale and quality")
@@ -180,7 +182,7 @@ func reload_checkpoint(target: int, quality: String, corrupt: bool) -> void:
 		file.close()
 		expect(Store.load_game(path).status == "recovered", "damaged primary selects valid backup")
 		recoveries += 1
-	boot(path, target, quality)
+	await boot(path, target, quality)
 	expect(ledger_equal(game.state.snapshot(), snapshot) and not game.selection_pending and not game.save_blocked, "ordinary boot continues saved or recovered ledger")
 	if corrupt:
 		save_checkpoint()
@@ -193,6 +195,7 @@ func reset_scale(target: int) -> void:
 	game._modal_action("reset_confirm")
 	game._modal_action("pick_again")
 	game._modal_action("world_%d" % target)
+	await game.wait_until_ready()
 	resets += 1
 	expect(game.state.target_stones == target and game.state.total_delivered == 0, "real restart creates requested fresh journey")
 	await process_frame
@@ -213,7 +216,7 @@ func run_case(target: int, quality: String) -> void:
 	phase = "timed-case"
 	var path := output.path_join("journeys/%d-%s/coast.json" % [target, quality])
 	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
-	boot(path, target, quality)
+	await boot(path, target, quality)
 	await process_frame
 	var samples: Array[float] = []
 	var operations: Array = []
@@ -348,7 +351,7 @@ func run() -> void:
 	for target in [100000, 1000000, 10000000, 100000000]:
 		var path := output.path_join("warmup/%d/coast.json" % target)
 		DirAccess.make_dir_recursive_absolute(path.get_base_dir())
-		boot(path, target, "standard")
+		await boot(path, target, "standard")
 		prepare_reclamation()
 		effect_stress()
 		await process_frame

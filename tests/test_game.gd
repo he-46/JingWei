@@ -23,6 +23,7 @@ func move_player(point: Vector2) -> void:
 func run() -> void:
 	game = load("res://scenes/art/pipeline_preview.tscn" if "--imported-visuals" in OS.get_cmdline_user_args() else "res://scenes/main.tscn").instantiate()
 	root.add_child(game)
+	await game.wait_until_ready()
 	await process_frame
 	expect(game.selection_pending and game.hud.modal_open, "new journey opens scale picker")
 	expect(game.hud.modal_buttons.get_child_count() == 4, "picker has four scale options")
@@ -35,6 +36,7 @@ func run() -> void:
 	game._modal_action("resume")
 	expect(game.hud.modal_open, "first picker cannot be dismissed without a choice")
 	game._modal_action("world_100000")
+	await game.wait_until_ready()
 	await process_frame
 	expect(not game.selection_pending and not game.hud.modal_open and game.state.target_stones == 100000, "selection builds chosen map")
 	expect(game.world.camera.current and game.world.bird_body is CharacterBody3D, "play scene has camera and physical bird")
@@ -159,6 +161,7 @@ func run() -> void:
 		game._modal_action("reset_confirm")
 		game._modal_action("pick_again")
 		game._modal_action("world_%d" % target)
+		await game.wait_until_ready()
 		await process_frame
 		var rendered := 0
 		var different_meshes: Dictionary = {}
@@ -193,6 +196,7 @@ func run() -> void:
 	game._modal_action("reset_confirm")
 	game._modal_action("pick_again")
 	game._modal_action("world_100000")
+	await game.wait_until_ready()
 	await process_frame
 	expect(Store.load_game(game.save_path)["state"].target_stones == 100000, "confirmed restart saves new scale")
 	var archived := false

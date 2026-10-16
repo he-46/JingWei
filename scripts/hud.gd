@@ -50,6 +50,8 @@ var modal_title: Label
 var modal_text: Label
 var modal_buttons: VBoxContainer
 var modal_open := false
+var loading_bar: ProgressBar
+var modal_shade: ColorRect
 var notification_time := 0.0
 var drawer: Control
 var upgrade_page: VBoxContainer
@@ -317,6 +319,7 @@ func _build_modal() -> void:
 	modal.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.add_child(modal)
 	var shade := ColorRect.new()
+	modal_shade = shade
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	shade.color = Color(0.08, 0.14, 0.13, 0.56)
 	modal.add_child(shade)
@@ -330,12 +333,19 @@ func _build_modal() -> void:
 	modal_title = text(modal_box, "", 24)
 	modal_text = text(modal_box, "", 15, MUTED, true)
 	modal_text.custom_minimum_size.x = 472
+	loading_bar = ProgressBar.new()
+	loading_bar.custom_minimum_size.y = 12
+	loading_bar.show_percentage = false
+	loading_bar.visible = false
+	modal_box.add_child(loading_bar)
 	modal_buttons = VBoxContainer.new()
 	modal_buttons.add_theme_constant_override("separation", 8)
 	modal_box.add_child(modal_buttons)
 	modal.visible = false
 
 func show_modal(title: String, body: String, choices: Array) -> void:
+	loading_bar.hide()
+	modal_shade.color = Color(0.08, 0.14, 0.13, 0.56)
 	player_locator.hide()
 	modal_open = true
 	modal.visible = true
@@ -351,6 +361,16 @@ func show_modal(title: String, body: String, choices: Array) -> void:
 func hide_modal() -> void:
 	modal_open = false
 	modal.visible = false
+	loading_bar.hide()
+
+func show_loading(stage: String, progress: float) -> void:
+	if not loading_bar.visible:
+		show_modal("准备旅程", "", [])
+		loading_bar.value = 0
+		loading_bar.show()
+		modal_shade.color = Color("e1e7dd")
+	loading_bar.value = maxf(loading_bar.value, clampf(progress * 100, 0, 100))
+	modal_text.text = stage
 
 func show_settings(values: Dictionary) -> void:
 	show_modal("设置", "流畅画质减少草丛与阴影，降低画面精细度。", [])

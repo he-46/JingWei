@@ -25,6 +25,7 @@ func boot(path: String) -> void:
 	game.save_path = path
 	game.muted = true
 	root.add_child(game)
+	await game.wait_until_ready()
 	game.set_process(false)
 	game.set_physics_process(false)
 	expect(game.save_enabled and game.save_path.begins_with("res://artifacts/"), "normal save/load behavior runs only against isolated fixture files")
@@ -76,9 +77,10 @@ func run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
 	for profile in State.PROFILES:
 		var path := folder.path_join("journey-%d.json" % profile.target)
-		boot(path)
+		await boot(path)
 		expect(game.selection_pending and game.hud.modal_open, "missing save opens scale selection")
 		game._modal_action("world_%d" % profile.target)
+		await game.wait_until_ready()
 		expect(game.state.target_stones == profile.target and not game.hud.modal_open and Store.load_game(path).state != null, "each new scale creates and saves its real default world")
 		expect(game.world.bird_model.model_scene.resource_path.contains("characters/jingwei.glb") and game.world.npc_views[0].animal.model_scene.resource_path.contains("characters/pangolin.glb") and game.world.mountain_batches.size() == 8, "all four scales use formal actors and full mountain catalog")
 		await shot("%d-new-coast" % profile.target)
@@ -127,7 +129,7 @@ func run() -> void:
 		game.world.animate(game.state, 0, false, false, -1)
 		expect(not game.world.overview and game.world.sun.shadow_enabled, "normal camera and shadows return")
 		await close()
-		boot(path)
+		await boot(path)
 		expect(not game.selection_pending and game.state.snapshot() == saved and FileAccess.get_file_as_bytes(path) == primary_bytes, "normal boot continues exact partial save without silently rewriting it")
 		expect(game.feedback.events.is_empty(), "loading partial progress never replays historical effects")
 		# Resource-balanced full-sea fixture; separate walkthrough verifies real progression.
@@ -145,13 +147,14 @@ func run() -> void:
 		await shot("%d-completed" % profile.target)
 		var completed: Dictionary = game.state.snapshot()
 		await close()
-		boot(path)
+		await boot(path)
 		expect(game.state.snapshot() == completed and game.win_shown and not game.hud.modal_open, "completed save reopens without replaying victory")
 		var completed_bytes := FileAccess.get_file_as_bytes(path)
 		game.show_menu()
 		game._modal_action("reset_confirm")
 		game._modal_action("pick_again")
 		game._modal_action("world_%d" % (1000000 if profile.target == 100000 else 100000))
+		await game.wait_until_ready()
 		var preserved := false
 		for name in DirAccess.get_files_at(folder):
 			if name.begins_with(path.get_file() + ".before-reset-"):
@@ -165,7 +168,7 @@ func run() -> void:
 	file.store_buffer(legacy_bytes)
 	file.close()
 	var migrated: Dictionary = Store.load_game(legacy_path).state.snapshot()
-	boot(legacy_path)
+	await boot(legacy_path)
 	expect(game.state.snapshot() == migrated and game.state.migrated_from == 2 and not game.selection_pending, "actual normal boot migrates the shipped legacy fixture")
 	expect(FileAccess.get_file_as_bytes(legacy_path) == legacy_bytes, "legacy boot retains the original file until a save is requested")
 	game.save_game(false)
@@ -175,7 +178,7 @@ func run() -> void:
 	file = FileAccess.open(legacy_path, FileAccess.WRITE)
 	file.store_string("{intentionally damaged fixture")
 	file.close()
-	boot(legacy_path)
+	await boot(legacy_path)
 	expect(game.state.snapshot() == migrated and not game.save_blocked, "normal boot recovers a damaged primary from the known-good legacy backup")
 	game.save_game(false)
 	expect(Store.load_game(legacy_path).state.snapshot() == migrated and FileAccess.get_file_as_bytes(legacy_path + ".bak") == legacy_bytes, "recovery repairs the primary without overwriting the valid old backup")
