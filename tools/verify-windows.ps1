@@ -27,6 +27,7 @@ foreach ($file in $info.files) {
 # No test scripts, fixtures or editor are included in the playable ZIP/PCK.
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_windows_pack.gd') -Destination (Join-Path $qa 'pack.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_preferences.gd') -Destination (Join-Path $qa 'preferences.gd')
+Copy-Item -LiteralPath (Join-Path $root 'tests\test_first_person.gd') -Destination (Join-Path $qa 'first-person.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_loading.gd') -Destination (Join-Path $qa 'loading.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_startup.gd') -Destination (Join-Path $qa 'startup.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\fixtures\coast_v2.json') -Destination (Join-Path $qa 'coast_v2.json')
@@ -68,6 +69,8 @@ try {
     $env:LOCALAPPDATA = Join-Path $env:APPDATA 'local'
     $packArgs = @('--main-pack',('"' + (Join-Path $package 'Jingwei.pck') + '"'))
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'pack.gd') + '"'))) 'pack' -Harness
+    Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'first-person.gd') + '"'))) 'first-person-headless' -Harness
+    Invoke-Preview ($packArgs + @('--script',('"' + (Join-Path $qa 'first-person.gd') + '"'))) 'first-person-graphics' -Harness
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'regression.gd') + '"'))) 'regression' -Harness
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'preferences.gd') + '"'))) 'preferences' -Harness
     $loadingOut = (Join-Path $qa 'loading-headless').Replace('\','/')
@@ -106,11 +109,14 @@ try {
     Invoke-Preview @('--','--capture-continued',('--capture="' + $legacyCapture + '"')) 'release-legacy-continue'
     $movie = Join-Path $qa 'release-smooth.png'
     Invoke-Preview @('--','--capture-continued',('--capture="' + $movie + '"')) 'release-smooth-capture'
-    foreach ($capture in @($selectorCapture, $legacyCapture, $movie)) {
+    [IO.File]::WriteAllText((Join-Path $saveFolder 'preferences.json'), '{"version":1,"quality":"smooth","fullscreen":false,"volume":0.37,"muted":true,"first_person":true,"view_key":66}', (New-Object Text.UTF8Encoding($false)))
+    $firstPersonCapture = Join-Path $qa 'release-first-person.png'
+    Invoke-Preview @('--','--capture-continued',('--capture="' + $firstPersonCapture + '"')) 'release-first-person'
+    foreach ($capture in @($selectorCapture, $legacyCapture, $movie, $firstPersonCapture)) {
         if (-not (Test-Path -LiteralPath $capture)) { throw 'Actual release continuation/selector capture was not produced after loading completed.' }
     }
     if ((Get-FileHash -LiteralPath $savePath -Algorithm SHA256).Hash -ne $legacyHash) { throw 'Short ordinary legacy boot unexpectedly modified the original save.' }
-    [ordered]@{package=$info.package; source_commit=$info.source_commit; source_dirty=$info.source_dirty; zip_bytes=(Get-Item -LiteralPath $ZipPath).Length; zip_sha256=(Get-FileHash -LiteralPath $ZipPath -Algorithm SHA256).Hash; no_editor_on_path=$true; deep_regression='editor harness explicitly mounts shipping PCK'; release_checks='four real captures, ordinary selector, v2 continuation with persisted smooth settings'; save_isolated=$true; records=$records; destination=$Destination} | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $Destination 'verification.json') -Encoding UTF8
+    [ordered]@{package=$info.package; source_commit=$info.source_commit; source_dirty=$info.source_dirty; zip_bytes=(Get-Item -LiteralPath $ZipPath).Length; zip_sha256=(Get-FileHash -LiteralPath $ZipPath -Algorithm SHA256).Hash; no_editor_on_path=$true; deep_regression='editor harness explicitly mounts shipping PCK'; release_checks='four real captures, ordinary selector, v2 continuation with persisted smooth settings, first-person preference boot'; save_isolated=$true; records=$records; destination=$Destination} | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $Destination 'verification.json') -Encoding UTF8
     Write-Host "Standalone ZIP verification passed: $Destination"
 } finally {
     $env:PATH = $previousPath

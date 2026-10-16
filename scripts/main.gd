@@ -10,6 +10,7 @@ const Soundscape = preload("res://scripts/soundscape.gd")
 const Feedback = preload("res://scripts/visuals/action_feedback.gd")
 const Preferences = preload("res://scripts/preferences.gd")
 const RenderWarmup = preload("res://scripts/visuals/render_warmup.gd")
+const FirstPersonAim = preload("res://scripts/first_person_aim.gd")
 @export var bird_visual_scene: PackedScene
 @export var pangolin_visual_scene: PackedScene
 @export var mountain_visual_scenes: Array[PackedScene] = World.Catalog.scenes(World.Catalog.MOUNTAINS)
@@ -45,6 +46,8 @@ var preferences_error_shown := false
 var loading := false
 var loading_thread: Thread
 var warmup_report: Dictionary = {}
+var binding_view_key := false
+var application_focused := true
 
 func _ready() -> void:
 	_setup_input()
@@ -92,6 +95,8 @@ func _ready() -> void:
 	hud.help_requested.connect(show_help)
 	hud.modal_action.connect(_modal_action)
 	hud.setting_changed.connect(change_setting)
+	hud.view_key_requested.connect(_begin_view_key_binding)
+	hud.interaction_mode_changed.connect(_sync_pointer)
 	get_tree().auto_accept_quit = false
 	_apply_preferences()
 	loading = true
@@ -156,6 +161,7 @@ func _background(job: Callable) -> Variant:
 	return result
 
 func _exit_tree() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	# Closing during a read/archive must finish its file operation before exit.
 	if loading_thread != null and loading_thread.is_started():
 		loading_thread.wait_to_finish()
@@ -200,13 +206,84 @@ func _setup_input() -> void:
 	for action in keys:
 		if not InputMap.has_action(action):
 			InputMap.add_action(action)
+		InputMap.action_erase_events(action)
 		for key in keys[action]:
 			var event := InputEventKey.new()
 			event.physical_keycode = key
 			InputMap.action_add_event(action, event)
+	_apply_view_key()
+
+func _apply_view_key() -> void:
+	if not InputMap.has_action("jw_view"):
+		InputMap.add_action("jw_view")
+	InputMap.action_erase_events("jw_view")
+	var event := InputEventKey.new()
+	event.physical_keycode = int(preferences.view_key)
+	InputMap.action_add_event("jw_view", event)
+
+func _begin_view_key_binding() -> void:
+	binding_view_key = true
+	hud.settings_view_key.text = "请按新按键…　Esc 取消"
+
+func _input(event: InputEvent) -> void:
+	if binding_view_key and event is InputEventKey and event.pressed:
+		get_viewport().set_input_as_handled()
+		if event.echo:
+			return
+		var key: int = event.physical_keycode if event.physical_keycode != 0 else event.keycode
+		if key == KEY_ESCAPE:
+			binding_view_key = false
+			hud.refresh_settings(preferences)
+		elif event.alt_pressed or event.ctrl_pressed or event.meta_pressed or event.shift_pressed or not Preferences.valid_view_key(key):
+			hud.settings_view_key.text = "按键已占用或不可用，请重选 · Esc 取消"
+		else:
+			binding_view_key = false
+			change_setting("view_key", key)
+		return
+	if _first_person_active() and not loading and not hud.modal_open and not hud.drawer_open and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and event is InputEventMouseMotion:
+		world.look_yaw = wrapf(world.look_yaw - event.relative.x * .0025, -PI, PI)
+		world.look_pitch = clampf(world.look_pitch - event.relative.y * .0025, deg_to_rad(-85), deg_to_rad(80))
+		world.update_camera(state, 0, true)
+
+func _first_person_active() -> bool:
+	return is_instance_valid(world) and world.first_person and not world.overview
+
+func _sync_pointer() -> void:
+	if hud == null:
+		return
+	var capture: bool = _first_person_active() and not loading and not selection_pending and not hud.modal_open and not hud.drawer_open and application_focused
+	var mode := Input.MOUSE_MODE_CAPTURED if capture else Input.MOUSE_MODE_VISIBLE
+	if Input.mouse_mode != mode:
+		Input.mouse_mode = mode
+	hud.crosshair.visible = capture
+	if not hud.modal_open or hud.modal_title.text != "设置":
+		binding_view_key = false
+
+func toggle_view() -> void:
+	if loading or world == null or hud.modal_open or selection_pending:
+		return
+	preferences.first_person = not bool(preferences.first_person)
+	_apply_preferences()
+	preferences_dirty = preferences_enabled
+	_save_preferences()
+	_refresh()
+	_sync_pointer()
+
+func first_person_target() -> Variant:
+	var origin: Vector3 = world.camera.global_position
+	var direction: Vector3 = -world.camera.global_basis.z
+	var hit: Variant = FirstPersonAim.surface_hit(state, origin, direction)
+	if hit == null:
+		return null
+	var query := PhysicsRayQueryParameters3D.create(origin, hit)
+	query.exclude = [world.bird_body.get_rid()]
+	# Mountain collisions block a ray aimed through the mountain at a coast.
+	if not world.get_world_3d().direct_space_state.intersect_ray(query).is_empty():
+		return null
+	return Vector2(hit.x, hit.z)
 
 func _physics_process(delta: float) -> void:
-	if loading or hud == null or hud.modal_open or selection_pending:
+	if loading or hud == null or hud.modal_open or selection_pending or (_first_person_active() and (hud.drawer_open or not application_focused)):
 		return
 	var direction := Input.get_vector("jw_left", "jw_right", "jw_up", "jw_down")
 	var right := Vector3(world.camera.global_basis.x.x, 0, world.camera.global_basis.x.z).normalized()
@@ -250,6 +327,7 @@ func _physics_process(delta: float) -> void:
 		save_game(false)
 
 func _process(delta: float) -> void:
+	_sync_pointer()
 	if loading:
 		return
 	if preferences_dirty:
@@ -273,6 +351,8 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if loading:
 		return
+	if event is InputEventKey and event.echo:
+		return
 	if event.is_action_pressed("jw_menu"):
 		if selection_pending:
 			return
@@ -293,20 +373,27 @@ func _unhandled_input(event: InputEvent) -> void:
 		hud.notify("声音已关闭" if muted else "声音已开启")
 	elif not hud.modal_open and event.is_action_pressed("jw_upgrades"):
 		hud.toggle_drawer()
+	elif not hud.modal_open and event.is_action_pressed("jw_view"):
+		if not event is InputEventKey or not (event.alt_pressed or event.ctrl_pressed or event.meta_pressed or event.shift_pressed):
+			toggle_view()
 	elif not hud.modal_open and event.is_action_pressed("jw_help"):
 		show_help()
 	elif not hud.modal_open and event.is_action_pressed("jw_overview"):
 		toggle_overview()
 	elif not hud.modal_open and event.is_action_pressed("jw_throw"):
-		throw_forward()
+		if not _first_person_active() or not hud.drawer_open:
+			throw_forward()
 	elif not hud.modal_open and event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			if not world.overview:
+			if not world.overview and not world.first_person:
 				world.zoom = clampf(world.zoom * (0.85 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.18), 0.6, 2.0)
 		elif event.button_index == MOUSE_BUTTON_LEFT:
-			var point: Variant = mouse_world_point(event.position)
+			if _first_person_active() and hud.drawer_open:
+				return
+			var point: Variant = first_person_target() if _first_person_active() else mouse_world_point(event.position)
 			if point != null:
 				deposit_at(point)
+	_sync_pointer()
 
 func mouse_world_point(screen: Vector2) -> Variant:
 	var origin: Vector3 = world.camera.project_ray_origin(screen)
@@ -321,6 +408,7 @@ func toggle_overview() -> void:
 	hud.set_overview(world.overview)
 	world.update_camera(state, 1.0, true)
 	_refresh()
+	_sync_pointer()
 
 func interact() -> void:
 	if hud.modal_open or selection_pending:
@@ -380,7 +468,14 @@ func q_target() -> Vector2:
 	return Vector2(0.25, clampf(state.player.y, state.map_origin.y + 0.1, -state.map_origin.y - 0.1))
 
 func throw_forward() -> void:
-	deposit_at(q_target())
+	if _first_person_active():
+		var target: Variant = first_person_target()
+		if target == null:
+			hud.notify("请瞄准无遮挡的陆地或海面。")
+		else:
+			deposit_at(target)
+	else:
+		deposit_at(q_target())
 
 func deposit_at(point: Vector2) -> int:
 	if hud.modal_open or selection_pending:
@@ -433,11 +528,14 @@ func buy_upgrade(kind: String) -> void:
 
 func _refresh() -> void:
 	var target: Vector2 = q_target()
-	if get_viewport().gui_get_hovered_control() == null and not hud.modal_open:
+	if _first_person_active():
+		var hit: Variant = first_person_target()
+		target = hit if hit != null else Vector2.INF
+	elif get_viewport().gui_get_hovered_control() == null and not hud.modal_open:
 		var mouse: Variant = mouse_world_point(get_viewport().get_mouse_position())
 		if mouse != null and state.cell_at(mouse) >= 0:
 			target = mouse
-	aimed_cell = state.cell_at(target) if world.point_visible(target) else -1
+	aimed_cell = state.cell_at(target) if target.is_finite() and world.point_visible(target) else -1
 	world.aim_point = target
 	world.sync(state)
 	var prompt := "寻找石子"
@@ -456,6 +554,9 @@ func _refresh() -> void:
 	elif state.closest_stone(state.player) >= 0:
 		prompt = "散石 · 每次 %s 石" % State.number(state.gather_power())
 	hud.update_state(state, prompt, aimed_cell, target, world.bird_body.position.y)
+	if _first_person_active() and aimed_cell < 0:
+		hud.cell_label.visible = true
+		hud.cell_label.text = "准星未指向可投落点"
 	if world.bird_body.position.y > 2.7:
 		hud.interact_button.disabled = true
 
@@ -476,8 +577,14 @@ func show_menu() -> void:
 	hud.show_modal("暂停", "已填 %s / %s 石\n%s" % [State.number(state.total_delivered), State.number(state.target_stones), hud.save_label.text], [{"text": "继续", "action": "resume"}, {"text": "保存", "action": "save"}, {"text": "设置", "action": "settings"}, {"text": "操作说明", "action": "help"}, {"text": "重新开始…", "action": "reset_confirm"}])
 
 func _apply_preferences() -> void:
+	_apply_view_key()
 	var smooth: bool = preferences.quality == "smooth"
 	if world != null:
+		var entering: bool = bool(preferences.first_person) and not world.first_person
+		world.first_person = bool(preferences.first_person)
+		if entering:
+			hud.drawer_open = false
+			hud.drawer.hide()
 		world.reduced_detail = smooth
 		world.animate(state, 0, false, false, aimed_cell)
 	get_viewport().scaling_3d_scale = .75 if smooth else 1.0
@@ -486,6 +593,7 @@ func _apply_preferences() -> void:
 		var mode := Window.MODE_FULLSCREEN if preferences.fullscreen else Window.MODE_WINDOWED
 		if get_window().mode != mode:
 			get_window().mode = mode
+	_sync_pointer()
 
 func change_setting(key: String, value: Variant) -> void:
 	if loading or not hud.modal_open or hud.modal_title.text != "设置" or not Preferences.DEFAULTS.has(key) or key == "version":
@@ -493,7 +601,7 @@ func change_setting(key: String, value: Variant) -> void:
 	preferences[key] = value
 	preferences = Preferences.sanitize(preferences)
 	muted = bool(preferences.muted)
-	if key in ["quality", "fullscreen"]:
+	if key in ["quality", "fullscreen", "first_person", "view_key"]:
 		_apply_preferences()
 	else:
 		soundscape.set_volume(float(preferences.volume))
@@ -530,7 +638,7 @@ func _save_preferences() -> void:
 func show_help() -> void:
 	if hud.modal_open or selection_pending:
 		return
-	hud.show_modal("操作", "WASD / 方向键  移动\n空格  升高增程，松开降落\nE  低空采集 / 对话（可按住）\nQ / 鼠标左键  射程内投石\n\nU  收起升级栏　Tab  全图\n滚轮  缩放　M  静音　Esc  暂停\n\n满高度射程为基础的 2 倍，金圈显示当前范围。\n陆地石子可拾回；填入海中才获得修行。", [{"text": "返回", "action": "resume"}])
+	hud.show_modal("操作", "WASD / 方向键  移动\n空格  升高增程，松开降落\nE  低空采集 / 对话（可按住）\nQ / 鼠标左键  射程内投石\n%s  切换视角（设置中可改键）\n第一人称：鼠标观察，准星瞄准投石\n\nU  升级栏 / 鼠标　Tab  全图\n滚轮  随行缩放　M  静音　Esc  暂停\n\n满高度射程为基础的 2 倍。\n陆地石子可拾回；填入海中才获得修行。" % OS.get_keycode_string(int(preferences.view_key)), [{"text": "返回", "action": "resume"}])
 
 func _modal_action(action: String) -> void:
 	if loading:
@@ -638,6 +746,14 @@ func save_game(manual: bool = false) -> void:
 		hud.notify("保存未成功，请检查保存目录权限。")
 
 func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		application_focused = false
+		if world != null and hud != null and not loading:
+			show_menu()
+		_sync_pointer()
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		application_focused = true
+		_sync_pointer()
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		_save_preferences()
 		if state != null and hud != null:
@@ -696,7 +812,9 @@ func _advance_world(seconds: float) -> void:
 func _throw_effect(target: Vector2, sea: bool, formed_land: bool, completed: bool) -> void:
 	soundscape.play("throw")
 	var end := Vector3(target.x, maxf(.25, world.cell_height(state, state.cell_at(target)) + .04), target.y)
-	feedback.throw_stone(world.bird_body.position, end, sea, formed_land, completed, soundscape.epoch)
+	var first := _first_person_active()
+	var start: Vector3 = world.camera.position - world.camera.basis.z * .7 - Vector3.UP * .2 if first else world.bird_body.position
+	feedback.throw_stone(start, end, sea, formed_land, completed, soundscape.epoch, not first)
 
 func _setup_feedback() -> void:
 	feedback = Feedback.new()

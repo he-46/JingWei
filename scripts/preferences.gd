@@ -1,6 +1,6 @@
 extends RefCounted
 ## Device preferences are deliberately independent of the resource/save ledger.
-const DEFAULTS := {"version": 1, "quality": "standard", "fullscreen": false, "volume": 1.0, "muted": false}
+const DEFAULTS := {"version": 1, "quality": "standard", "fullscreen": false, "volume": 1.0, "muted": false, "first_person": false, "view_key": KEY_V}
 const LIMIT := 8192
 
 static func sanitize(data: Dictionary) -> Dictionary:
@@ -9,13 +9,20 @@ static func sanitize(data: Dictionary) -> Dictionary:
 		return result
 	if data.get("quality") in ["standard", "smooth"]:
 		result.quality = data.quality
-	for key in ["fullscreen", "muted"]:
+	for key in ["fullscreen", "muted", "first_person"]:
 		if data.get(key) is bool:
 			result[key] = data[key]
 	var volume: Variant = data.get("volume")
 	if (volume is float or volume is int) and is_finite(float(volume)):
 		result.volume = clampf(float(volume), 0, 1)
+	var view_key: Variant = data.get("view_key")
+	if (view_key is int or view_key is float) and is_finite(float(view_key)) and float(view_key) == int(view_key) and valid_view_key(int(view_key)):
+		result.view_key = int(view_key)
 	return result
+
+static func valid_view_key(key: int) -> bool:
+	# Single physical keys; reserve all existing controls and OS modifier keys.
+	return ((key >= KEY_A and key <= KEY_Z) or (key >= KEY_F2 and key <= KEY_F12)) and key not in [KEY_A, KEY_D, KEY_W, KEY_S, KEY_E, KEY_Q, KEY_U, KEY_M, KEY_F4]
 
 static func read(path: String) -> Dictionary:
 	var file := FileAccess.open(path, FileAccess.READ)

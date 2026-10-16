@@ -9,6 +9,8 @@ signal overview_requested
 signal help_requested
 signal modal_action(action: String)
 signal setting_changed(key: String, value: Variant)
+signal view_key_requested
+signal interaction_mode_changed
 
 const State = preload("res://scripts/state.gd")
 const Locator = preload("res://scripts/visuals/player_locator.gd")
@@ -72,6 +74,9 @@ var settings_mute: Button
 var settings_volume: HSlider
 var settings_volume_label: Label
 var settings_values: Dictionary = {}
+var settings_view: Button
+var settings_view_key: Button
+var crosshair: Label
 
 func _ready() -> void:
 	root = Control.new()
@@ -103,6 +108,16 @@ func _ready() -> void:
 	_build_drawer()
 	_build_map()
 	_build_bottom()
+	crosshair = text(root, "+", 24, Color("fff1bd"))
+	crosshair.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	crosshair.offset_left = -12
+	crosshair.offset_top = -18
+	crosshair.offset_right = 12
+	crosshair.offset_bottom = 18
+	crosshair.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	crosshair.add_theme_color_override("font_outline_color", INK)
+	crosshair.add_theme_constant_override("outline_size", 3)
+	crosshair.hide()
 	_build_modal()
 
 static func number(value: int) -> String:
@@ -357,10 +372,12 @@ func show_modal(title: String, body: String, choices: Array) -> void:
 	for choice in choices:
 		var action: String = choice["action"]
 		button(modal_buttons, String(choice["text"]), func() -> void: modal_action.emit(action), 40)
+	interaction_mode_changed.emit()
 
 func hide_modal() -> void:
 	modal_open = false
 	modal.visible = false
+	interaction_mode_changed.emit()
 	loading_bar.hide()
 
 func show_loading(stage: String, progress: float) -> void:
@@ -373,11 +390,15 @@ func show_loading(stage: String, progress: float) -> void:
 	modal_text.text = stage
 
 func show_settings(values: Dictionary) -> void:
-	show_modal("设置", "流畅画质减少草丛与阴影，降低画面精细度。", [])
+	show_modal("设置", "流畅画质减少草丛与阴影。切换键可选空闲字母或 F2–F12。", [])
 	settings_quality = button(modal_buttons, "", func() -> void: setting_changed.emit("quality", "smooth" if settings_values.quality == "standard" else "standard"), 40)
 	settings_display = button(modal_buttons, "", func() -> void: setting_changed.emit("fullscreen", not settings_values.fullscreen), 40)
 	settings_quality.focus_mode = Control.FOCUS_ALL
 	settings_display.focus_mode = Control.FOCUS_ALL
+	settings_view = button(modal_buttons, "", func() -> void: setting_changed.emit("first_person", not settings_values.first_person), 40)
+	settings_view_key = button(modal_buttons, "", func() -> void: view_key_requested.emit(), 40)
+	settings_view.focus_mode = Control.FOCUS_ALL
+	settings_view_key.focus_mode = Control.FOCUS_ALL
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 14)
 	modal_buttons.add_child(row)
@@ -401,6 +422,8 @@ func refresh_settings(values: Dictionary) -> void:
 	settings_values = values.duplicate()
 	settings_quality.text = "画质　" + ("流畅" if values.quality == "smooth" else "标准")
 	settings_display.text = "显示　" + ("全屏" if values.fullscreen else "窗口")
+	settings_view.text = "视角　" + ("第一人称" if values.first_person else "随行")
+	settings_view_key.text = "切换视角　" + OS.get_keycode_string(int(values.view_key)) + "　（点击修改）"
 	settings_volume_label.text = "音量　%d%%" % roundi(float(values.volume) * 100)
 	settings_volume.set_value_no_signal(float(values.volume) * 100)
 	settings_mute.text = "声音　" + ("已静音 · M" if values.muted else "开启 · M")
@@ -440,6 +463,7 @@ func toggle_drawer() -> void:
 		return
 	drawer_open = not drawer_open
 	drawer.visible = drawer_open
+	interaction_mode_changed.emit()
 
 func select_tab(id: String) -> void:
 	active_tab = id
@@ -456,6 +480,7 @@ func set_overview(enabled: bool) -> void:
 	drawer.visible = drawer_open and not enabled
 	drawer_button.disabled = enabled
 	map_button.text = "返回  Tab" if enabled else "全图  Tab"
+	interaction_mode_changed.emit()
 
 func locate_player(point: Vector2, obscured: bool) -> void:
 	player_locator.position = point

@@ -67,6 +67,9 @@ var zoom: float = 1.0
 var focus := Vector3.ZERO
 var normal_size: float = 29.0
 var camera_offset := Vector3(16, 29, 27)
+var first_person := false
+var look_yaw := -PI / 2
+var look_pitch := -.38
 var tree_canopies: Array[Vector4] = []
 var locator_clock := 0.0
 var player_obscured := false
@@ -610,6 +613,16 @@ func _update_chunk(state: JWState, key: Vector2i) -> void:
 		foam_chunks[key].visible = false
 
 func update_camera(state: JWState, delta: float, instant: bool = false) -> void:
+	if first_person and not overview:
+		camera.projection = Camera3D.PROJECTION_PERSPECTIVE
+		camera.near = .08
+		camera.fov = 75
+		camera.position = bird_body.position + Vector3.UP * .18
+		camera.rotation = Vector3(look_pitch, look_yaw, 0)
+		overview_marker.hide()
+		return
+	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	camera.near = .05
 	var target := Vector3(state.map_origin.x + state.map_side / 2, 0, state.map_side * 0.055) if overview else Vector3(state.player.x, 0, state.player.y)
 	focus = target if instant else focus.lerp(target, minf(1, delta * 8))
 	var desired_size := state.map_side * 1.6 if overview else normal_size * zoom
@@ -629,7 +642,7 @@ func point_visible(point: Vector2) -> bool:
 func player_occluded() -> bool:
 	# One ray through real mountain collisions and at most 200 analytic canopy tests.
 	# Trees remain instanced decoration without added physics bodies.
-	if overview or bird_body.position.x >= 0:
+	if first_person or overview or bird_body.position.x >= 0:
 		return false
 	var start := camera.global_position
 	var end := bird_body.global_position + Vector3.UP * .15
@@ -646,6 +659,9 @@ func player_occluded() -> bool:
 	return false
 
 func update_player_locator(delta: float) -> Vector2:
+	if first_person and not overview:
+		player_obscured = false
+		return Vector2.ZERO
 	locator_clock -= delta
 	if locator_clock <= 0:
 		locator_clock = .1
@@ -680,7 +696,7 @@ func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aime
 	bird_model.set_motion(moving, high_flight)
 	if not overview:
 		bird_model.advance(delta, time)
-	bird_model.visible = not overview
+	bird_model.visible = not overview and not first_person
 	npc_animation_clock += delta
 	for index in npc_views:
 		var animal: Node3D = npc_views[index]["animal"]

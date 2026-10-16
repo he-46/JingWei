@@ -73,7 +73,7 @@ func _ready() -> void:
 func count_event(kind: String) -> void:
 	events[kind] = int(events.get(kind, 0)) + 1
 
-func throw_stone(start: Vector3, end: Vector3, sea: bool, formed_land: bool, completed: bool, audio_epoch: int) -> bool:
+func throw_stone(start: Vector3, end: Vector3, sea: bool, formed_land: bool, completed: bool, audio_epoch: int, launch_burst: bool = true) -> bool:
 	count_event("launch")
 	var chosen: Dictionary = {}
 	for slot in flights:
@@ -96,7 +96,8 @@ func throw_stone(start: Vector3, end: Vector3, sea: bool, formed_land: bool, com
 		"sea": sea, "formed": formed_land, "completed": completed, "epoch": audio_epoch}, true)
 	chosen.node.position = start
 	chosen.node.show()
-	burst("throw", start)
+	if launch_burst:
+		burst("throw", start)
 	return true
 
 func burst(kind: String, point: Vector3, target: Vector3 = Vector3.ZERO, radius: float = 1.0) -> Dictionary:
