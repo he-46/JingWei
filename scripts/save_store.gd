@@ -28,7 +28,10 @@ static func load_game(path: String) -> Dictionary:
 	return {"state": null, "status": "invalid" if exists else "new"}
 
 static func save_game(path: String, state: JWState) -> Error:
-	if State.from_snapshot(state.snapshot()) == null:
+	return save_snapshot(path, state.snapshot())
+
+static func save_snapshot(path: String, snapshot: Dictionary) -> Error:
+	if State.from_snapshot(snapshot) == null:
 		return ERR_INVALID_DATA
 	var parent := ProjectSettings.globalize_path(path).get_base_dir()
 	var error := DirAccess.make_dir_recursive_absolute(parent)
@@ -37,7 +40,7 @@ static func save_game(path: String, state: JWState) -> Error:
 	var file := FileAccess.open(path + ".tmp", FileAccess.WRITE)
 	if file == null:
 		return FileAccess.get_open_error()
-	file.store_string(JSON.stringify(state.snapshot(), "", true, true))
+	file.store_string(JSON.stringify(snapshot, "", true, true))
 	file.flush()
 	error = file.get_error()
 	file.close()
@@ -45,13 +48,16 @@ static func save_game(path: String, state: JWState) -> Error:
 		return error
 	# Keep a known-good previous save; never replace it with corrupt input.
 	if _read(path) != null:
-		var backup := FileAccess.open(path + ".bak", FileAccess.WRITE)
+		var backup := FileAccess.open(path + ".bak.tmp", FileAccess.WRITE)
 		if backup == null:
 			return FileAccess.get_open_error()
 		backup.store_buffer(FileAccess.get_file_as_bytes(path))
 		backup.flush()
 		error = backup.get_error()
 		backup.close()
+		if error != OK:
+			return error
+		error = DirAccess.rename_absolute(ProjectSettings.globalize_path(path + ".bak.tmp"), ProjectSettings.globalize_path(path + ".bak"))
 		if error != OK:
 			return error
 	return DirAccess.rename_absolute(ProjectSettings.globalize_path(path + ".tmp"), ProjectSettings.globalize_path(path))

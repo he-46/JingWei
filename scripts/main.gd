@@ -6,6 +6,10 @@ const State = preload("res://scripts/state.gd")
 const World = preload("res://scripts/world.gd")
 const HUD = preload("res://scripts/hud.gd")
 const Store = preload("res://scripts/save_store.gd")
+const SaveWorker = preload("res://scripts/save_worker.gd")
+var save_worker := SaveWorker.new()
+var save_pending := false
+var save_failed := false
 const Soundscape = preload("res://scripts/soundscape.gd")
 const Feedback = preload("res://scripts/visuals/action_feedback.gd")
 const Preferences = preload("res://scripts/preferences.gd")
@@ -165,6 +169,7 @@ func _background(job: Callable) -> Variant:
 
 func _exit_tree() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	save_worker.finish()
 	# Closing during a read/archive must finish its file operation before exit.
 	if loading_thread != null and loading_thread.is_started():
 		loading_thread.wait_to_finish()
@@ -384,14 +389,15 @@ func _physics_process(delta: float) -> void:
 	_drain_messages()
 	save_clock += delta
 	if save_clock >= 15:
-		save_game(false)
+		request_autosave()
 		save_clock = 0
 	if state.won and not win_shown and not feedback.completion_pending():
 		win_shown = true
 		hud.show_modal("填海完成", "已填入 %s 石。精卫完成了自己的心愿。" % State.number(state.target_stones), [{"text": "继续探索", "action": "resume"}, {"text": "保存", "action": "save"}])
-		save_game(false)
+		request_autosave()
 
 func _process(delta: float) -> void:
+	_poll_save()
 	_sync_pointer()
 	if loading:
 		return
@@ -571,7 +577,7 @@ func deposit_at(point: Vector2) -> int:
 	var amount := state.deposit(point, flight_height)
 	if not was_unlocked and state.mining_unlocked():
 		soundscape.play("unlock")
-		save_game(false)
+		request_autosave()
 	if amount > 0:
 		world.bird_model.play_throw(amount)
 		first_person_body.play("throw", amount)
@@ -739,6 +745,10 @@ func _modal_action(action: String) -> void:
 		"save":
 			save_game(true)
 			hud.hide_modal()
+		"retry_quit":
+			_notification(NOTIFICATION_WM_CLOSE_REQUEST)
+		"quit_unsaved":
+			get_tree().quit()
 		"reset_confirm":
 			hud.show_modal("重新开始？", "当前进度会保留备份，然后选择新的填海规模。", [{"text": "取消", "action": "resume"}, {"text": "选择规模", "action": "pick_again"}])
 		"pick_again":
@@ -757,6 +767,10 @@ func choose_world(target: int) -> bool:
 
 func _replace_world(target: int) -> void:
 	hud.show_loading("保留上一段旅程", 0)
+	save_pending = false
+	while save_worker.busy():
+		_poll_save()
+		await get_tree().process_frame
 	await get_tree().process_frame
 	var prepared: Dictionary = await _background(func() -> Dictionary:
 		if save_enabled and (selection_pending or choosing_again) and not _archive_before_new():
@@ -789,8 +803,8 @@ func _replace_world(target: int) -> void:
 	hud.set_overview(false)
 	hud.notify("WASD 移动 · E 采集 · Q 投石")
 	_refresh()
-	if error != OK:
-		hud.notify("旅程暂未保存，请检查保存目录权限。")
+	if save_enabled:
+		_save_result(error)
 	loading_finished.emit()
 
 func _archive_before_new() -> bool:
@@ -805,20 +819,53 @@ func _archive_before_new() -> bool:
 				return false
 	return true
 
-func save_game(manual: bool = false) -> void:
-	if loading or not save_enabled or selection_pending:
-		return
-	if save_blocked:
-		hud.save_label.text = "原存档无法读取 · 自动保存停用"
-		return
-	var error := Store.save_game(save_path, state)
+func _save_result(error: Error, manual: bool = false) -> void:
+	var was_failed := save_failed
+	save_failed = error != OK
 	if error == OK:
 		hud.save_label.text = "已保存 · " + Time.get_time_string_from_system().substr(0, 5)
-		if manual:
-			hud.notify("已保存。")
+		if manual or was_failed:
+			hud.notify("保存已恢复。" if was_failed else "已保存。")
 	else:
-		hud.save_label.text = "保存未成功 · 错误 %d" % error
-		hud.notify("保存未成功，请检查保存目录权限。")
+		hud.save_label.text = "保存失败 · 菜单中可重试"
+		if manual or not was_failed:
+			hud.notify("保存失败，进度仍在本次游戏中。请检查磁盘空间和目录权限，再从菜单保存。")
+	if hud.modal_open and hud.modal_title.text == "暂停":
+		hud.modal_text.text = "已填 %s / %s 石\n%s" % [State.number(state.total_delivered), State.number(state.target_stones), hud.save_label.text]
+
+func request_autosave() -> void:
+	if loading or not save_enabled or selection_pending or save_blocked:
+		return
+	if save_worker.busy():
+		save_pending = true
+		return
+	# snapshot() copies all mutable arrays/dictionaries on the main thread.
+	var error := save_worker.start(save_path, state.snapshot())
+	if error != OK:
+		_save_result(error)
+	else:
+		hud.save_label.text = "正在保存…"
+
+func _poll_save() -> void:
+	if not save_worker.ready():
+		return
+	_save_result(save_worker.finish())
+	if save_pending:
+		save_pending = false
+		request_autosave()
+
+func save_game(manual: bool = false) -> bool:
+	if loading or not save_enabled or selection_pending:
+		return true
+	if save_blocked:
+		hud.save_label.text = "原存档无法读取 · 自动保存停用"
+		return false
+	# Explicit save/close is a durability barrier, never racing an automatic write.
+	save_pending = false
+	save_worker.finish()
+	var error := Store.save_game(save_path, state)
+	_save_result(error, manual)
+	return error == OK
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
@@ -832,7 +879,9 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		_save_preferences()
 		if state != null and hud != null:
-			save_game(false)
+			if not save_game(true):
+				hud.show_modal("退出前保存失败", "进度仍在本次游戏中。可取消退出，检查磁盘空间和保存目录后再试。", [{"text": "继续游戏", "action": "resume"}, {"text": "重试并退出", "action": "retry_quit"}, {"text": "不保存退出", "action": "quit_unsaved"}])
+				return
 		get_tree().quit()
 
 func _prepare_showcase() -> void:

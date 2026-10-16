@@ -8,6 +8,7 @@ func _ready() -> void:
 	hud.hide_modal()
 	hud.save_label.text = "样板旅程 · 本次进度不保存"
 
-func save_game(manual: bool = false) -> void:
+func save_game(manual: bool = false) -> bool:
 	if manual and hud != null:
 		hud.notify("样板进度只保留在本次运行中。")
+	return true

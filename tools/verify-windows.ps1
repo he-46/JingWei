@@ -30,6 +30,7 @@ Copy-Item -LiteralPath (Join-Path $root 'tests\test_preferences.gd') -Destinatio
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_first_person.gd') -Destination (Join-Path $qa 'first-person.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_first_person_polish.gd') -Destination (Join-Path $qa 'first-person-polish.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_first_person_body.gd') -Destination (Join-Path $qa 'first-person-body.gd')
+Copy-Item -LiteralPath (Join-Path $root 'tests\test_autosave.gd') -Destination (Join-Path $qa 'autosave.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_loading.gd') -Destination (Join-Path $qa 'loading.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\test_startup.gd') -Destination (Join-Path $qa 'startup.gd')
 Copy-Item -LiteralPath (Join-Path $root 'tests\fixtures\coast_v2.json') -Destination (Join-Path $qa 'coast_v2.json')
@@ -79,6 +80,8 @@ try {
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'preferences.gd') + '"'))) 'preferences' -Harness
     $loadingOut = (Join-Path $qa 'loading-headless').Replace('\','/')
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'first-person-body.gd') + '"'))) 'first-person-body-headless' -Harness
+    Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'autosave.gd') + '"'))) 'autosave-headless' -Harness
+    Invoke-Preview ($packArgs + @('--script',('"' + (Join-Path $qa 'autosave.gd') + '"'))) 'autosave-graphics' -Harness
     Invoke-Preview ($packArgs + @('--script',('"' + (Join-Path $qa 'first-person-body.gd') + '"'))) 'first-person-body-graphics' -Harness
     Invoke-Preview ($packArgs + @('--headless','--script',('"' + (Join-Path $qa 'loading.gd') + '"'),'--',('--loading-out="' + $loadingOut + '"'))) 'loading' -Harness
     $startupOut = (Join-Path $qa 'startup-headless').Replace('\','/')

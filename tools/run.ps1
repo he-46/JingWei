@@ -162,6 +162,7 @@ try {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_first_person.gd') 'first-person-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_first_person_polish.gd') 'first-person-polish-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_first_person_body.gd') 'first-person-body-tests.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_autosave.gd') 'autosave-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_loading.gd') 'loading-tests.log'
             $startupFixture = Join-Path $logRoot ('startup-test-' + [Guid]::NewGuid().ToString('N'))
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_startup.gd', '--', ('--startup-out=' + $startupFixture), ('--save-path=' + (Join-Path $startupFixture 'journey.json'))) 'startup-tests.log'

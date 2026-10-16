@@ -1,0 +1,29 @@
+{
+	"checks": 34,
+	"failures": 0,
+	"note": "Single local run. Snapshot copy remains on main thread; timings are not frame percentiles. Slow disk is a test-only delay.",
+	"responsive_frames": 30,
+	"slow_disk_fixture_ms": 300,
+	"timings": [
+		{
+			"request_main_ms": 0.097,
+			"synchronous_main_ms": 2.204,
+			"target": 100000
+		},
+		{
+			"request_main_ms": 0.142,
+			"synchronous_main_ms": 6.133,
+			"target": 1000000
+		},
+		{
+			"request_main_ms": 0.3,
+			"synchronous_main_ms": 30.567,
+			"target": 10000000
+		},
+		{
+			"request_main_ms": 0.534,
+			"synchronous_main_ms": 146.681,
+			"target": 100000000
+		}
+	]
+}
