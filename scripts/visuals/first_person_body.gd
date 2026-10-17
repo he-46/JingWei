@@ -7,35 +7,68 @@ var clock := 0.0
 var action := ""
 var remaining := 0.0
 var load_fraction := 0.0
+var flight_blend := 0.0
+
+# Curved feather vanes with baked facet shading. Each feather has
+# a broad vane and a narrow tip; they overlap along an actual wing, not one fan pivot.
+func _feather(tool: SurfaceTool, start: Vector3, end: Vector3, width: float, color: Color, side: float) -> void:
+	var axis := (end - start).normalized()
+	var across := Vector3(-axis.y, axis.x, 0).normalized()
+	var rings: Array[PackedVector3Array] = []
+	var profile := [.28, .82, 1.0, .94, .68, .30, .025]
+	for j in range(7):
+		var t := float(j) / 6
+		var center := start.lerp(end, t) + Vector3(side * sin(t * PI) * .025, sin(t * PI) * .025, sin(t * PI) * .032)
+		var ring := PackedVector3Array()
+		for k in range(8):
+			var angle := TAU * k / 8
+			ring.append(center + across * cos(angle) * width * profile[j] + Vector3(0, 0, sin(angle) * width * .30 * profile[j]))
+		rings.append(ring)
+	for j in range(6):
+		# Only the camera-facing vane is needed. With depth testing disabled,
+		# an underside would paint through this surface and create triangle noise.
+		for k in range(4):
+			var next := (k + 1) % 8
+			var shade := color.lightened(.12 * maxf(0, sin(TAU * (k + .5) / 8)))
+			shade = shade.darkened(.16 * float(j) / 6)
+			var points := [rings[j][k], rings[j + 1][k], rings[j + 1][next], rings[j][k], rings[j + 1][next], rings[j][next]]
+			for p in points:
+				tool.set_color(shade)
+				tool.add_vertex(p)
+
+func _wing_mesh(side: float) -> ArrayMesh:
+	var tool := SurfaceTool.new()
+	tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	# Outer shoulder stays outside the frame. Long primaries sweep inward/forward;
+	# shorter coverts overlap their roots and form a continuous curved leading edge.
+	for i in range(9):
+		var t := float(i) / 8
+		_feather(tool, Vector3(side * (.37 + t * .24), -.20 - t * .065, -.02), Vector3(side * (.02 + t * .52), .14 + sin(t * PI) * .12 - t * .14, .025), .042 + t * .007, Color("284f61").lerp(Color("477c89"), t * .65), side)
+	for i in range(7):
+		var t := float(i) / 6
+		_feather(tool, Vector3(side * (.53 + t * .16), -.29, .02), Vector3(side * (.18 + t * .36), .065 - t * .24, .065), .050, Color("55838b").lerp(Color("739b9d"), t * .65), side)
+	for i in range(5):
+		var t := float(i) / 4
+		_feather(tool, Vector3(side * (.57 + t * .11), -.30, .055), Vector3(side * (.34 + t * .25), -.08 - t * .12, .10), .044, Color("9fae9f").lerp(Color("d0cbb1"), t * .6), side)
+	# A small warm shoulder accent, not alternating bright stripes on every feather.
+	for i in range(3):
+		_feather(tool, Vector3(side * .65, -.30, .085), Vector3(side * (.48 + i * .055), -.18 - i * .025, .13), .032, Color("a2644e"), side)
+	tool.generate_normals()
+	return tool.commit()
 
 func _ready() -> void:
-	var colors := [Color("305f70"), Color("477d88"), Color("fff0ca"), Color("da684d")]
-	var materials: Array[StandardMaterial3D] = []
-	for color in colors:
-		var mat := Models.material(color)
-		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		mat.no_depth_test = true
-		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-		mat.render_priority = 10
-		materials.append(mat)
+	var mat := Models.material(Color.WHITE)
+	mat.vertex_color_use_as_albedo = true
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.no_depth_test = true
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.render_priority = 10
 	for side in [-1.0, 1.0]:
 		var wing := Node3D.new()
 		add_child(wing)
 		wings.append(wing)
-		for i in range(6):
-			var tool := SurfaceTool.new()
-			tool.begin(Mesh.PRIMITIVE_TRIANGLES)
-			var root_point := Vector3(side * .12, -.02, 0)
-			var tip := Vector3(side * (.38 + i * .052), .13 - i * .054, -.025)
-			var middle := root_point.lerp(tip, .6)
-			var ridge := middle + Vector3(0, 0, .025)
-			var edge: Array[Vector3] = [root_point, middle + Vector3(0, .038, 0), tip + Vector3(side * .08, 0, 0), middle - Vector3(0, .038, 0)]
-			for k in range(4):
-				for p in [edge[k], edge[(k + 1) % 4], ridge]:
-					tool.add_vertex(p)
-			tool.generate_normals()
-			var feather := Models.mesh_part(wing, tool.commit(), materials[i % 4], Vector3.ZERO)
-			feather.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var mesh := Models.mesh_part(wing, _wing_mesh(side), mat, Vector3.ZERO)
+		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	cargo = Node3D.new()
 	add_child(cargo)
 	var stone_mat := Models.material(Color("afa28a"))
@@ -66,12 +99,14 @@ func update_view(enabled: bool, fraction: float, flying: bool, fov: float, delta
 	# Keep the silhouette in the same screen region across the user's FOV range.
 	var framing := tan(deg_to_rad(fov * .5)) / tan(deg_to_rad(75.0 * .5))
 	scale = Vector3(framing, framing, 1)
-	var flutter := sin(clock * (9 if flying else 3)) * (.055 if flying else .012)
+	flight_blend = move_toward(flight_blend, 1.0 if flying else 0.0, delta * 3)
+	var flutter := sin(clock * 5.5) * lerpf(.008, .045, flight_blend)
 	var gesture := sin(remaining / (.48 if action == "throw" else .42) * PI) if remaining > 0 else 0.0
 	for i in range(2):
 		var side := -1.0 if i == 0 else 1.0
-		wings[i].position = Vector3(side * .36, -.49 + flutter + gesture * .065, -1)
-		wings[i].rotation.z = side * (-.12 + flutter + gesture * .16)
+		wings[i].position = Vector3(side * .46, -.43 + flutter + gesture * .025, -1)
+		wings[i].rotation.z = side * (-.04 + flutter * .8 + gesture * .07)
+		wings[i].rotation.x = flutter * 1.4
 	cargo.position = Vector3(.52, -.48 + flutter - gesture * .10, -.98)
 	cargo.visible = load_fraction > 0 and action != "throw"
 	for i in range(3):
