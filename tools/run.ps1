@@ -168,6 +168,7 @@ try {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_startup.gd', '--', ('--startup-out=' + $startupFixture), ('--save-path=' + (Join-Path $startupFixture 'journey.json'))) 'startup-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_visuals.gd', '--', '--qa') 'visual-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_jingwei.gd', '--', '--qa') 'jingwei-tests.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_editor_preview.gd') 'editor-preview-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_pangolin.gd', '--', '--qa') 'pangolin-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_mountain.gd', '--', '--qa') 'mountain-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_environment.gd', '--', '--qa') 'environment-tests.log'

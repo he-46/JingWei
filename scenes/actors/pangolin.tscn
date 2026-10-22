@@ -8,3 +8,5 @@ model_scene = ExtResource("2")
 surface_material = ExtResource("3")
 use_arrival_animation = true
 blend_seconds = 0.10
+
+[node name="Model" parent="." instance=ExtResource("2")]

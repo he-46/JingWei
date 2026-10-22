@@ -1,0 +1,88 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/actors/jingwei.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/actors/pangolin.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/strata_mountain.glb" id="3"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/coast_tree.glb" id="4"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/crag_mountain.glb" id="5"]
+[ext_resource type="Material" path="res://assets/materials/strata_mountain.tres" id="6"]
+
+[sub_resource type="StandardMaterial3D" id="LandMaterial"]
+albedo_color = Color(0.40, 0.53, 0.31, 1)
+roughness = 1.0
+[sub_resource type="BoxMesh" id="Land"]
+material = SubResource("LandMaterial")
+size = Vector3(24, 0.6, 30)
+[sub_resource type="StandardMaterial3D" id="SandMaterial"]
+albedo_color = Color(0.76, 0.70, 0.48, 1)
+roughness = 1.0
+[sub_resource type="BoxMesh" id="Sand"]
+material = SubResource("SandMaterial")
+size = Vector3(3, 0.35, 30)
+[sub_resource type="StandardMaterial3D" id="SeaMaterial"]
+albedo_color = Color(0.12, 0.41, 0.46, 1)
+roughness = 0.32
+metallic = 0.12
+[sub_resource type="PlaneMesh" id="Sea"]
+material = SubResource("SeaMaterial")
+size = Vector2(28, 30)
+[sub_resource type="Environment" id="Environment"]
+background_mode = 1
+background_color = Color(0.55, 0.70, 0.73, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.74, 0.81, 0.77, 1)
+ambient_light_energy = 0.42
+tonemap_mode = 0
+
+[node name="EditorCoast" type="Node3D"]
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment")
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-48, -32, 0)
+light_color = Color(1, 0.92, 0.78, 1)
+light_energy = 0.68
+shadow_enabled = true
+[node name="Camera" type="Camera3D" parent="."]
+position = Vector3(20, 23, 28)
+rotation_degrees = Vector3(-33, 40, 0)
+projection = 1
+size = 34.0
+current = true
+[node name="Coast" type="Node3D" parent="."]
+[node name="Land" type="MeshInstance3D" parent="Coast"]
+position = Vector3(-13.5, -0.3, 0)
+mesh = SubResource("Land")
+[node name="Beach" type="MeshInstance3D" parent="Coast"]
+position = Vector3(0, -0.175, 0)
+mesh = SubResource("Sand")
+[node name="Sea" type="MeshInstance3D" parent="Coast"]
+position = Vector3(15.5, -0.08, 0)
+mesh = SubResource("Sea")
+
+[node name="Characters" type="Node3D" parent="."]
+[node name="Jingwei" parent="Characters" instance=ExtResource("1")]
+position = Vector3(-2, 1.5, 3)
+rotation_degrees = Vector3(0, 35, 0)
+[node name="Pangolin" parent="Characters" instance=ExtResource("2")]
+position = Vector3(-7, 0, 0)
+rotation_degrees = Vector3(0, -45, 0)
+
+[node name="Mountains" type="Node3D" parent="."]
+[node name="SmallMountain" parent="Mountains" instance=ExtResource("3")]
+position = Vector3(-9, 0, -4)
+scale = Vector3(2.2, 2.2, 2.2)
+[node name="LargeMountain" parent="Mountains" instance=ExtResource("5")]
+position = Vector3(-17, 0, -7)
+scale = Vector3(3, 3, 3)
+[node name="crag_mountain" parent="Mountains/LargeMountain"]
+material_override = ExtResource("6")
+[node name="Trees" type="Node3D" parent="."]
+[node name="Tree1" parent="Trees" instance=ExtResource("4")]
+position = Vector3(-5, 0, -7)
+[node name="Tree2" parent="Trees" instance=ExtResource("4")]
+position = Vector3(-12, 0, 5)
+[node name="Tree3" parent="Trees" instance=ExtResource("4")]
+position = Vector3(-18, 0, 1)
+
+[editable path="Mountains/LargeMountain"]

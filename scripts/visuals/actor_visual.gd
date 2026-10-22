@@ -16,12 +16,20 @@ func _make_fallback() -> Node3D:
 	return Node3D.new()
 
 func replace_model(scene: PackedScene) -> void:
+	# Actor scenes contain their default model so the editor can display it.
+	# Adopt that instance once; subsequent swaps retain the existing API.
+	var authored := get_node_or_null("Model") if not is_instance_valid(model) and scene == model_scene else null
+	if authored != null and (scene == null or authored.scene_file_path != scene.resource_path):
+		remove_child(authored)
+		authored.queue_free()
+		authored = null
 	if is_instance_valid(model):
 		remove_child(model)
 		model.queue_free()
 	model_scene = scene
-	model = scene.instantiate() if scene else _make_fallback()
-	add_child(model)
+	model = authored if authored else (scene.instantiate() if scene else _make_fallback())
+	if model.get_parent() == null:
+		add_child(model)
 	animation_player = null
 	# Imported hierarchy names are not part of the gameplay contract.
 	for child in model.find_children("*", "AnimationPlayer", true, false):
