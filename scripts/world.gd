@@ -45,6 +45,8 @@ var mountain_collisions: Array[CollisionShape3D] = []
 var mountain_cache: Array[int] = []
 var mountain_ratios: Array[float] = []
 var mountain_collision_groups: Array = []
+var natural_mountains: Array[MeshInstance3D] = []
+var natural_removed: Array[int] = []
 var sample_enabled := false
 var sample_collision_radii := PackedFloat32Array()
 var quarry_mesh: RefCounted
@@ -118,6 +120,10 @@ func setup(state: JWState, staged: bool = false, progress: Callable = Callable()
 	pickup_marker = ring(Color("fff1bd"), 0.64, 0.035)
 	add_child(pickup_marker)
 	await sync(state)
+	if staged_loading:
+		# Deferred trimesh changes must reach physics before the loading screen exits.
+		await get_tree().physics_frame
+		await get_tree().physics_frame
 	update_camera(state, 1.0, true)
 	staged_loading = false
 	loading_progress = Callable()
@@ -428,11 +434,33 @@ func _build_resources(state: JWState) -> void:
 		mountain_cache.append(-1)
 		mountain_ratios.append(-1)
 		pile_cache.append(-1)
+		natural_removed.append(-1)
 		var body := StaticBody3D.new()
 		var visual = MountainVisual.from_state(state, index)
 		body.position = site_anchors[index]
 		add_child(body)
 		var group: Array[CollisionShape3D] = []
+		if state.is_natural_mountain(index):
+			body.rotation.y = float(state.mountains[index]["yaw"])
+			var surface := MeshInstance3D.new()
+			surface.name = "NaturalMountain_%d" % index
+			var rock := StandardMaterial3D.new()
+			rock.vertex_color_use_as_albedo = true
+			rock.vertex_color_is_srgb = true
+			rock.roughness = .93
+			surface.material_override = rock
+			body.add_child(surface)
+			natural_mountains.append(surface)
+			var collider := CollisionShape3D.new()
+			body.add_child(collider)
+			group.append(collider)
+			mountain_collisions.append(collider)
+			mountain_collision_groups.append(group)
+			# Keep the authored catalog for legacy saves and art preview scenes.
+			mountain_batches[mountain_variants[index]].set_instance_transform(mountain_slots[index], Transform3D(Basis.IDENTITY, Vector3(0, -1000, 0)))
+			await _loading_step("建立自然山体", .60 + .06 * float(index) / state.mountains.size())
+			continue
+		natural_mountains.append(null)
 		var profile: PackedFloat32Array = collision_profiles[mountain_variants[index]]
 		for slab in range(8):
 			var shape := CylinderShape3D.new()
@@ -446,6 +474,29 @@ func _build_resources(state: JWState) -> void:
 		mountain_collision_groups.append(group)
 		if index % 8 == 0:
 			await _loading_step("建立山体边界", .60 + .06 * float(index) / state.mountains.size())
+
+func _sync_natural_mountain(state: JWState, index: int) -> void:
+	var field = state.mountain_field(index)
+	var work: float = state.mountains[index]["work"]
+	var removed: int = field.removed_cells(work)
+	if natural_removed[index] == removed:
+		return
+	natural_removed[index] = removed
+	var surface := natural_mountains[index]
+	var collider := mountain_collisions[index]
+	if removed == field.total_cells:
+		surface.visible = false
+		surface.mesh = null
+		collider.set_deferred("disabled", true)
+		collider.set_deferred("shape", null)
+		return
+	var mesh: ArrayMesh = field.surface(work)
+	surface.mesh = mesh
+	# Static trimesh follows the very same rock surface, including valleys.
+	var shape := mesh.create_trimesh_shape()
+	shape.backface_collision = true
+	collider.set_deferred("shape", shape)
+	collider.set_deferred("disabled", false)
 
 func sync(state: JWState) -> void:
 	for index in state.stone_dirty:
@@ -467,22 +518,25 @@ func sync(state: JWState) -> void:
 		if mountain_ratios[index] != ratio:
 			mountain_ratios[index] = ratio
 			mountain_cache[index] = count
-			var transform: Transform3D = visual.transform
-			if count == 0:
-				transform.origin.y = -100
-			var mesh = mountain_batches[mountain_variants[index]]
-			var slot := mountain_slots[index]
-			mesh.set_instance_transform(slot, transform)
-			mesh.set_instance_custom_data(slot, Color(ratio, 0, 0, 1))
-			mesh.set_instance_color(slot, Color("e5ead3") if index % 3 == 0 else Color.WHITE)
-			var group: Array = mountain_collision_groups[index]
-			for slab in range(group.size()):
-				var collider: CollisionShape3D = group[slab]
-				var bottom := float(slab) / group.size()
-				var top := minf(float(slab + 1) / group.size(), ratio)
-				collider.set_deferred("disabled", top <= bottom)
-				collider.shape.height = maxf(0.001, (top - bottom) * visual.height)
-				collider.position.y = (bottom + maxf(bottom, top)) * visual.height * 0.5
+			if state.is_natural_mountain(index):
+				_sync_natural_mountain(state, index)
+			else:
+				var transform: Transform3D = visual.transform
+				if count == 0:
+					transform.origin.y = -100
+				var mesh = mountain_batches[mountain_variants[index]]
+				var slot := mountain_slots[index]
+				mesh.set_instance_transform(slot, transform)
+				mesh.set_instance_custom_data(slot, Color(ratio, 0, 0, 1))
+				mesh.set_instance_color(slot, Color("e5ead3") if index % 3 == 0 else Color.WHITE)
+				var group: Array = mountain_collision_groups[index]
+				for slab in range(group.size()):
+					var collider: CollisionShape3D = group[slab]
+					var bottom := float(slab) / group.size()
+					var top := minf(float(slab + 1) / group.size(), ratio)
+					collider.set_deferred("disabled", top <= bottom)
+					collider.shape.height = maxf(0.001, (top - bottom) * visual.height)
+					collider.position.y = (bottom + maxf(bottom, top)) * visual.height * 0.5
 			_update_quarry_site(index, visual)
 		var stock: int = visual.stock
 		if pile_cache[index] != stock:

@@ -165,15 +165,15 @@ func run() -> void:
 		await process_frame
 		var rendered := 0
 		var different_meshes: Dictionary = {}
-		for batch in game.world.mountain_batches:
-			rendered += batch.instance_count
-			different_meshes[hash(batch.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX])] = true
-		expect(game.state.target_stones == target and rendered == game.state.mountains.size() and different_meshes.size() == (5 if "--imported-visuals" in OS.get_cmdline_user_args() else 8), "shared mountain meshes cover all generated mountains")
+		for surface in game.world.natural_mountains:
+			rendered += int(surface != null and surface.visible)
+			different_meshes[hash(surface.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX])] = true
+		expect(game.state.target_stones == target and rendered == game.state.mountains.size() and different_meshes.size() == rendered, "each new mountain has its own seeded natural surface")
 		expect(game.world.npc_views.size() == 1, "larger world still has exactly one pangolin")
-		var first_shape: CylinderShape3D = game.world.mountain_collisions[0].shape
-		var last_shape: CylinderShape3D = game.world.mountain_collisions[-1].shape
-		expect(last_shape.radius > first_shape.radius and last_shape.height > first_shape.height, "collision footprints grow with actual stock")
-		expect(game.world.flight_ceiling > last_shape.height + 1, "high flight clears the largest mountain")
+		var first_mesh: Mesh = game.world.natural_mountains[0].mesh
+		var last_mesh: Mesh = game.world.natural_mountains[-1].mesh
+		expect(game.world.mountain_collisions[-1].shape is ConcavePolygonShape3D and last_mesh.get_aabb().size.x > first_mesh.get_aabb().size.x and last_mesh.get_aabb().size.y > first_mesh.get_aabb().size.y, "natural surface collision grows by adding fixed cells")
+		expect(game.world.flight_ceiling > last_mesh.get_aabb().end.y + 1, "high flight clears the largest mountain")
 		game.toggle_overview()
 		var corners_visible := true
 		for index in [0, game.state.grid_size - 1, game.state.grid_size * (game.state.grid_size - 1), game.state.grid_size * game.state.grid_size - 1]:

@@ -180,8 +180,9 @@ func run() -> void:
 		expect(game.hud.modal_title.text == "穿山甲" and game.hud.modal_open, "E opens pangolin dialogue %d" % target)
 		game._modal_action("resume")
 		# Mountain body blocks aiming at the ground behind it.
-		var mountain: Vector2 = game.state.mountain_position(0)
-		var radius: float = game.state.mountain_radius(0)
+		# The first 1024-stone mound is now genuinely small; use a mountain taller than eye level.
+		var mountain: Vector2 = game.state.mountain_position(-1)
+		var radius: float = game.state.mountain_radius(-1)
 		place(mountain + Vector2(radius + 2, 0))
 		await physics_frame
 		aim_at(Vector3(mountain.x - radius - 2, .44, mountain.y))

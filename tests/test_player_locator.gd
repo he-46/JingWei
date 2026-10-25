@@ -72,6 +72,11 @@ func run() -> void:
 	game.save_game(true)
 	game.choose_world(100000)
 	await game.wait_until_ready()
+	# Keep the original authored occlusion fixture; natural surface rays are covered separately.
+	for mountain in game.state.mountains:
+		mountain.erase("terrain_version")
+	await game._build_world()
+	game.hud.hide_modal()
 	expect(FileAccess.get_file_as_string(path) == original, "sample save and restart leave protected journey byte-for-byte unchanged")
 	expect(game.world.tree_canopies.size() <= 200 and not game.world.tree_canopies.is_empty(), "CPU canopy data is bounded and available even without GPU transform readback")
 	await frame_at(Vector2(-2.5, 3))

@@ -181,6 +181,12 @@ func _build_world() -> void:
 		feedback = null
 		# Release the previous scene before allocating the next set of batches.
 		await get_tree().process_frame
+	hud.show_loading("生成山形", .04)
+	await _background(func() -> bool:
+		for index in range(state.mountains.size()):
+			if state.is_natural_mountain(index):
+				state.mountain_field(index)
+		return true)
 	world = World.new()
 	# The opaque loading panel conceals construction while the renderer prepares
 	# materials incrementally. Hiding the entire 3D tree defers all first-use shader
@@ -775,7 +781,9 @@ func _replace_world(target: int) -> void:
 	var prepared: Dictionary = await _background(func() -> Dictionary:
 		if save_enabled and (selection_pending or choosing_again) and not _archive_before_new():
 			return {"ok": false}
-		return {"ok": true, "state": State.new(target)})
+		# Fresh journeys vary; the persisted world seed reproduces them on load.
+		var seed_value := 10213 if not save_enabled or "--qa" in OS.get_cmdline_user_args() else randi()
+		return {"ok": true, "state": State.new(target, seed_value)})
 	if not prepared.ok:
 		hud.show_world_picker(not selection_pending)
 		hud.modal_text.text = "原存档暂时无法备份，请检查保存目录权限。当前旅程仍被保留。"

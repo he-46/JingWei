@@ -67,6 +67,9 @@ func run() -> void:
 	await process_frame
 	for profile in State.PROFILES:
 		var state := State.new(int(profile["target"]), 10213)
+		# Regression for authored mountains in existing saves. New geometry has its own suite.
+		for mountain in state.mountains:
+			mountain.erase("terrain_version")
 		var world := World.new()
 		root.add_child(world)
 		world.setup(state)
@@ -98,6 +101,9 @@ func run() -> void:
 	game.set_physics_process(false)
 	game.choose_world(100000)
 	await game.wait_until_ready()
+	for mountain in game.state.mountains:
+		mountain.erase("terrain_version")
+	await game._build_world()
 	game.save_enabled = false
 	unlock(game.state)
 	var full_yield: int = game.state.mountains[0]["yield"]

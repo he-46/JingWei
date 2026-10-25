@@ -27,6 +27,11 @@ func run() -> void:
 	await process_frame
 	game.choose_world(100000)
 	await game.wait_until_ready()
+	# This suite exercises authored import compatibility for existing saves.
+	for mountain in game.state.mountains:
+		mountain.erase("terrain_version")
+	await game._build_world()
+	game.hud.hide_modal()
 	var bird = game.world.bird_model
 	var animal = game.world.npc_views[0]["animal"]
 	expect(not game.save_enabled, "preview never opens or overwrites a player save")

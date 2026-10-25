@@ -4,6 +4,8 @@ Godot 4.7.2 / GDScript 的单机 3D 增量游戏原型。从大陆海岸出发�
 
 ## 开始试玩
 
+源码新增了随机自然山体：新旅程使用固定格子储量与连续岩面，旧存档保留原山形。实现说明与 Godot 可调预览见 [自然山体](docs/natural-mountains.md)。此更新尚未重新导出下述独立试玩包。
+
 当前源码为 **0.5.4 · 第一人称羽翼重做**，调整翼形、羽毛层次与振翅动作，见 [交付记录](docs/releases/FP-WINGS.md) 与 [任务包](docs/release-tasks.md)。Windows 独立试玩包解压后双击 **Jingwei.exe**，与 Jingwei.pck 放在同一目录即可，无需 Godot、首次导入或联网，与源码版共用旅程。保留 [第一人称切换与改键](docs/releases/FP-01.md)、[轻量启动与预热](docs/releases/QA-04.md)、[分阶段加载](docs/releases/QA-03.md) 和 [运行设置](docs/releases/QA-01.md)。独立 ZIP 是构建产物，不随 Git 源码归档附带。
 
 从 GitHub 下载的仓库 ZIP 仍是 **源码 + 随附 Godot 4.7.2 引擎**，无需另行安装 Godot：

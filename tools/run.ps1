@@ -171,6 +171,7 @@ try {
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_editor_preview.gd') 'editor-preview-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_pangolin.gd', '--', '--qa') 'pangolin-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_mountain.gd', '--', '--qa') 'mountain-tests.log'
+            Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_natural_mountains.gd', '--', '--qa') 'natural-mountain-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_environment.gd', '--', '--qa') 'environment-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_expansion.gd', '--', '--qa') 'expansion-tests.log'
             Invoke-Engine @('--headless', '--path', $projectRoot, '--script', 'res://tests/test_feedback.gd', '--', '--qa') 'feedback-tests.log'

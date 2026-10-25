@@ -2,6 +2,7 @@ class_name JWState
 extends RefCounted
 
 const SAVE_VERSION := 3
+const MountainField = preload("res://scripts/mountain_field.gd")
 const CELL_SIZE := 4.0
 const LAND_HEIGHT := 0.44
 const BIRD_HOVER_HEIGHT := 1.45
@@ -48,6 +49,7 @@ var artifacts: Array[String] = []
 var artifact_plan: Array[Dictionary] = []
 var mountains: Array[Dictionary] = []
 var mountain_radii: Array[float] = []
+var mountain_fields: Dictionary = {}
 var stone_positions: Array[Vector2] = []
 var stone_base: Array[int] = []
 var stone_amounts: Array[int] = []
@@ -165,7 +167,8 @@ func _generate_mountains(rng: RandomNumberGenerator, count: int) -> void:
 		var stock := 1024 + int(floor((budget - count * 1024) * float(index * index) / weight_total))
 		allocated += stock
 		mountains.append({"x": points[index].x, "z": points[index].y, "yield": stock, "work": 0.0,
-			"started": false, "settled": false, "stock": 0, "shape": index % 5, "yaw": rng.randi_range(0, 6433) / 1024.0})
+			"started": false, "settled": false, "stock": 0, "shape": index % 5, "yaw": rng.randi_range(0, 6433) / 1024.0,
+			"terrain_version": MountainField.VERSION})
 	mountains[-1]["yield"] = int(mountains[-1]["yield"]) + budget - allocated
 
 func mountain_radius(index: int) -> float:
@@ -181,7 +184,20 @@ func mountain_radius(index: int) -> float:
 	return mountain_radii[index]
 
 func mountain_height(index: int) -> float:
+	if is_natural_mountain(index):
+		return mountain_field(index).peak * MountainField.UNIT
 	return mountain_radius(index) * 2.25
+
+func is_natural_mountain(index: int) -> bool:
+	return int(mountains[index].get("terrain_version", 0)) == MountainField.VERSION
+
+func mountain_field(index: int):
+	if index < 0:
+		index += mountains.size()
+	if not mountain_fields.has(index):
+		var seed_id := posmod(world_seed, 2147483647) ^ ((index + 1) * 104729)
+		mountain_fields[index] = MountainField.generate(int(mountains[index]["yield"]), seed_id, seed_id % 4, mountain_radius(index))
+	return mountain_fields[index]
 
 func high_flight_height() -> float:
 	var height := 8.2
@@ -635,7 +651,11 @@ static func from_snapshot(data: Dictionary) -> JWState:
 			return null
 		if bool(entry["settled"]) != (work >= amount) or (not entry["started"] and work > 0) or (not entry["settled"] and stock != 0):
 			return null
+		if entry.has("terrain_version") and (not _integer(entry["terrain_version"]) or int(entry["terrain_version"]) != MountainField.VERSION):
+			return null
 		result.mountains.append({"x": point.x, "z": point.y, "yield": amount, "work": work, "stock": stock, "started": entry["started"], "settled": entry["settled"], "shape": int(entry["shape"]), "yaw": float(entry["yaw"])})
+		if entry.has("terrain_version"):
+			result.mountains[-1]["terrain_version"] = MountainField.VERSION
 		mountain_total += amount
 	if mountain_total != int(result.target_stones * 1.2):
 		return null

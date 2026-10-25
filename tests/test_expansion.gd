@@ -51,6 +51,9 @@ func run() -> void:
 			expect(data[Mesh.ARRAY_TEX_UV].size() == data[Mesh.ARRAY_VERTEX].size(), "decor retains complete UVs for shared palettes")
 	for profile in State.PROFILES:
 		var state := State.new(profile.target, 10213)
+		# Preserve coverage of the authored catalog still used by pre-procedural saves.
+		for mountain in state.mountains:
+			mountain.erase("terrain_version")
 		var before := state.snapshot()
 		var world := World.new()
 		root.add_child(world)
