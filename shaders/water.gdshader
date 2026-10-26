@@ -13,6 +13,15 @@ uniform vec2 atlas_size = vec2(49.0);
 uniform float map_side = 48.0;
 uniform vec4 distant_fog : source_color = vec4(0.663, 0.745, 0.718, 1.0);
 uniform vec4 ripple_events[8];
+// Values are supplied by ocean_parameters.gd for both rendering and CPU aiming.
+uniform vec4 wave_components[3];
+uniform vec3 wave_speeds;
+uniform float horizontal_scale;
+uniform float shore_range;
+uniform vec2 shore_fade;
+uniform vec2 outer_fade;
+uniform vec4 ripple_shape;
+uniform vec2 ripple_limits;
 varying vec3 world_point;
 varying vec2 rest_point;
 varying vec3 wave_normal;
@@ -20,32 +29,33 @@ varying vec3 wave_normal;
 float shore_distance(vec2 p) {
     vec2 pixel = p - atlas_origin;
     if (any(lessThan(pixel, vec2(0.0))) || any(greaterThan(pixel, atlas_size - vec2(1.0)))) {
-        return clamp(p.x, -8.0, 8.0);
+        return clamp(p.x, -shore_range, shore_range);
     }
     return texture(shore_atlas, (pixel + vec2(0.5)) / atlas_size).r;
 }
 vec3 one_wave(vec2 p, vec2 direction, float amplitude, float k, float speed) {
     float phase = k * dot(direction, p) - speed * wave_time;
-    return vec3(direction.x * 0.55 * amplitude * cos(phase), amplitude * sin(phase), direction.y * 0.55 * amplitude * cos(phase));
+    return vec3(direction.x * horizontal_scale * amplitude * cos(phase), amplitude * sin(phase), direction.y * horizontal_scale * amplitude * cos(phase));
 }
 float impact_wave(vec2 p) {
     float value = 0.0;
     for (int i = 0; i < 8; i++) {
         float age = wave_time - ripple_events[i].z;
-        if (age >= 0.0 && age <= 4.5) {
-            float front = distance(p, ripple_events[i].xy) - age * 2.8;
-            value += ripple_events[i].w * sin(front * 5.0) * exp(-front * front * 1.5) * exp(-age * 0.7);
+        if (age >= 0.0 && age <= ripple_limits.x) {
+            float front = distance(p, ripple_events[i].xy) - age * ripple_shape.x;
+            value += ripple_events[i].w * sin(front * ripple_shape.y) * exp(-front * front * ripple_shape.z) * exp(-age * ripple_shape.w);
         }
     }
-    return clamp(value, -0.10, 0.10);
+    return clamp(value, -ripple_limits.y, ripple_limits.y);
 }
 vec3 displacement(vec2 p) {
-    vec3 offset = one_wave(p, vec2(-0.9805807, 0.1961161), 0.16, 0.70, 1.05);
-    offset += one_wave(p, vec2(-0.7071068, -0.7071068), 0.07, 1.15, 1.38);
-    offset += one_wave(p, vec2(-0.8574929, 0.5144958), 0.035, 1.90, 1.85);
+    vec3 offset = vec3(0.0);
+    for (int i = 0; i < 3; i++) {
+        offset += one_wave(p, wave_components[i].xy, wave_components[i].z, wave_components[i].w, wave_speeds[i]);
+    }
     offset.y += impact_wave(p);
     float outer = max(abs(p.x - atlas_origin.x - map_side * 0.5), abs(p.y - atlas_origin.y - map_side * 0.5)) - map_side * 0.5;
-    return offset * smoothstep(0.35, 3.0, shore_distance(p)) * (1.0 - smoothstep(12.0, 32.0, outer));
+    return offset * smoothstep(shore_fade.x, shore_fade.y, shore_distance(p)) * (1.0 - smoothstep(outer_fade.x, outer_fade.y, outer));
 }
 void vertex() {
     rest_point = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xz;
@@ -68,7 +78,7 @@ void fragment() {
     float band = smoothstep(0.78, 0.99, cos(phase + sin(rest_point.y * 1.4) * 0.10));
     float near_shore = smoothstep(0.02, 0.20, d) * (1.0 - smoothstep(3.0, 6.0, d));
     float foam = band * near_shore * breakup * 0.48 * detail;
-    float ripples = abs(impact_wave(rest_point)) * 3.2 * smoothstep(0.35, 3.0, d) * detail;
+    float ripples = abs(impact_wave(rest_point)) * 3.2 * smoothstep(shore_fade.x, shore_fade.y, d) * detail;
     vec3 normal = normalize(wave_normal);
     float light = 0.76 + 0.24 * normal.y + (-normal.x * 0.7 + normal.z * 0.35) * detail;
     float fine = sin(rest_point.y * 2.1 - rest_point.x * 0.6 + wave_time * 0.7);

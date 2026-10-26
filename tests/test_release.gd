@@ -146,7 +146,7 @@ func run() -> void:
 		# Completion now requests a background write. Observe its actual completion
 		# before checking disk or destroying this deliberately process-disabled scene.
 		var save_deadline := Time.get_ticks_msec() + 10000
-		while game.save_worker.busy() and Time.get_ticks_msec() < save_deadline:
+		while game.saves.worker.busy() and Time.get_ticks_msec() < save_deadline:
 			game._poll_save()
 			await process_frame
 		expect(State.from_snapshot(game.state.snapshot()) != null and Store.load_game(path).state.won, "completed progress remains valid and is saved")

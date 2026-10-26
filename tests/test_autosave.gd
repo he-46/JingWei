@@ -29,10 +29,10 @@ func expect(value: bool, description: String) -> void:
 
 func drain() -> void:
 	var deadline := Time.get_ticks_msec() + 10000
-	while game.save_worker.busy() and Time.get_ticks_msec() < deadline:
+	while game.saves.worker.busy() and Time.get_ticks_msec() < deadline:
 		game._poll_save()
 		await process_frame
-	expect(not game.save_worker.busy(), "save finishes within test deadline")
+	expect(not game.saves.worker.busy(), "save finishes within test deadline")
 
 func run() -> void:
 	for arg in OS.get_cmdline_user_args():
@@ -55,7 +55,7 @@ func run() -> void:
 		var stamp := Time.get_ticks_usec()
 		game.request_autosave()
 		var request_ms := (Time.get_ticks_usec() - stamp) / 1000.0
-		expect(game.save_worker.busy(), "request owns a background worker")
+		expect(game.saves.worker.busy(), "request owns a background worker")
 		var frozen: Dictionary = game.state.snapshot()
 		game.state.elapsed += 1
 		await drain()
@@ -63,18 +63,18 @@ func run() -> void:
 		stamp = Time.get_ticks_usec()
 		expect(Store.save_game(game.save_path + ".reference", game.state) == OK, "synchronous comparison saves valid data")
 		records.append({"target": target, "request_main_ms": request_ms, "synchronous_main_ms": (Time.get_ticks_usec() - stamp) / 1000.0})
-	game.save_worker = SlowWorker.new()
+	game.saves.worker = SlowWorker.new()
 	game.request_autosave()
 	game.state.elapsed += 7
 	for i in range(20):
 		game.request_autosave()
-	expect(game.save_pending, "repeated requests coalesce while IO is delayed")
+	expect(game.saves.pending, "repeated requests coalesce while IO is delayed")
 	var frames := 0
 	var started := Time.get_ticks_msec()
 	while Time.get_ticks_msec() - started < 150:
 		frames += 1
 		await process_frame
-	expect(frames > 1 and game.save_worker.busy(), "main loop continues during simulated slow disk")
+	expect(frames > 1 and game.saves.worker.busy(), "main loop continues during simulated slow disk")
 	await drain()
 	expect(Store.load_game(game.save_path).state.snapshot() == game.state.snapshot(), "coalesced request saves latest state")
 	expect(Store._read(game.save_path + ".bak") != null, "previous valid generation remains readable")
@@ -82,8 +82,8 @@ func run() -> void:
 	game.state.elapsed += 2
 	game.request_autosave()
 	expect(game.save_game(true), "explicit save waits for pending automatic write")
-	expect(not game.save_worker.busy() and not game.save_pending and Store.load_game(game.save_path).state.snapshot() == game.state.snapshot(), "manual durability barrier saves latest state without a later stale write")
-	game.save_worker = Worker.new()
+	expect(not game.saves.worker.busy() and not game.saves.pending and Store.load_game(game.save_path).state.snapshot() == game.state.snapshot(), "manual durability barrier saves latest state without a later stale write")
+	game.saves.worker = Worker.new()
 	var primary := FileAccess.get_file_as_bytes(game.save_path)
 	var backup := FileAccess.get_file_as_bytes(game.save_path + ".bak")
 	DirAccess.make_dir_absolute(game.save_path + ".tmp")
@@ -114,12 +114,12 @@ func run() -> void:
 	expect(Store.load_game(game.save_path).status == "recovered", "damaged primary falls back to known-good backup")
 	backup = FileAccess.get_file_as_bytes(game.save_path + ".bak")
 	expect(game.save_game(true) and FileAccess.get_file_as_bytes(game.save_path + ".bak") == backup, "repair retains known-good backup")
-	game.save_worker = SlowWorker.new()
+	game.saves.worker = SlowWorker.new()
 	game.request_autosave()
 	game.choosing_again = true
 	game.choose_world(100000)
 	await game.wait_until_ready()
-	expect(Store.load_game(game.save_path).state.target_stones == 100000 and not game.save_worker.busy(), "new map waits for old writer before replacing save")
+	expect(Store.load_game(game.save_path).state.target_stones == 100000 and not game.saves.worker.busy(), "new map waits for old writer before replacing save")
 	game.queue_free()
 	await process_frame
 	await process_frame

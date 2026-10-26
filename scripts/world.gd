@@ -179,7 +179,7 @@ func _build_land(state: JWState) -> void:
 	water_material.set_shader_parameter("sea_end", (state.grid_size - state.land_cols) * State.CELL_SIZE)
 	ocean.setup(state, water_material)
 	water_surface = Models.mesh_part(self, ocean.mesh(), water_material, Vector3(0, Coast.WATER_HEIGHT, 0))
-	water_surface.extra_cull_margin = .6
+	water_surface.extra_cull_margin = Ocean.Parameters.displacement_bound() * maxf(1, Ocean.Parameters.HORIZONTAL_SCALE) + .05
 	water_surface.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# Mainland continues west/north/south beyond the square journey boundary.
 	var land := PlaneMesh.new()

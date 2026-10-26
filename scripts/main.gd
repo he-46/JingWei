@@ -6,15 +6,14 @@ const State = preload("res://scripts/state.gd")
 const World = preload("res://scripts/world.gd")
 const HUD = preload("res://scripts/hud.gd")
 const Store = preload("res://scripts/save_store.gd")
-const SaveWorker = preload("res://scripts/save_worker.gd")
-var save_worker := SaveWorker.new()
-var save_pending := false
+const SaveCoordinator = preload("res://scripts/save_coordinator.gd")
+var saves := SaveCoordinator.new()
 var save_failed := false
 const Soundscape = preload("res://scripts/soundscape.gd")
 const Feedback = preload("res://scripts/visuals/action_feedback.gd")
 const Preferences = preload("res://scripts/preferences.gd")
 const RenderWarmup = preload("res://scripts/visuals/render_warmup.gd")
-const FirstPersonAim = preload("res://scripts/first_person_aim.gd")
+const ViewControls = preload("res://scripts/view_controls.gd")
 const FirstPersonBody = preload("res://scripts/visuals/first_person_body.gd")
 var first_person_body: Node3D
 @export var bird_visual_scene: PackedScene
@@ -57,6 +56,8 @@ var application_focused := true
 var aim_reason := ""
 
 func _ready() -> void:
+	saves.completed.connect(_save_result)
+	saves.started.connect(func() -> void: hud.save_label.text = "正在保存…")
 	_setup_input()
 	var target := 100000
 	var atlas_view := false
@@ -169,7 +170,7 @@ func _background(job: Callable) -> Variant:
 
 func _exit_tree() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	save_worker.finish()
+	saves.finish()
 	# Closing during a read/archive must finish its file operation before exit.
 	if loading_thread != null and loading_thread.is_started():
 		loading_thread.wait_to_finish()
@@ -210,30 +211,10 @@ func _prepare_rendering() -> void:
 		await RenderingServer.frame_post_draw
 
 func _setup_input() -> void:
-	var keys := {
-		"jw_left": [KEY_A, KEY_LEFT], "jw_right": [KEY_D, KEY_RIGHT],
-		"jw_up": [KEY_W, KEY_UP], "jw_down": [KEY_S, KEY_DOWN],
-		"jw_high": [KEY_SPACE], "jw_interact": [KEY_E], "jw_throw": [KEY_Q],
-		"jw_menu": [KEY_ESCAPE], "jw_mute": [KEY_M], "jw_overview": [KEY_TAB],
-		"jw_upgrades": [KEY_U], "jw_help": [KEY_F1],
-	}
-	for action in keys:
-		if not InputMap.has_action(action):
-			InputMap.add_action(action)
-		InputMap.action_erase_events(action)
-		for key in keys[action]:
-			var event := InputEventKey.new()
-			event.physical_keycode = key
-			InputMap.action_add_event(action, event)
-	_apply_view_key()
+	ViewControls.setup_input(int(preferences.view_key))
 
 func _apply_view_key() -> void:
-	if not InputMap.has_action("jw_view"):
-		InputMap.add_action("jw_view")
-	InputMap.action_erase_events("jw_view")
-	var event := InputEventKey.new()
-	event.physical_keycode = int(preferences.view_key)
-	InputMap.action_add_event("jw_view", event)
+	ViewControls.apply_view_key(int(preferences.view_key))
 
 func _begin_view_key_binding() -> void:
 	binding_view_key = true
@@ -255,10 +236,7 @@ func _input(event: InputEvent) -> void:
 			change_setting("view_key", key)
 		return
 	if _first_person_active() and not loading and not hud.modal_open and not hud.drawer_open and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and event is InputEventMouseMotion:
-		var sensitivity: float = .0025 * float(preferences.look_sensitivity)
-		world.look_yaw = wrapf(world.look_yaw - event.relative.x * sensitivity, -PI, PI)
-		world.look_pitch = clampf(world.look_pitch - event.relative.y * sensitivity, deg_to_rad(-85), deg_to_rad(80))
-		world.update_camera(state, 0, true)
+		ViewControls.mouse_look(state, world, event, float(preferences.look_sensitivity))
 
 func _first_person_active() -> bool:
 	return is_instance_valid(world) and world.first_person and not world.overview
@@ -288,75 +266,12 @@ func toggle_view() -> void:
 	_sync_pointer()
 
 func first_person_target() -> Variant:
-	aim_reason = ""
-	var origin: Vector3 = world.camera.global_position
-	var direction: Vector3 = -world.camera.global_basis.z
-	var hit: Variant = FirstPersonAim.surface_hit(state, origin, direction, world.ocean)
-	if hit == null:
-		aim_reason = "瞄准海面或陆地" if direction.y >= 0 else "落点超出地图"
-		return null
-	var query := PhysicsRayQueryParameters3D.create(origin, hit)
-	query.exclude = [world.bird_body.get_rid()]
-	# Mountain collisions block a ray aimed through the mountain at a coast.
-	if not world.get_world_3d().direct_space_state.intersect_ray(query).is_empty():
-		aim_reason = "山体遮挡"
-		return null
-	return Vector2(hit.x, hit.z)
+	var result := ViewControls.target(state, world)
+	aim_reason = result.reason
+	return result.point
 
 func _first_person_ui(target: Vector2) -> void:
-	var usable: bool = target.is_finite() and state.can_throw(target, world.bird_body.position.y)
-	hud.crosshair.add_theme_color_override("font_color", Color("fff1bd") if usable and state.carried > 0 else (Color("d38b79") if target.is_finite() and not usable else Color("b9c7c0")))
-	hud.cell_label.visible = true
-	if not target.is_finite():
-		hud.cell_label.text = aim_reason
-	elif state.carried == 0:
-		hud.cell_label.text = "没有携石"
-	else:
-		var distance: float = state.player.distance_to(target)
-		var reach: float = state.throw_distance(world.bird_body.position.y)
-		var index: int = state.cell_at(target)
-		var depth: int = state.sea_depth[index]
-		hud.cell_label.text = "%s %s/%s 石" % [State.DEPTH_NAMES[depth], State.number(state.sea_fill[index]), State.number(state.sea_capacity[index])] if depth >= 0 else "陆地 · 可拾回"
-		hud.cell_label.text += " · 距离 %.1f / 射程 %.1f" % [distance, reach]
-		if usable:
-			hud.cell_label.text += " · Q 投石"
-		else:
-			hud.cell_label.text += " · 超距"
-	# Same priority and low-altitude rule as E; a screen hint never chooses a new
-	# resource or bypasses proximity. Out-of-view targets remain in the bottom HUD.
-	var point := Vector2.INF
-	var caption := ""
-	var height := .65
-	if world.bird_body.position.y <= 2.7:
-		var npc: int = state.nearby_mountain(state.player, 2.1, true)
-		var drop: int = state.closest_drop(state.player)
-		var pile: int = state.nearby_pile(state.player)
-		var stone: int = state.closest_stone(state.player)
-		if npc >= 0:
-			point = state.npc_position(npc)
-			caption = "E · 对话"
-			height = 1.35
-		elif state.carried < state.capacity():
-			if drop >= 0:
-				point = state.cell_center(drop)
-				caption = "E · 拾回石子"
-			elif pile >= 0:
-				point = state.pile_position(pile)
-				caption = "E · 搬运石料"
-			elif stone >= 0:
-				point = state.stone_positions[stone]
-				caption = "E · 拾石"
-	var screen := Vector2.INF
-	if point.is_finite():
-		var position := Vector3(point.x, height, point.y)
-		if not world.camera.is_position_behind(position):
-			var projected: Vector2 = world.camera.unproject_position(position)
-			var rect: Rect2 = get_viewport().get_visible_rect().grow(-100)
-			var query := PhysicsRayQueryParameters3D.create(world.camera.global_position, position)
-			query.exclude = [world.bird_body.get_rid()]
-			if rect.has_point(projected) and world.get_world_3d().direct_space_state.intersect_ray(query).is_empty():
-				screen = projected
-	hud.set_interaction_hint(screen, caption)
+	ViewControls.update_hint(state, world, hud, target, aim_reason, get_viewport().get_visible_rect())
 
 func _physics_process(delta: float) -> void:
 	if loading or hud == null or hud.modal_open or selection_pending or (_first_person_active() and (hud.drawer_open or not application_focused)):
@@ -477,10 +392,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	_sync_pointer()
 
 func mouse_world_point(screen: Vector2) -> Variant:
-	var origin: Vector3 = world.camera.project_ray_origin(screen)
-	var ray: Vector3 = world.camera.project_ray_normal(screen)
-	var hit: Variant = FirstPersonAim.surface_hit(state, origin, ray, world.ocean)
-	return Vector2(hit.x, hit.z) if hit != null else null
+	return ViewControls.mouse_target(state, world, screen)
 
 func toggle_overview() -> void:
 	if hud.modal_open or selection_pending:
@@ -773,8 +685,8 @@ func choose_world(target: int) -> bool:
 
 func _replace_world(target: int) -> void:
 	hud.show_loading("保留上一段旅程", 0)
-	save_pending = false
-	while save_worker.busy():
+	saves.pending = false
+	while saves.worker.busy():
 		_poll_save()
 		await get_tree().process_frame
 	await get_tree().process_frame
@@ -816,16 +728,7 @@ func _replace_world(target: int) -> void:
 	loading_finished.emit()
 
 func _archive_before_new() -> bool:
-	# Persist the current in-memory journey before archiving when a restart was requested.
-	if choosing_again and not save_blocked:
-		if Store.save_game(save_path, state) != OK:
-			return false
-	for suffix in ["", ".bak"]:
-		if FileAccess.file_exists(save_path + suffix):
-			var archive: String = save_path + suffix + ".before-reset-" + str(int(Time.get_unix_time_from_system())) + "-" + str(Time.get_ticks_usec())
-			if DirAccess.copy_absolute(ProjectSettings.globalize_path(save_path + suffix), ProjectSettings.globalize_path(archive)) != OK:
-				return false
-	return true
+	return SaveCoordinator.archive_before_new(save_path, state, choosing_again and not save_blocked)
 
 func _save_result(error: Error, manual: bool = false) -> void:
 	var was_failed := save_failed
@@ -842,25 +745,15 @@ func _save_result(error: Error, manual: bool = false) -> void:
 		hud.modal_text.text = "已填 %s / %s 石\n%s" % [State.number(state.total_delivered), State.number(state.target_stones), hud.save_label.text]
 
 func request_autosave() -> void:
-	if loading or not save_enabled or selection_pending or save_blocked:
-		return
-	if save_worker.busy():
-		save_pending = true
-		return
-	# snapshot() copies all mutable arrays/dictionaries on the main thread.
-	var error := save_worker.start(save_path, state.snapshot())
-	if error != OK:
-		_save_result(error)
-	else:
-		hud.save_label.text = "正在保存…"
+	if _can_autosave():
+		saves.request(save_path, state.snapshot)
+
+func _can_autosave() -> bool:
+	return not loading and save_enabled and not selection_pending and not save_blocked
 
 func _poll_save() -> void:
-	if not save_worker.ready():
-		return
-	_save_result(save_worker.finish())
-	if save_pending:
-		save_pending = false
-		request_autosave()
+	if state != null:
+		saves.poll(save_path, state.snapshot, _can_autosave())
 
 func save_game(manual: bool = false) -> bool:
 	if loading or not save_enabled or selection_pending:
@@ -868,12 +761,7 @@ func save_game(manual: bool = false) -> bool:
 	if save_blocked:
 		hud.save_label.text = "原存档无法读取 · 自动保存停用"
 		return false
-	# Explicit save/close is a durability barrier, never racing an automatic write.
-	save_pending = false
-	save_worker.finish()
-	var error := Store.save_game(save_path, state)
-	_save_result(error, manual)
-	return error == OK
+	return saves.save_now(save_path, state, manual)
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:

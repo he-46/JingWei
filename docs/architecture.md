@@ -4,6 +4,8 @@
 
 scripts/state.gd 是纯数据状态，不依赖场景节点。scripts/main.gd 处理输入、视野判断、对话和旅程流程；world.gd 组织场景，并向 scripts/visuals 的角色控制器和山体快照传递表现状态；models.gd 提供默认程序网格。hud.gd 显示修行、海图和选择界面；save_store.gd 管理存档。
 
+2026-10-26 代码整理：main.gd 保留场景生命周期、暂停/焦点门禁与玩法调度；view_controls.gd 提供无持久场景引用的按键映射、观察、瞄准与近景提示；save_coordinator.gd 管理后台写入、请求合并、手动保存等待和重开归档，结果通过信号交回界面。save_worker.gd 仅负责线程，save_store.gd 仅负责文件格式与原子写入。海浪参数统一在 ocean_parameters.gd，海岸距离图采用分区更新。详情见 [代码整理记录](code-maintenance.md)。
+
 ART-01 为角色建立可替换预制场景，内部可使用 GLB 骨骼动画；world 不再读取 WingLeft、WingRight、Load。角色动画随模拟时钟手动推进，采集、投石与完工事件仅接收逻辑已经结算的结果。ART-08 的八种山体和重复装饰按空间区域拆成 MultiMesh，仍允许替换标准化单网格 GLB。单位、碰撞尺寸、动作名与导出方法见 [资产流程](art/asset-pipeline.md)、[表现接口](art/visual-contract.md) 和 [全地图资产策略](art/expansion-assets.md)。
 
 石料、库存和修行都用整数。开采工作量和计时用浮点数。投石先结算状态，再播放飞行动画，动画不生成或消耗任何资源。首次选择规模之前，移动、生产、投放和保存均停止。
