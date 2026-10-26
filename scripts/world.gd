@@ -6,6 +6,7 @@ const MountainVisual = preload("res://scripts/visuals/mountain_visual.gd")
 const Coast = preload("res://scripts/visuals/coast_geometry.gd")
 const Catalog = preload("res://scripts/visuals/asset_catalog.gd")
 const SpatialBatch = preload("res://scripts/visuals/spatial_batch.gd")
+const Ocean = preload("res://scripts/visuals/ocean_surface.gd")
 const SAMPLE_MOUNTAIN = preload("res://assets/models/environment/strata_mountain.glb")
 @export var bird_scene: PackedScene = preload("res://scenes/actors/jingwei.tscn")
 @export var pangolin_scene: PackedScene = preload("res://scenes/actors/pangolin.tscn")
@@ -23,6 +24,8 @@ var shrub_mesh: RefCounted
 var shore_rocks: RefCounted
 var coast_surface: MeshInstance3D
 var water_surface: MeshInstance3D
+var ocean = Ocean.new()
+var water_reduced := false
 var water_material: ShaderMaterial
 var foam_material: ShaderMaterial
 var foliage_material: ShaderMaterial
@@ -169,14 +172,14 @@ func _build_lighting(state: JWState) -> void:
 	camera.current = true
 
 func _build_land(state: JWState) -> void:
-	var water := PlaneMesh.new()
-	water.size = Vector2.ONE * state.map_side * 5
 	water_material = ShaderMaterial.new()
 	water_material.shader = preload("res://shaders/water.gdshader")
 	water_material.set_shader_parameter("shallow_end", int(state.bands[0]) * State.CELL_SIZE)
 	water_material.set_shader_parameter("far_end", (int(state.bands[0]) + int(state.bands[1])) * State.CELL_SIZE)
 	water_material.set_shader_parameter("sea_end", (state.grid_size - state.land_cols) * State.CELL_SIZE)
-	water_surface = Models.mesh_part(self, water, water_material, Vector3(0, Coast.WATER_HEIGHT, 0))
+	ocean.setup(state, water_material)
+	water_surface = Models.mesh_part(self, ocean.mesh(), water_material, Vector3(0, Coast.WATER_HEIGHT, 0))
+	water_surface.extra_cull_margin = .6
 	water_surface.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# Mainland continues west/north/south beyond the square journey boundary.
 	var land := PlaneMesh.new()
@@ -567,6 +570,7 @@ func sync(state: JWState) -> void:
 		_update_chunk(state, key)
 		completed += 1
 		await _loading_step("恢复已填海域", .74 + .22 * float(completed) / dirty_chunks.size())
+	ocean.refresh(state, dirty_chunks)
 	state.sea_dirty.clear()
 	_sync_npcs(state)
 	bird_model.set_load(float(state.carried) / state.capacity())
@@ -638,6 +642,7 @@ func _update_chunk(state: JWState, key: Vector2i) -> void:
 	var foam := SurfaceTool.new()
 	foam.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var foam_segments := 0
+	var shore_segments: Array = []
 	for row in range(key.y * CHUNK, mini(state.grid_size, (key.y + 1) * CHUNK)):
 		for col in range(maxi(state.land_cols, key.x * CHUNK), mini(state.grid_size, (key.x + 1) * CHUNK)):
 			for triangle in Coast.cell_triangles(state, col, row):
@@ -646,8 +651,10 @@ func _update_chunk(state: JWState, key: Vector2i) -> void:
 					tool.add_vertex(triangle["points"][vertex])
 				var segment := Coast.water_segment(triangle["points"])
 				if segment.size() == 2 and maxf(segment[0].x, segment[1].x) > .20:
+					shore_segments.append(Vector4(segment[0].x, segment[0].z, segment[1].x, segment[1].z))
 					Coast.foam_strip(foam, segment[0], segment[1])
 					foam_segments += 1
+	ocean.set_segments(key, shore_segments)
 	if not terrain_chunks.has(key):
 		var node := MeshInstance3D.new()
 		node.material_override = preload("res://assets/materials/reclaimed_ground.tres")
@@ -725,7 +732,10 @@ func update_player_locator(delta: float) -> Vector2:
 
 func animate(state: JWState, delta: float, moving: bool, high_flight: bool, aimed_cell: int) -> void:
 	time += delta
-	water_material.set_shader_parameter("wave_time", time)
+	ocean.advance(delta)
+	if water_reduced != reduced_detail:
+		water_reduced = reduced_detail
+		water_surface.mesh = ocean.mesh(2.0 if reduced_detail else 1.0)
 	foam_material.set_shader_parameter("wave_time", time)
 	foliage_material.set_shader_parameter("wind_time", time)
 	var detail_origin := bird_body.position

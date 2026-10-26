@@ -1,6 +1,8 @@
 extends Node3D
 ## Presentation only. All resource settlement has already happened in JWState.
 signal landed(sea: bool, formed_land: bool, completed: bool, audio_epoch: int)
+signal water_impacted(point: Vector3)
+var water_height: Callable
 
 const Models = preload("res://scripts/models.gd")
 const FLIGHT_SECONDS := 0.48
@@ -148,6 +150,8 @@ func advance(delta: float) -> void:
 		if not slot.active:
 			continue
 		slot.age += delta
+		if slot.sea and water_height.is_valid():
+			slot.end.y = water_height.call(Vector2(slot.end.x, slot.end.z))
 		slot.node.visible = detail_visible(slot.end)
 		var t := minf(float(slot.age) / FLIGHT_SECONDS, 1.0)
 		slot.node.position = slot.start.lerp(slot.end, t) + Vector3.UP * sin(t * PI) * 1.5
@@ -160,6 +164,8 @@ func advance(delta: float) -> void:
 			if slot.formed:
 				var formation := burst("fill", slot.end, Vector3.ZERO, 1.6)
 				_advance_burst(formation, float(slot.age) - FLIGHT_SECONDS)
+			if slot.sea:
+				water_impacted.emit(slot.end)
 			landed.emit(slot.sea, slot.formed, slot.completed, slot.epoch)
 	for id in relics:
 		var slot: Dictionary = relics[id]

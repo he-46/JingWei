@@ -291,7 +291,7 @@ func first_person_target() -> Variant:
 	aim_reason = ""
 	var origin: Vector3 = world.camera.global_position
 	var direction: Vector3 = -world.camera.global_basis.z
-	var hit: Variant = FirstPersonAim.surface_hit(state, origin, direction)
+	var hit: Variant = FirstPersonAim.surface_hit(state, origin, direction, world.ocean)
 	if hit == null:
 		aim_reason = "瞄准海面或陆地" if direction.y >= 0 else "落点超出地图"
 		return null
@@ -479,7 +479,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func mouse_world_point(screen: Vector2) -> Variant:
 	var origin: Vector3 = world.camera.project_ray_origin(screen)
 	var ray: Vector3 = world.camera.project_ray_normal(screen)
-	var hit: Variant = Plane(Vector3.UP, 0.2).intersects_ray(origin, ray)
+	var hit: Variant = FirstPersonAim.surface_hit(state, origin, ray, world.ocean)
 	return Vector2(hit.x, hit.z) if hit != null else null
 
 func toggle_overview() -> void:
@@ -943,7 +943,7 @@ func _advance_world(seconds: float) -> void:
 
 func _throw_effect(target: Vector2, sea: bool, formed_land: bool, completed: bool) -> void:
 	soundscape.play("throw")
-	var end := Vector3(target.x, maxf(.25, world.cell_height(state, state.cell_at(target)) + .04), target.y)
+	var end := Vector3(target.x, world.ocean.impact_height(target) if sea else maxf(.25, world.cell_height(state, state.cell_at(target)) + .04), target.y)
 	var first := _first_person_active()
 	var start: Vector3 = first_person_body.launch_position() if first else world.bird_body.position
 	feedback.throw_stone(start, end, sea, formed_land, completed, soundscape.epoch, not first)
@@ -954,6 +954,8 @@ func _setup_feedback() -> void:
 	feedback = Feedback.new()
 	world.add_child(feedback)
 	feedback.landed.connect(_impact_audio)
+	feedback.water_height = world.ocean.impact_height
+	feedback.water_impacted.connect(world.ocean.add_ripple)
 
 func _impact_audio(sea: bool, formed_land: bool, completed: bool, audio_epoch: int) -> void:
 	if audio_epoch != soundscape.epoch:

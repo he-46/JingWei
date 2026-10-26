@@ -181,7 +181,7 @@ func run() -> void:
 		expect(corners_visible, "overview fits all four corners of %d map" % target)
 		game.state.pickup_stone(0)
 		var point: Vector2 = game.state.cell_center(game.state.sea_indices[-1])
-		var screen: Vector2 = game.world.camera.unproject_position(Vector3(point.x, 0.2, point.y))
+		var screen: Vector2 = game.world.camera.unproject_position(Vector3(point.x, game.world.ocean.height(point), point.y))
 		var picked: Vector2 = game.mouse_world_point(screen)
 		expect(picked.distance_to(point) < 0.001 and game.deposit_at(picked) == 0, "far-corner ray is accurate but still out of range")
 		move_player(point - Vector2(2, 0))
